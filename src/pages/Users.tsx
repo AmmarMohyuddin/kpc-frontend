@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Breadcrumb from '../components/Breadcrumb';
 import apiService from '../services/ApiService';
+import { useNavigate } from 'react-router-dom';
 import Loader from '../common/Loader';
 import toast from 'react-hot-toast';
 
@@ -9,10 +10,12 @@ interface User {
   full_name: string;
   email: string;
   person_number: string;
+  role: string;
   is_approved: boolean;
 }
 
 const Users = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1); // Track current page
@@ -95,6 +98,9 @@ const Users = () => {
                     Person Number
                   </th>
                   <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                    Role
+                  </th>
+                  <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
                     Approval
                   </th>
                   <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
@@ -122,6 +128,11 @@ const Users = () => {
                       <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                         <p className="text-black dark:text-white">
                           {user.person_number}
+                        </p>
+                      </td>
+                      <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                        <p className="text-black dark:text-white">
+                          {user.role}
                         </p>
                       </td>
                       <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -206,7 +217,14 @@ const Users = () => {
                       </td>
                       <td className="py-5 px-4">
                         <div className="flex items-center space-x-3.5">
-                          <button className="hover:text-primary">
+                          <button
+                            className="hover:text-primary"
+                            onClick={() =>
+                              navigate(`/users/${user._id}`, {
+                                state: { user },
+                              })
+                            }
+                          >
                             <svg
                               className="fill-current"
                               width="18"

@@ -11,6 +11,11 @@ const Alerts = lazy(() => import('../pages/UiElements/Alerts'));
 const Buttons = lazy(() => import('../pages/UiElements/Buttons'));
 const Users = lazy(()=> import('../pages/Users'))
 const ImportUsers = lazy(()=> import('../pages/ImportUsers'))
+const Customers = lazy(() => import('../pages/Customers'));
+const SalesPersons = lazy(() => import('../pages/SalesPersons'));
+const ShowSalesPerson = lazy(() => import('../pages/ShowSalesPerson'));
+const ShowCustomer = lazy(() => import('../pages/ShowCustomer'));
+const ShowUser = lazy(() => import('../pages/ShowUser'));
 
 const coreRoutes = [
   {
@@ -44,9 +49,34 @@ const coreRoutes = [
     component: Users,
   },
   {
+    path: '/users/:id',
+    title: 'Show User',
+    component: ShowUser,
+  },
+  {
     path: '/import',
     title: 'Import Users',
     component: ImportUsers,
+  },
+  {
+    path: '/sales',
+    title: 'Sales Persons',
+    component: SalesPersons,
+  },
+  {
+    path: '/sales/:id',
+    title: 'Show Sales Person',
+    component: ShowSalesPerson,
+  },
+  {
+    path: '/customers',
+    title: 'Customers',
+    component: Customers,
+  },
+  {
+    path: '/customers/:id',
+    title: 'Show Customer',
+    component: ShowCustomer,
   },
   {
     path: '/settings',
