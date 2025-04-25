@@ -13,47 +13,87 @@ const ShowUser = () => {
             <h3 className="text-[22px] font-semibold text-black dark:text-white border-b border-[#eee] py-3  dark:border-strokedark">
               Personal Information
             </h3>
+            {user?.role === 'salesPerson' && (
+              <div className="grid grid-cols-1 md:grid-cols-1 gap-5 p-4">
+                <div>
+                  <h5 className="font-medium text-black dark:text-white">
+                    Full Name:
+                  </h5>
+                  <span className="text-black dark:text-white">
+                    {user?.full_name}
+                  </span>
+                </div>
+                <div>
+                  <h5 className="font-medium text-black dark:text-white">
+                    Email:
+                  </h5>
+                  <span className="text-black dark:text-white">
+                    {user?.email}
+                  </span>
+                </div>
+                <div>
+                  <h5 className="font-medium text-black dark:text-white">
+                    Person Number:
+                  </h5>
+                  <span className="text-black dark:text-white">
+                    {user?.person_number}
+                  </span>
+                </div>
+                <div>
+                  <h5 className="font-medium text-black dark:text-white">
+                    Role:
+                  </h5>
+                  <span className="text-black dark:text-white">
+                    {user?.role}
+                  </span>
+                </div>
+                <div>
+                  <h5 className="font-medium text-black dark:text-white">
+                    Approval Status:
+                  </h5>
+                  <span className="text-black dark:text-white">
+                    {user?.is_approved ? 'Approved' : 'Not Approved'}
+                  </span>
+                </div>
+              </div>
+            )}
 
-            <div className="grid grid-cols-1 md:grid-cols-1 gap-5 p-4">
-              <div>
-                <h5 className="font-medium text-black dark:text-white">
-                  Full Name:
-                </h5>
-                <span className="text-black dark:text-white">
-                  {user?.full_name}
-                </span>
+            {user?.role === 'customer' && (
+              <div className="grid grid-cols-1 md:grid-cols-1 gap-5 p-4">
+                <div>
+                  <h5 className="font-medium text-black dark:text-white">
+                    Full Name:
+                  </h5>
+                  <span className="text-black dark:text-white">
+                    {user?.full_name}
+                  </span>
+                </div>
+                <div>
+                  <h5 className="font-medium text-black dark:text-white">
+                    Email:
+                  </h5>
+                  <span className="text-black dark:text-white">
+                    {user?.email}
+                  </span>
+                </div>
+                <div>
+                  <h5 className="font-medium text-black dark:text-white">
+                    Role:
+                  </h5>
+                  <span className="text-black dark:text-white">
+                    {user?.role}
+                  </span>
+                </div>
+                <div>
+                  <h5 className="font-medium text-black dark:text-white">
+                    Approval Status:
+                  </h5>
+                  <span className="text-black dark:text-white">
+                    {user?.is_approved ? 'Approved' : 'Not Approved'}
+                  </span>
+                </div>
               </div>
-              <div>
-                <h5 className="font-medium text-black dark:text-white">
-                  Email:
-                </h5>
-                <span className="text-black dark:text-white">
-                  {user?.email}
-                </span>
-              </div>
-              <div>
-                <h5 className="font-medium text-black dark:text-white">
-                  Person Number:
-                </h5>
-                <span className="text-black dark:text-white">
-                  {user?.person_number}
-                </span>
-              </div>
-              <div>
-                <h5 className="font-medium text-black dark:text-white">
-                  Role:
-                </h5>
-                <span className="text-black dark:text-white">{user?.role}</span>
-              </div>
-              <div>
-                <h5 className="font-medium text-black dark:text-white">
-                  Approval Status:
-                </h5>
-                <span className="text-black dark:text-white">
-                  {user?.is_approved ? 'Approved' : 'Not Approved'}
-                </span>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

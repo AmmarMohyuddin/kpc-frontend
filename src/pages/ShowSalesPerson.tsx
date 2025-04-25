@@ -11,7 +11,6 @@ const ShowSalesPersons = () => {
 
   const [formData, setFormData] = useState({
     email: '',
-    password: '',
   });
 
   const handleChange = (e: any) => {
@@ -25,7 +24,6 @@ const ShowSalesPersons = () => {
         person_number: user?.person_number,
         full_name: user?.party_name,
         email: formData.email,
-        password: formData.password,
       });
 
       if (response.status === 201) {
@@ -88,20 +86,6 @@ const ShowSalesPersons = () => {
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input"
                       name="email"
                       value={formData.email}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <h5 className="font-medium text-black dark:text-white">
-                      Sales Person Password:
-                    </h5>
-                    <input
-                      type="password"
-                      placeholder="Enter your password"
-                      className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input"
-                      name="password"
-                      value={formData.password}
                       onChange={handleChange}
                       required
                     />

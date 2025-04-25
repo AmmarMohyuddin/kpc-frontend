@@ -16,6 +16,7 @@ const SalesPersons = lazy(() => import('../pages/SalesPersons'));
 const ShowSalesPerson = lazy(() => import('../pages/ShowSalesPerson'));
 const ShowCustomer = lazy(() => import('../pages/ShowCustomer'));
 const ShowUser = lazy(() => import('../pages/ShowUser'));
+const deactivateUsers = lazy(() => import('../pages/DeactivateUsers'));
 
 const coreRoutes = [
   {
@@ -47,6 +48,11 @@ const coreRoutes = [
     path: '/users',
     title: 'Users',
     component: Users,
+  },
+  {
+    path: '/deactivate',
+    title: 'Deactivate Users',
+    component: deactivateUsers,
   },
   {
     path: '/users/:id',
