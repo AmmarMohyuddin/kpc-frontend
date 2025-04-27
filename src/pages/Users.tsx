@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import Breadcrumb from '../components/Breadcrumb';
 import apiService from '../services/ApiService';
 import { useNavigate } from 'react-router-dom';
-import Loader from '../common/Loader';
 import toast from 'react-hot-toast';
 
 interface User {
