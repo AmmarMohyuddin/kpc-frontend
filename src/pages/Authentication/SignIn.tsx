@@ -29,9 +29,9 @@ const SignIn = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Default to 'admin' if no role is selected
     if (!credentials.role) {
-      toast.error('Please select a role!');
-      return;
+      credentials.role = 'admin';
     }
 
     try {
