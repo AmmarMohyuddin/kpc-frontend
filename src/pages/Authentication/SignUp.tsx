@@ -7,6 +7,8 @@ import Select from 'react-select';
 const SignUp = () => {
   const [activeTab, setActiveTab] = useState('Sales Person');
   const [customers, setCustomers] = useState([]);
+  const [accountNumbers, setAccountNumbers] = useState([]);
+  const [addressLine, setAddressLine] = useState<string[]>([]);
   const [salesPersons, setSalesPersons] = useState([]);
 
   const [salesPersonFormData, setSalesPersonFormData] = useState({
@@ -17,6 +19,7 @@ const SignUp = () => {
 
   const [customerFormData, setCustomerFormData] = useState({
     customer_id: '',
+    customer_name: '',
     account_number: '',
     address: '',
     customer_email: '',
@@ -30,12 +33,22 @@ const SignUp = () => {
 
   const salesPersonOptions = salesPersons.map((person: any) => ({
     value: person._id,
-    label: person.party_name,
+    label: person.salesperson_name,
   }));
 
   const customerOptions = customers.map((customer: any) => ({
     value: customer._id,
     label: customer.party_name,
+  }));
+
+  const accountNumberOptions = accountNumbers.map((account: any) => ({
+    value: account,
+    label: account,
+  }));
+
+  const addressLineOptions = addressLine.map((address: any) => ({
+    value: address,
+    label: address,
   }));
 
   const navigate = useNavigate();
@@ -116,30 +129,78 @@ const SignUp = () => {
     fetchSalesPersonsData();
   }, []);
 
+  // const handleCustomerSelect = async (selectedOption: any) => {
+  //   if (selectedOption) {
+  //     try {
+  //       const response = await apiService.get(
+  //         `/api/v1/customers/detail/${selectedOption.value}`,
+  //         {},
+  //       );
+  //       const customerData = response.data;
+  //       setCustomerFormData((prevData) => ({
+  //         ...prevData,
+  //         customer_id: selectedOption.value,
+  //         account_number: customerData.account_number || '',
+  //         address: customerData.address_line_1 || '',
+  //       }));
+  //     } catch (error) {
+  //       console.error('Error fetching customer details:', error);
+  //     }
+  //   } else {
+  //     setCustomerFormData((prevData) => ({
+  //       ...prevData,
+  //       customer_id: '',
+  //       account_number: '',
+  //       address: '',
+  //     }));
+  //   }
+  // };
+
   const handleCustomerSelect = async (selectedOption: any) => {
     if (selectedOption) {
+      setCustomerFormData((prevData) => ({
+        ...prevData,
+        customer_id: selectedOption.value,
+        customer_name: selectedOption.label,
+      }));
       try {
         const response = await apiService.get(
-          `/api/v1/customers/detail/${selectedOption.value}`,
+          `/api/v1/customers/list?customer_name=${selectedOption.label}`,
           {},
         );
-        const customerData = response.data;
-        console.log(customerData);
-        setCustomerFormData((prevData) => ({
-          ...prevData,
-          customer_id: selectedOption.value,
-          account_number: customerData.account_number || '',
-          address: customerData.address_line_1 || '',
-        }));
+        const account_numbers = response.data;
+        setAccountNumbers(account_numbers);
       } catch (error) {
         console.error('Error fetching customer details:', error);
       }
-    } else {
+    }
+  };
+
+  const handleAccountNumberSelect = async (selectedOption: any) => {
+    if (selectedOption) {
+      console.log(selectedOption);
       setCustomerFormData((prevData) => ({
         ...prevData,
-        customer_id: '',
-        account_number: '',
-        address: '',
+        account_number: selectedOption.value,
+      }));
+      try {
+        const response = await apiService.get(
+          `/api/v1/customers/list?customer_name=${customerFormData?.customer_name}&account_number=${selectedOption.label}`,
+          {},
+        );
+        const address_line_1 = response.data;
+        setAddressLine(address_line_1);
+      } catch (error) {
+        console.error('Error fetching customer details:', error);
+      }
+    }
+  };
+
+  const handleAddressLineSelect = async (selectedOption: any) => {
+    if (selectedOption) {
+      setCustomerFormData((prevData) => ({
+        ...prevData,
+        address: selectedOption.value,
       }));
     }
   };
@@ -250,22 +311,6 @@ const SignUp = () => {
                         <label className="mb-2.5 block font-medium text-black dark:text-white">
                           Customer
                         </label>
-                        {/* <select
-                          name="customer_name"
-                          value={customerFormData.customer_name}
-                          onChange={handleCustomerChange}
-                          className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                        >
-                          <option>Select Customer</option>
-                          {customers.map((customer: any) => (
-                            <option
-                              key={customer._id}
-                              value={customer.customer_name}
-                            >
-                              {customer.party_name}
-                            </option>
-                          ))}
-                        </select> */}
                         <Select
                           name="customer_id"
                           value={
@@ -288,14 +333,21 @@ const SignUp = () => {
                             Account Number
                           </label>
                           <div className="relative">
-                            <input
-                              type="text"
+                            <Select
                               name="account_number"
-                              value={customerFormData.account_number}
-                              onChange={handleCustomerChange}
-                              placeholder="Enter account number"
-                              className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                              readOnly
+                              value={
+                                accountNumberOptions.find(
+                                  (option) =>
+                                    option.value ===
+                                    customerFormData.account_number,
+                                ) || null
+                              }
+                              onChange={handleAccountNumberSelect}
+                              options={accountNumberOptions}
+                              placeholder="Select Account Number"
+                              isSearchable
+                              className="react-select-container text-black dark:text-white"
+                              classNamePrefix="react-select"
                             />
                           </div>
                         </div>
@@ -304,14 +356,20 @@ const SignUp = () => {
                             Address
                           </label>
                           <div className="relative">
-                            <input
-                              type="text"
+                            <Select
                               name="address"
-                              value={customerFormData.address}
-                              onChange={handleCustomerChange}
-                              placeholder="Enter address"
-                              className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                              readOnly
+                              value={
+                                addressLineOptions.find(
+                                  (option) =>
+                                    option.value === customerFormData.address,
+                                ) || null
+                              }
+                              onChange={handleAddressLineSelect}
+                              options={addressLineOptions}
+                              placeholder="Select Address"
+                              isSearchable
+                              className="react-select-container text-black dark:text-white"
+                              classNamePrefix="react-select"
                             />
                           </div>
                         </div>
@@ -320,22 +378,6 @@ const SignUp = () => {
                         <label className="mb-2.5 block font-medium text-black dark:text-white">
                           Sales Person
                         </label>
-                        {/* <select
-                          name="sales_person_id"
-                          value={customerFormData.sales_person_id}
-                          onChange={handleCustomerChange}
-                          className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                        >
-                          <option>Select Sales Person</option>
-                          {salesPersons.map((salesPerson: any) => (
-                            <option
-                              key={salesPerson._id}
-                              value={salesPerson._id}
-                            >
-                              {salesPerson?.party_name}
-                            </option>
-                          ))}
-                        </select> */}
                         <Select
                           name="sales_person_id"
                           value={salesPersonOptions.find(

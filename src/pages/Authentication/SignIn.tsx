@@ -63,7 +63,7 @@ const SignIn = () => {
             </h2>
 
             <form onSubmit={handleSubmit}>
-              <div className="flex gap-6 mb-6">
+              <div className="flex gap-20 mb-8">
                 <div className="flex items-center">
                   <input
                     type="checkbox"
