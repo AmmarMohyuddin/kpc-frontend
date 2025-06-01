@@ -6,9 +6,13 @@ import Loader from '../common/Loader';
 
 interface SalesPerson {
   _id: string;
-  sales_person_id: number;
-  party_name: string;
-  person_number: string;
+  salesperson_id: string;
+  salesperson_name: string;
+  employee_number: string;
+  registered: boolean;
+  last_update_date: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const SalesPersons = () => {
@@ -25,6 +29,7 @@ const SalesPersons = () => {
         const response = await apiService.get('/api/v1/salesPersons/list', {});
         if (response?.status === 200) {
           setUsers(response?.data || []);
+          console.log('Sales Persons:', response?.data);
         }
       } catch (error) {
         console.error('Error fetching users', error);
@@ -78,17 +83,17 @@ const SalesPersons = () => {
                         }
                       >
                         <h5 className="font-medium text-black dark:text-white">
-                          {user.party_name}
+                          {user.salesperson_name}
                         </h5>
                       </td>
                       <td className="border-b border-[#eee] py-5 px-4 xl:pl-11 dark:border-strokedark">
                         <p className="text-black dark:text-white">
-                          {user.sales_person_id}
+                          {user.salesperson_id}
                         </p>
                       </td>
                       <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                         <p className="text-black dark:text-white">
-                          {user.person_number}
+                          {user.employee_number}
                         </p>
                       </td>
                     </tr>

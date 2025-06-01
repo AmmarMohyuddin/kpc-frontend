@@ -21,8 +21,8 @@ const ShowSalesPersons = () => {
   const handleRegister = async () => {
     try {
       const response = await apiService.post('/api/v1/salesPersons/register', {
-        person_number: user?.person_number,
-        full_name: user?.party_name,
+        person_number: user?.employee_number,
+        full_name: user?.salesperson_name,
         email: formData.email,
       });
 
@@ -32,7 +32,8 @@ const ShowSalesPersons = () => {
       }
     } catch (error) {
       console.error(error);
-      const errorMessage = error?.message || 'Registration failed';
+      const errorMessage =
+        (error as { message?: string })?.message || 'Registration failed';
       toast.error(errorMessage);
     }
   };
@@ -53,7 +54,7 @@ const ShowSalesPersons = () => {
                   Sales Person Id:
                 </h5>
                 <span className="text-black dark:text-white">
-                  {user?.sales_person_id}
+                  {user?.salesperson_id}
                 </span>
               </div>
               <div>
@@ -61,7 +62,7 @@ const ShowSalesPersons = () => {
                   Sales Person Name:
                 </h5>
                 <span className="text-black dark:text-white">
-                  {user?.party_name}
+                  {user?.salesperson_name}
                 </span>
               </div>
               <div>
@@ -69,7 +70,7 @@ const ShowSalesPersons = () => {
                   Person Number:
                 </h5>
                 <span className="text-black dark:text-white">
-                  {user?.person_number}
+                  {user?.employee_number}
                 </span>
               </div>
 
