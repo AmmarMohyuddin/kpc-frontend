@@ -28,7 +28,7 @@ const CheckboxOne = () => {
             ></span>
           </div>
         </div>
-        Checkbox Text
+        Sales Person
       </label>
     </div>
   );

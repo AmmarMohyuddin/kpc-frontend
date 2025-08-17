@@ -8,7 +8,7 @@ const CardFour = ({ title, count = 0 }: CardTwoProps) => {
     <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
         <svg
-          className="fill-primary dark:fill-white"
+          className="fill-[#C32033] dark:fill-white"
           width="22"
           height="18"
           viewBox="0 0 22 18"

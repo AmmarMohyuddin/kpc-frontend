@@ -17,6 +17,20 @@ const ShowSalesPerson = lazy(() => import('../pages/ShowSalesPerson'));
 const ShowCustomer = lazy(() => import('../pages/ShowCustomer'));
 const ShowUser = lazy(() => import('../pages/ShowUser'));
 const deactivateUsers = lazy(() => import('../pages/DeactivateUsers'));
+const CreateLead = lazy(() => import('../pages/Leads/CreateLead'));
+const FollowUp = lazy(() => import('../pages/Leads/FollowUp'));
+const ManageLead = lazy(() => import('../pages/Leads/ManageLead'));
+const DetailLead = lazy(() => import('../pages/Leads/DetailLead'));
+const DetailOpportunity = lazy(() => import('../pages/Leads/DetailOpportunity'));
+const CreateOpportunity = lazy(() => import('../pages/Opportunities/CreateOpportunity'));
+const ManageOpportunity = lazy(() => import('../pages/Opportunities/ManageOpportunity'));
+const DetailOpp = lazy(() => import('../pages/Opportunities/DetailOpportunity'));
+const Closure = lazy(() => import('../pages/Leads/Closure'));
+const CreateSalesRequest = lazy(() => import('../pages/SalesRequest/CreateSalesRequest'));
+const ManageSalesRequest = lazy(() => import('../pages/SalesRequest/ManageSalesRequest'))
+const ConfirmAddress = lazy(() => import('../pages/SalesRequest/ConfirmAddress'));
+const DetailItem = lazy(() => import('../pages/SalesRequest/ItemDetail'))
+const ItemListing = lazy(() => import('../pages/SalesRequest/ItemListing'));
 
 const coreRoutes = [
   {
@@ -38,6 +52,76 @@ const coreRoutes = [
     path: '/forms/form-layout',
     title: 'Form Layouts',
     component: FormLayout,
+  },
+  {
+    path: '/leads/create',
+    title: 'Create Lead',
+    component: CreateLead,
+  },
+  {
+    path: '/leads/follow-up',
+    title: 'Follow Up',
+    component: FollowUp,
+  },
+  {
+    path: '/leads/manage',
+    title: 'Manage Lead',
+    component: ManageLead,
+  },
+  {
+    path: '/leads/:id',
+    title: 'Detail Lead',
+    component: DetailLead,
+  },
+  {
+    path: '/leads/:id/opportunity',
+    title: 'Detail Opportunity',
+    component: DetailOpportunity,
+  },
+  {
+    path: '/leads/closure',
+    title: 'Closure',
+    component: Closure,
+  },
+  {
+    path: '/opportunities/create',
+    title: 'Create Opportunity',
+    component: CreateOpportunity,
+  },
+  {
+    path: '/opportunities/manage',
+    title: 'Manage Opportunities',
+    component: ManageOpportunity,
+  },
+  {
+    path: '/opportunities/:id',
+    title: 'Detail Opportunity',
+    component: DetailOpp,
+  },
+  {
+    path: '/sales-request/create',
+    title: 'Create Sales Request',
+    component: CreateSalesRequest,
+  },
+    {
+    path: '/sales-request/manage',
+    title: 'Manage Sales Request',
+    component: ManageSalesRequest,
+  },
+  {
+    path: '/sales-request/confirm-address',
+    title: 'Confirm Address',
+    component: ConfirmAddress,
+  },
+  {
+    path: '/sales-request/details/:index',
+    title: 'Item Details',
+    component: DetailItem,
+  },
+    {
+    path: '/item-listing',
+    title: 'Item Listing',
+    component: ItemListing,
   },
   {
     path: '/tables',

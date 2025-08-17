@@ -53,10 +53,12 @@ const DropdownUser = () => {
         to="#"
       >
         <span className="hidden text-right lg:block">
-          <span className="block text-sm font-medium text-black dark:text-white">
+          <span className="block text-md font-medium text-white dark:text-white">
             {user?.full_name}
           </span>
-          <span className="block text-xs">{user?.person_number}</span>
+          <span className="block text-md font-small text-white">
+            {user?.person_number}
+          </span>
         </span>
 
         <span className="h-12 w-12 rounded-full">
@@ -77,7 +79,7 @@ const DropdownUser = () => {
             fillRule="evenodd"
             clipRule="evenodd"
             d="M0.410765 0.910734C0.736202 0.585297 1.26384 0.585297 1.58928 0.910734L6.00002 5.32148L10.4108 0.910734C10.7362 0.585297 11.2638 0.585297 11.5893 0.910734C11.9147 1.23617 11.9147 1.76381 11.5893 2.08924L6.58928 7.08924C6.26384 7.41468 5.7362 7.41468 5.41077 7.08924L0.410765 2.08924C0.0853277 1.76381 0.0853277 1.23617 0.410765 0.910734Z"
-            fill=""
+            fill="white"
           />
         </svg>
       </Link>
@@ -119,7 +121,7 @@ const DropdownUser = () => {
           </li>
         </ul> */}
         <button
-          className="flex items-center gap-3.5 py-4 px-6 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+          className="flex items-center gap-3.5 py-4 px-6 text-sm font-medium duration-300 ease-in-out hover:text-[#C32033] lg:text-base"
           onClick={handleSignOut}
         >
           <svg
