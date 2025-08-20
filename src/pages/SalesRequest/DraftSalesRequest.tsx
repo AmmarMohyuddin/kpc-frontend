@@ -26,13 +26,12 @@ interface SalesRequest {
 
 const ITEMS_PER_PAGE = 7;
 
-const ManageSalesRequest = () => {
+const DraftSalesRequest = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<{
-    item_number: string;
-    customer_id: string;
+    order_header_id: string;
   } | null>(null);
   const [salesRequests, setSalesRequests] = useState<SalesRequest[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,7 +42,7 @@ const ManageSalesRequest = () => {
       try {
         setIsLoading(true);
         const response = await apiService.get(
-          `/api/v1/salesRequests/list-sales-request`,
+          `/api/v1/salesRequests/draft-sales-request`,
           {},
         );
 
@@ -87,7 +86,7 @@ const ManageSalesRequest = () => {
   };
 
   const breadcrumbs = [
-    { label: 'Sales Requests', path: '/' },
+    { label: 'Draft Sales Requests', path: '/' },
     { label: 'Listing', path: '', isActive: true },
   ];
 
@@ -105,8 +104,7 @@ const ManageSalesRequest = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         itemName="item"
-        itemNumber={selectedItem?.item_number}
-        customerId={selectedItem?.customer_id}
+        orderHeaderId={selectedItem?.order_header_id}
         onItemDeleted={handleItemDeleted}
       />
 
@@ -115,7 +113,7 @@ const ManageSalesRequest = () => {
           {/* Header */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-2 gap-4">
             <h1 className="text-2xl font-semibold text-black dark:text-white">
-              Sales Requests
+              Draft Sales Request
             </h1>
           </div>
 
@@ -221,6 +219,32 @@ const ManageSalesRequest = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <button
+                            onClick={() => {
+                              setSelectedItem({
+                                order_header_id: request.ORDER_HEADER_ID,
+                              });
+                              setIsModalOpen(true);
+                            }}
+                            className="hover:scale-110 transition-transform"
+                          >
+                            <Trash2 className="text-[#C32033] hover:text-red-800 w-5 h-5" />
+                          </button>
+                          <button
+                            onClick={() =>
+                              navigate(
+                                `/sales-request/edit/${request.ORDER_HEADER_ID}`,
+                                {
+                                  state: {
+                                    order_header_id: request.ORDER_HEADER_ID,
+                                  },
+                                },
+                              )
+                            }
+                            className="hover:scale-110 transition-transform"
+                          >
+                            <Edit className="text-blue-600 hover:text-blue-800 w-5 h-5" />
+                          </button>
+                          <button
                             onClick={() =>
                               navigate(
                                 `/sales-request/details/${request.ORDER_HEADER_ID}`,
@@ -247,7 +271,7 @@ const ManageSalesRequest = () => {
                     >
                       {searchTerm
                         ? 'No matching items found'
-                        : 'No items found'}
+                        : 'No Draft Orders found'}
                     </td>
                   </tr>
                 )}
@@ -297,4 +321,4 @@ const ManageSalesRequest = () => {
   );
 };
 
-export default ManageSalesRequest;
+export default DraftSalesRequest;

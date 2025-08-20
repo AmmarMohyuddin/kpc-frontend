@@ -1,6 +1,8 @@
 import { X } from 'lucide-react';
 import apiService from '../../services/ApiService';
 import toast from 'react-hot-toast';
+import { useState } from 'react';
+import Loader from '../../common/Loader';
 
 interface DeleteModalProps {
   isOpen: boolean;
@@ -8,6 +10,7 @@ interface DeleteModalProps {
   itemName?: string;
   itemNumber?: string;
   customerId?: string;
+  orderHeaderId?: string;
   onItemDeleted: (updatedItems: any[]) => void;
 }
 
@@ -17,40 +20,69 @@ const DeleteModal = ({
   itemName = 'item',
   itemNumber,
   customerId,
+  orderHeaderId,
   onItemDeleted,
 }: DeleteModalProps) => {
+  const [loading, setLoading] = useState(false);
+
   if (!isOpen) return null;
 
   const handleCancel = () => {
-    onClose();
+    if (!loading) onClose();
   };
 
   const handleDelete = async () => {
-    if (!itemNumber || !customerId) {
-      console.error('Item number and customer ID are required for deletion');
-      return;
-    }
-
     try {
-      const response = await apiService.post(
-        `/api/v1/salesRequests/item-delete`,
-        {
+      setLoading(true);
+      let response;
+
+      if (itemNumber && orderHeaderId) {
+        // Delete specific item from an order
+        response = await apiService.post(
+          `/api/v1/salesRequests/delete-sales-request`,
+          { item_number: itemNumber, order_header_id: orderHeaderId },
+        );
+
+        if (response?.status === 200) {
+          toast.success(response.data.message || 'Order Line deleted');
+          onClose();
+          window.location.reload();
+        }
+      } else if (orderHeaderId && !itemNumber) {
+        // Delete entire order
+        response = await apiService.post(
+          `/api/v1/salesRequests/delete-sales-request`,
+          { order_header_id: orderHeaderId },
+        );
+
+        if (response?.status === 200) {
+          toast.success(response.data.message || 'Order Header deleted');
+          onClose();
+          window.location.reload();
+        }
+      } else if (itemNumber && customerId) {
+        // Delete item using customerId
+        response = await apiService.post(`/api/v1/salesRequests/item-delete`, {
           item_number: itemNumber,
           customer_id: customerId,
-        },
-      );
+        });
+      } else {
+        toast.error('Missing required information.');
+        return;
+      }
 
       if (response?.status === 200) {
-        toast.success('Item Deleted!');
+        toast.success('Deleted successfully!');
         onItemDeleted(response.data || []);
         onClose();
       } else {
-        console.error('Failed to delete item:', response);
-        toast.error('Failed to delete item.');
+        toast.error('Failed to delete.');
       }
     } catch (error) {
-      console.error('Error deleting item:', error);
-      toast.error('Failed to delete item.');
+      console.error('Error deleting:', error);
+      toast.error('Failed to delete.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -59,11 +91,18 @@ const DeleteModal = ({
       {/* Overlay */}
       <div
         className="absolute inset-0 bg-black bg-opacity-50"
-        onClick={onClose}
+        onClick={!loading ? onClose : undefined}
       ></div>
 
+      {/* Loader overlay */}
+      {loading && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-30">
+          <Loader />
+        </div>
+      )}
+
       {/* Modal */}
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4">
+      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 z-50">
         <div className="flex items-center justify-between p-6 pb-4">
           <div className="flex-1 text-center">
             <h2 className="text-xl font-semibold text-black">Delete Item!</h2>
@@ -71,6 +110,7 @@ const DeleteModal = ({
           <button
             onClick={onClose}
             className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+            disabled={loading}
           >
             <X className="w-5 h-5 text-gray-500" />
           </button>
@@ -78,8 +118,12 @@ const DeleteModal = ({
 
         <div className="px-6 pb-6 space-y-6">
           <div className="text-center">
-            <p className="text-gray-600 text-sm">
-              Do you really want to delete this {itemName}?
+            <p className="text-gray-600 text-lg">
+              {itemNumber && orderHeaderId
+                ? `Do you really want to delete this ${itemName} from the order?`
+                : orderHeaderId
+                ? `Do you really want to delete this entire order?`
+                : `Do you really want to delete this ${itemName}?`}
             </p>
           </div>
 
@@ -87,12 +131,14 @@ const DeleteModal = ({
             <button
               onClick={handleCancel}
               className="flex-1 px-6 py-3 rounded-lg border border-[#C32033] text-[#C32033] font-medium hover:bg-gray-50 transition-colors"
+              disabled={loading}
             >
               Cancel
             </button>
             <button
               onClick={handleDelete}
               className="flex-1 px-6 py-3 rounded-lg bg-[#C32033] text-white font-medium hover:bg-[#A91B2E] transition-colors"
+              disabled={loading}
             >
               Delete
             </button>

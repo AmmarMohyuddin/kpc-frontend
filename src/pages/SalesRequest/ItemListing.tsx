@@ -25,57 +25,128 @@ interface SalesItem {
   line_amount: number;
 }
 
+interface OrderLine {
+  ORDER_LINE_ID: number;
+  ORDER_HEADER_ID: number;
+  INVENTORY_ITEM_ID: number;
+  ITEM_NUMBER: string;
+  DESCRIPTION: string;
+  UOM: string;
+  ORDER_QUANTITY: number;
+  PRICE: number;
+  AMOUNT: number;
+  LINE_STATUS: string;
+  CREATION_DATE: string;
+  CREATED_BY: string;
+  LAST_UPDATE_DATE: string;
+  LAST_UPDATED_BY: string;
+  PAYMENT_TERM: string;
+  REQUESTED_SHIP_DATE: string;
+  INSTRUCTIONS: string | null;
+}
+
 const ITEMS_PER_PAGE = 5;
 
 const ItemListing = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const customer = location.state?.customer;
+  const { customer, order_header_id } = location.state || {};
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<{
     item_number: string;
     customer_id: string;
+    order_header_id?: string;
   } | null>(null);
   const [items, setItems] = useState<SalesItem[]>([]);
+  const [orderlines, setOrderLines] = useState<OrderLine[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    const fetchItems = async () => {
-      if (!customer?.customer_id) {
-        setIsLoading(false);
-        console.error('No customer_id provided');
-        return;
-      }
+    const fetchData = async () => {
+      setIsLoading(true);
 
       try {
-        setIsLoading(true);
-        const response = await apiService.get(
-          `/api/v1/salesRequests/item-list/${customer.customer_id}`,
-          {},
-        );
+        if (order_header_id) {
+          // Fetch order lines if order_header_id is present
+          const response = await apiService.post(
+            `/api/v1/salesRequests/detail-sales-request`,
+            { order_header_id },
+          );
 
-        if (response?.status === 200) {
-          setItems(response.data || []);
+          if (response?.status === 200) {
+            setOrderLines(response.data.ORDER_LINES || []);
+          }
+        } else if (customer?.customer_id) {
+          // Fetch items if customer_id is present but no order_header_id
+          const response = await apiService.get(
+            `/api/v1/salesRequests/item-list/${customer.customer_id}`,
+            {},
+          );
+
+          if (response?.status === 200) {
+            setItems(response.data || []);
+          }
+        } else {
+          console.error('No customer_id or order_header_id provided');
         }
       } catch (error) {
-        console.error('Error fetching items:', error);
+        console.error('Error fetching data:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchItems();
-  }, [customer?.customer_id]);
+    fetchData();
+  }, [order_header_id, customer?.customer_id]);
 
   const handleItemDeleted = (updatedItems: SalesItem[]) => {
-    setItems(updatedItems);
+    if (order_header_id) {
+      // Convert SalesItem back to OrderLine format if needed
+      const updatedOrderLines = updatedItems.map((item) => ({
+        ORDER_LINE_ID: 0, // This would need to be handled properly
+        ORDER_HEADER_ID: order_header_id,
+        INVENTORY_ITEM_ID: 0,
+        ITEM_NUMBER: item.item_number,
+        DESCRIPTION: item.description,
+        UOM: item.unit_of_measure,
+        ORDER_QUANTITY: item.order_quantity,
+        PRICE: item.price,
+        AMOUNT: item.line_amount,
+        LINE_STATUS: 'ACTIVE',
+        CREATION_DATE: new Date().toISOString().split('T')[0],
+        CREATED_BY: 'USER',
+        LAST_UPDATE_DATE: new Date().toISOString().split('T')[0],
+        LAST_UPDATED_BY: 'USER',
+        PAYMENT_TERM: '',
+        REQUESTED_SHIP_DATE: new Date().toISOString(),
+        INSTRUCTIONS: item.instructions,
+      }));
+      setOrderLines(updatedOrderLines);
+    } else {
+      setItems(updatedItems);
+    }
     setCurrentPage(1);
   };
 
+  // Determine which data to use and normalize it for display
+  const displayData = order_header_id
+    ? orderlines.map((line) => ({
+        item_detail: line.DESCRIPTION || '',
+        item_number: line.ITEM_NUMBER || '',
+        unit_of_measure: line.UOM || '',
+        sub_category: '', // Not available in orderlines
+        description: line.DESCRIPTION || '',
+        instructions: line.INSTRUCTIONS || '',
+        order_quantity: line.ORDER_QUANTITY || 0,
+        price: line.PRICE || 0,
+        line_amount: line.AMOUNT || 0,
+      }))
+    : items;
+
   // Filter items based on search term
-  const filteredItems = items.filter(
+  const filteredItems = displayData.filter(
     (item) =>
       item.item_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.description?.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -115,6 +186,7 @@ const ItemListing = () => {
         itemName="item"
         itemNumber={selectedItem?.item_number}
         customerId={selectedItem?.customer_id}
+        orderHeaderId={selectedItem?.order_header_id}
         onItemDeleted={handleItemDeleted}
       />
 
@@ -123,33 +195,39 @@ const ItemListing = () => {
           {/* Header */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-2 gap-4">
             <h1 className="text-2xl font-semibold text-black dark:text-white">
-              Items Listing
+              {order_header_id ? 'Order Items' : 'Items Listing'}
             </h1>
 
-            <div className="flex gap-3">
-              <button
-                onClick={() =>
-                  navigate('/sales-request/create', {
-                    state: {
-                      step: 1,
-                      customer_id: customer.customer_id,
-                      mode: 'save',
-                    },
-                  })
-                }
-                className="px-4 py-2 rounded border border-[#C32033] text-[#C32033] hover:bg-[#C32033] hover:text-white transition-colors font-medium"
-              >
-                Add More Items
-              </button>
-              <Link
-                to="/sales-request/confirm-address"
-                state={{ customer_id: customer.customer_id }}
-              >
-                <button className="px-4 py-2 rounded bg-[#C32033] text-white hover:bg-[#a91b2e] transition-colors font-medium">
-                  Confirm Address
+            {!order_header_id && (
+              <div className="flex gap-3">
+                <button
+                  onClick={() =>
+                    navigate('/sales-request/create', {
+                      state: {
+                        step: 1,
+                        customer_id: customer?.customer_id,
+                        mode: 'save',
+                      },
+                    })
+                  }
+                  className="px-4 py-2 rounded border border-[#C32033] text-[#C32033] hover:bg-[#C32033] hover:text-white transition-colors font-medium"
+                >
+                  Add More Items
                 </button>
-              </Link>
-            </div>
+
+                <Link
+                  to="/sales-request/confirm-address"
+                  state={{
+                    customer_id: customer?.customer_id,
+                    order_header_id: order_header_id,
+                  }}
+                >
+                  <button className="px-4 py-2 rounded bg-[#C32033] text-white hover:bg-[#a91b2e] transition-colors font-medium">
+                    Confirm Address
+                  </button>
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Top Bar */}
@@ -192,13 +270,14 @@ const ItemListing = () => {
             </div>
           </div>
 
-          {/* Table with loading skeleton */}
+          {/* Table */}
           <div className="overflow-x-auto mt-5">
             <table className="w-full">
               <thead>
                 <tr className="bg-[#C32033] text-white">
                   <th className="px-6 py-4 text-left">No.</th>
                   <th className="px-6 py-4 text-left">Item Number</th>
+                  <th className="px-6 py-4 text-left">Description</th>
                   <th className="px-6 py-4 text-left">Order Quantity</th>
                   <th className="px-6 py-4 text-left">Price</th>
                   <th className="px-6 py-4 text-left">Amount</th>
@@ -209,13 +288,14 @@ const ItemListing = () => {
                 {paginatedItems.length > 0 ? (
                   paginatedItems.map((item, index) => (
                     <tr
-                      key={item.item_number}
+                      key={item.item_number || index}
                       className={`border-b ${
                         index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                       } hover:bg-gray-100 transition-colors`}
                     >
                       <td className="px-6 py-4">{startIndex + index + 1}</td>
                       <td className="px-6 py-4">{item.item_number || '-'}</td>
+                      <td className="px-6 py-4">{item.description || '-'}</td>
                       <td className="px-6 py-4">{item.order_quantity || 0}</td>
                       <td className="px-6 py-4">
                         {item.price?.toFixed(2) || '0.00'}
@@ -223,46 +303,86 @@ const ItemListing = () => {
                       <td className="px-6 py-4">
                         {item.line_amount?.toFixed(2) || '0.00'}
                       </td>
+
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <button
-                            onClick={() => {
-                              setSelectedItem({
-                                item_number: item.item_number,
-                                customer_id: customer.customer_id,
-                              });
-                              setIsModalOpen(true);
-                            }}
-                            className="hover:scale-110 transition-transform"
-                          >
-                            <Trash2 className="text-[#C32033] hover:text-red-800 w-5 h-5" />
-                          </button>
-                          <button
-                            onClick={() =>
-                              navigate('/sales-request/create', {
-                                state: {
-                                  step: 1,
+                          {!orderlines ? (
+                            <button
+                              onClick={() => {
+                                setSelectedItem({
                                   item_number: item.item_number,
-                                  customer_id: customer.customer_id,
-                                  mode: 'update',
-                                },
-                              })
-                            }
-                            className="hover:scale-110 transition-transform"
-                          >
-                            <Edit className="text-blue-600 hover:text-blue-800 w-5 h-5" />
-                          </button>
-                          <Link
-                            to={`/sales-request/details/${item.item_number}`}
-                            state={{
-                              item_number: item.item_number,
-                              customer_id: customer.customer_id,
-                            }}
-                          >
-                            <button className="px-4 py-2 border border-[#C32033] text-[#C32033] rounded hover:bg-[#C32033] hover:text-white transition-colors">
-                              View Details
+                                  customer_id: customer?.customer_id,
+                                });
+                                setIsModalOpen(true);
+                              }}
+                              className="hover:scale-110 transition-transform"
+                            >
+                              <Trash2 className="text-[#C32033] hover:text-red-800 w-5 h-5" />
                             </button>
-                          </Link>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                setSelectedItem({
+                                  item_number: item.item_number,
+                                  customer_id: customer?.customer_id,
+                                  order_header_id: order_header_id,
+                                });
+                                setIsModalOpen(true);
+                              }}
+                              className="hover:scale-110 transition-transform"
+                            >
+                              <Trash2 className="text-[#C32033] hover:text-red-800 w-5 h-5" />
+                            </button>
+                          )}
+                          {!orderlines ? (
+                            <button
+                              onClick={() =>
+                                navigate('/sales-request/create', {
+                                  state: {
+                                    step: 1,
+                                    item_number: item.item_number,
+                                    customer_id: customer?.customer_id,
+                                    mode: 'update',
+                                  },
+                                })
+                              }
+                              className="hover:scale-110 transition-transform"
+                            >
+                              <Edit className="text-blue-600 hover:text-blue-800 w-5 h-5" />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() =>
+                                navigate(
+                                  `/sales-request/edit/${order_header_id}`,
+                                  {
+                                    state: {
+                                      mode: 'update_order_line',
+                                      order_header_id,
+                                      item_number: item.item_number,
+                                    },
+                                  },
+                                )
+                              }
+                              className="hover:scale-110 transition-transform"
+                            >
+                              <Edit className="text-blue-600 hover:text-blue-800 w-5 h-5" />
+                            </button>
+                          )}
+
+                          {!order_header_id && (
+                            <Link
+                              to={`/sales-request/details/${item.item_number}`}
+                              state={{
+                                item_number: item.item_number,
+                                customer_id: customer?.customer_id,
+                              }}
+                            >
+                              <button className="px-4 py-2 border border-[#C32033] text-[#C32033] rounded hover:bg-[#C32033] hover:text-white transition-colors">
+                                View Details
+                              </button>
+                            </Link>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -270,7 +390,7 @@ const ItemListing = () => {
                 ) : (
                   <tr>
                     <td
-                      colSpan={6}
+                      colSpan={order_header_id ? 6 : 7}
                       className="px-6 py-4 text-center text-gray-500"
                     >
                       {searchTerm

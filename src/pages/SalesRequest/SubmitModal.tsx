@@ -29,7 +29,7 @@ const SubmitModal = ({
     onClose();
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (status: 'pending' | 'draft') => {
     if (!customerId) {
       alert('Customer ID is required!');
       return;
@@ -42,14 +42,13 @@ const SubmitModal = ({
         '/api/v1/salesRequests/create-sales-request',
         {
           customer_id: customerId,
+          order_status: status,
         },
       );
 
       if (res.status === 201) {
         setConfirmationOpen(true);
-        if (OnSubmit) {
-          OnSubmit();
-        }
+        if (OnSubmit) OnSubmit();
       } else {
         alert('Failed to submit order. Please try again.');
       }
@@ -120,11 +119,18 @@ const SubmitModal = ({
                 Cancel
               </button>
               <button
-                onClick={handleSubmit}
+                onClick={() => handleSubmit('pending')}
                 disabled={loading}
                 className="flex-1 px-6 py-3 rounded-lg bg-[#C32033] text-white font-medium hover:bg-[#A91B2E] transition-colors disabled:opacity-60"
               >
                 {loading ? 'Submitting...' : 'Submit'}
+              </button>
+              <button
+                onClick={() => handleSubmit('draft')}
+                disabled={loading}
+                className="flex-1 px-6 py-3 rounded-lg bg-[#C32033] text-white font-medium hover:bg-[#A91B2E] transition-colors disabled:opacity-60"
+              >
+                {loading ? 'Submitting...' : 'Save as Draft'}
               </button>
             </div>
           </div>

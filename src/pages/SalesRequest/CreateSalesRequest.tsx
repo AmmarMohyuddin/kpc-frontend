@@ -1,7 +1,8 @@
 import { ChevronRight } from 'lucide-react';
 import { Stepper, Step, button } from '@material-tailwind/react';
 import { useState, useEffect } from 'react';
-import Select from 'react-select';
+import Select, { components } from 'react-select';
+import { FixedSizeList as List } from 'react-window';
 import { useNavigate, useLocation } from 'react-router-dom';
 import apiService from '../../services/ApiService';
 import toast from 'react-hot-toast';
@@ -42,6 +43,7 @@ type CustomerFormData = {
   line_amount: number;
   salesperson_id: string;
   salesperson_name: string;
+  status: string;
 };
 
 const CreateSalesRequest = () => {
@@ -71,8 +73,8 @@ const CreateSalesRequest = () => {
     line_amount: 0.0,
     salesperson_id: '',
     salesperson_name: '',
+    status: '',
   });
-  console.log('CustomerFormData', customerFormData);
 
   const [accountNumbers, setAccountNumbers] = useState([]);
   const [addressLine, setAddressLine] = useState<string[]>([]);
@@ -255,7 +257,7 @@ const CreateSalesRequest = () => {
         `/api/v1/salesRequests/create`,
         customerFormData,
       );
-      console.log('RESPONSE', response);
+
       if (response?.status === 201) {
         toast.success('Item Added');
         navigate('/item-listing', {
@@ -302,6 +304,12 @@ const CreateSalesRequest = () => {
           {},
         );
         setAccountNumbers(response.data);
+        setCustomerFormData((prevData) => ({
+          ...prevData,
+          address: '',
+          payment_term: '',
+          account_number: '',
+        }));
       } catch (error) {
         console.error('Error fetching account numbers:', error);
       }
@@ -360,6 +368,15 @@ const CreateSalesRequest = () => {
       );
       // If you still need itemDetail for other purposes
       setItemDetail(response.data);
+      setCustomerFormData((prevData) => ({
+        ...prevData,
+        sub_category: '',
+        description: '',
+        unit_of_measure: '',
+        order_quantity: 0,
+        price: 0,
+        line_amount: 0,
+      }));
     } catch (error) {
       console.error('Error fetching item details:', error);
     }
@@ -437,19 +454,42 @@ const CreateSalesRequest = () => {
     option: (provided: any, state: any) => ({
       ...provided,
       backgroundColor: state.isSelected
-        ? '#FFD7D7' // Selected option color
+        ? '#FFD7D7'
         : state.isFocused
-        ? '#FFD7D7' // Hover color
+        ? '#FFD7D7'
         : provided.backgroundColor,
-      color: '#000', // Always black text
+      color: '#000',
       '&:active': {
         backgroundColor: state.isSelected ? '#FFD7D7' : '#FFD7D7',
       },
     }),
     singleValue: (provided: any) => ({
       ...provided,
-      color: '#C32033', // selected value text color in main field
+      color: '#C32033',
     }),
+  };
+
+  // For Customer Name
+  const MenuList = (props: any) => {
+    const height = 35;
+    const items = props.options;
+    const itemCount = items.length;
+    const maxHeight = 300;
+
+    return (
+      <components.MenuList {...props}>
+        <List
+          height={Math.min(maxHeight, itemCount * height)}
+          itemCount={itemCount}
+          itemSize={height}
+          width="100%"
+        >
+          {({ index, style }) => (
+            <div style={style}>{props.children[index]}</div>
+          )}
+        </List>
+      </components.MenuList>
+    );
   };
 
   return (
@@ -530,6 +570,7 @@ const CreateSalesRequest = () => {
                       placeholder="Select Customer"
                       isSearchable
                       styles={customSelectStyles}
+                      components={{ MenuList }}
                     />
                   </div>
 
@@ -540,6 +581,7 @@ const CreateSalesRequest = () => {
                     </label>
                     <Select
                       name="address"
+                      isDisabled={!customerFormData.account_number}
                       value={
                         addressLineOptions.length > 0
                           ? addressLineOptions.find(
@@ -598,6 +640,7 @@ const CreateSalesRequest = () => {
                     </label>
                     <Select
                       name="account_number"
+                      isDisabled={!customerFormData.customer_id}
                       value={
                         accountNumberOptions.length > 0
                           ? accountNumberOptions.find(
@@ -624,6 +667,7 @@ const CreateSalesRequest = () => {
                     </label>
                     <Select
                       name="payment_term"
+                      isDisabled={!customerFormData.account_number}
                       value={
                         paymentTermOptions.length > 0
                           ? paymentTermOptions.find(
@@ -700,6 +744,7 @@ const CreateSalesRequest = () => {
                       placeholder="Select Item Number"
                       isSearchable
                       styles={customSelectStyles}
+                      components={{ MenuList }}
                     />
                   </div>
 
@@ -709,6 +754,7 @@ const CreateSalesRequest = () => {
                     </label>
                     <Select
                       name="unit_of_measure"
+                      isDisabled={!customerFormData.item_number}
                       value={
                         unitOfMeasureOptions.length > 0
                           ? unitOfMeasureOptions.find(
@@ -734,6 +780,7 @@ const CreateSalesRequest = () => {
                     </label>
                     <Select
                       name="sub_category"
+                      isDisabled={!customerFormData.item_number}
                       value={
                         subCategoryOptions.length > 0
                           ? subCategoryOptions.find(
@@ -762,7 +809,7 @@ const CreateSalesRequest = () => {
                       value={
                         (customerFormData.price === 0
                           ? price[0]?.base_price
-                          : customerFormData.price) || ''
+                          : customerFormData.price) || 0
                       }
                       min={0}
                       step="any"
@@ -796,6 +843,7 @@ const CreateSalesRequest = () => {
                     </label>
                     <Select
                       name="description"
+                      isDisabled={!customerFormData.item_number}
                       value={
                         descriptionOptions.length > 0
                           ? descriptionOptions.find(

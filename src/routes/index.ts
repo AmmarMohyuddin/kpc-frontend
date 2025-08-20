@@ -31,6 +31,9 @@ const ManageSalesRequest = lazy(() => import('../pages/SalesRequest/ManageSalesR
 const ConfirmAddress = lazy(() => import('../pages/SalesRequest/ConfirmAddress'));
 const DetailItem = lazy(() => import('../pages/SalesRequest/ItemDetail'))
 const ItemListing = lazy(() => import('../pages/SalesRequest/ItemListing'));
+const DetailSalesRequest = lazy(() => import('../pages/SalesRequest/DetailSalesRequest'));
+const DraftSalesRequest = lazy(() => import('../pages/SalesRequest/DraftSalesRequest'));
+const EditSalesRequest = lazy(() => import('../pages/SalesRequest/EditSalesRequest'));
 
 const coreRoutes = [
   {
@@ -103,10 +106,15 @@ const coreRoutes = [
     title: 'Create Sales Request',
     component: CreateSalesRequest,
   },
-    {
+  {
     path: '/sales-request/manage',
     title: 'Manage Sales Request',
     component: ManageSalesRequest,
+  },
+  {
+    path: '/sales-request/draft',
+    title: 'Draft Sales Request',
+    component: DraftSalesRequest,
   },
   {
     path: '/sales-request/confirm-address',
@@ -114,9 +122,19 @@ const coreRoutes = [
     component: ConfirmAddress,
   },
   {
-    path: '/sales-request/details/:index',
+    path: '/sales-request/details',
     title: 'Item Details',
     component: DetailItem,
+  },
+  {
+    path: '/sales-request/details/:order_header_id',
+    title: 'Sales Request Details',
+    component: DetailSalesRequest,
+  },
+    {
+    path: '/sales-request/edit/:order_header_id',
+    title: 'Sales Request Edit',
+    component: EditSalesRequest,
   },
     {
     path: '/item-listing',
