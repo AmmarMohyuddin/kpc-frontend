@@ -122,22 +122,41 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
                 <button
                   onClick={toggleSidebar}
-                  className="absolute right-[-15px] top-1/2 transform -translate-y-1/2 w-8 h-8 bg-[#C32033] border-2 border-white rounded-full flex items-center justify-center hover:bg-[#A01B2A] transition-colors duration-200 z-50"
+                  className="absolute right-[-15px] top-1/2 transform -translate-y-1/2 w-8 h-8 shadow-2xl bg-[#fff] border-2 border-[#C32033] rounded-full flex items-center justify-center hover:bg-[#C32033] transition-colors duration-200 z-50"
                 >
-                  <svg
-                    className="w-4 h-4 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  </svg>
+                  {isCollapsed ? (
+                    // 👉 Right Arrow (expand)
+                    <svg
+                      className="w-4 h-4 text-black"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  ) : (
+                    // 👈 Left Arrow (collapse)
+                    <svg
+                      className="w-4 h-4 text-black"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                  )}
                 </button>
               </li>
               <li className="mb-1">

@@ -42,24 +42,12 @@ const DeleteModal = ({
           `/api/v1/salesRequests/delete-sales-request`,
           { item_number: itemNumber, order_header_id: orderHeaderId },
         );
-
-        if (response?.status === 200) {
-          toast.success(response.data.message || 'Order Line deleted');
-          onClose();
-          window.location.reload();
-        }
       } else if (orderHeaderId && !itemNumber) {
         // Delete entire order
         response = await apiService.post(
           `/api/v1/salesRequests/delete-sales-request`,
           { order_header_id: orderHeaderId },
         );
-
-        if (response?.status === 200) {
-          toast.success(response.data.message || 'Order Header deleted');
-          onClose();
-          window.location.reload();
-        }
       } else if (itemNumber && customerId) {
         // Delete item using customerId
         response = await apiService.post(`/api/v1/salesRequests/item-delete`, {
@@ -72,16 +60,18 @@ const DeleteModal = ({
       }
 
       if (response?.status === 200) {
-        toast.success('Deleted successfully!');
-        onItemDeleted(response.data || []);
-        onClose();
+        toast.success(response.data.message || 'Deleted successfully!');
+        // show loader → then reload page
+        setTimeout(() => {
+          window.location.reload();
+        }, 600); // small delay lets loader render
       } else {
         toast.error('Failed to delete.');
+        setLoading(false);
       }
     } catch (error) {
       console.error('Error deleting:', error);
       toast.error('Failed to delete.');
-    } finally {
       setLoading(false);
     }
   };

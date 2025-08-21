@@ -134,8 +134,36 @@ const DetailSalesRequest = () => {
     );
   }
 
+  const excludeHeaderFields = [
+    'ORDER_HEADER_ID',
+    'OPPORTUNITY_ID',
+    'CREATED_BY',
+    'CUSTOMER_ACCOUNT_NAME',
+    'LAST_UPDATED_BY',
+    'INTERFACED',
+    'SITE_NUMBER',
+    'CREDIT_LIMIT',
+    'ORDER_LINES',
+    'CUSTOMER_ID',
+    'SALESPERSON_ID',
+    'SALESPERSON_NAME',
+    'SITE_NAME',
+    'FUSION_FLAG',
+    'FUSION_SALES_ORDER_NUM',
+    'SITE_USE_ID',
+    'SITE_ID',
+  ];
+
+  const excludeLineFields = [
+    'ORDER_HEADER_ID',
+    'ORDER_LINE_ID',
+    'INVENTORY_ITEM_ID',
+    'LAST_UPDATED_BY',
+    'CREATED_BY',
+  ];
+
   const headerFields = Object.entries(salesRequest)
-    .filter(([key, value]) => key !== 'ORDER_LINES')
+    .filter(([key]) => !excludeHeaderFields.includes(key))
     .map(([key, value]) => ({
       label: key.replace(/_/g, ' '),
       value: value ?? '-',
@@ -166,13 +194,15 @@ const DetailSalesRequest = () => {
         <h2 className="text-xl text-[#C32033] font-semibold mb-4">
           Header Information
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
           {headerFields.map((field) => (
             <div
               key={field.label}
-              className="flex justify-between py-1 border-b border-gray-200"
+              className="flex items-center justify-between py-1 border-b border-gray"
             >
-              <span className="font-medium text-gray-700">{field.label}:</span>
+              <span className="font-bold text-md text-black dark:text-white">
+                {field.label}:
+              </span>
               <span className="text-black dark:text-gray-300">
                 {String(field.value)}
               </span>
@@ -196,20 +226,22 @@ const DetailSalesRequest = () => {
                 <h3 className="font-semibold mb-2">
                   Line {index + 1} - {line.ITEM_NUMBER}
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {Object.entries(line).map(([key, value]) => (
-                    <div
-                      key={key}
-                      className="flex justify-between py-1 border-b border-gray-200"
-                    >
-                      <span className="font-medium text-gray-700">
-                        {key.replace(/_/g, ' ')}:
-                      </span>
-                      <span className="text-black dark:text-gray-300">
-                        {String(value ?? '-')}
-                      </span>
-                    </div>
-                  ))}
+                <div className="grid grid-cols-1 md:grid-cols-1 gap-3">
+                  {Object.entries(line)
+                    .filter(([key]) => !excludeLineFields.includes(key))
+                    .map(([key, value]) => (
+                      <div
+                        key={key}
+                        className="flex items-center justify-between py-1 border-b border-gray"
+                      >
+                        <span className="font-bold text-md text-black dark:text-white">
+                          {key.replace(/_/g, ' ')}:
+                        </span>
+                        <span className="text-black dark:text-gray-300">
+                          {String(value ?? '-')}
+                        </span>
+                      </div>
+                    ))}
                 </div>
               </div>
             ))}

@@ -1,11 +1,12 @@
 import { ChevronRight } from 'lucide-react';
-import { Stepper, Step, button } from '@material-tailwind/react';
+import { Stepper, Step } from '@material-tailwind/react';
 import { useState, useEffect } from 'react';
 import Select, { components } from 'react-select';
 import { FixedSizeList as List } from 'react-window';
 import { useNavigate, useLocation } from 'react-router-dom';
 import apiService from '../../services/ApiService';
 import toast from 'react-hot-toast';
+import Loader from '../../common/Loader';
 
 type Address = string;
 
@@ -82,11 +83,23 @@ const CreateSalesRequest = () => {
   const [itemDetail, setItemDetail] = useState<string[]>([]);
   const [price, setPrice] = useState<Price[]>([]);
   const [activeStep, setActiveStep] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  const salesPersonOptions = salesPersons.map((person: any) => ({
-    value: person._id,
-    label: person.salesperson_name,
-  }));
+  const loggedInUser = JSON.parse(localStorage.getItem('user') || '{}');
+
+  const salesPersonOptions = salesPersons
+    .filter(
+      (person: any) => person.employee_number === loggedInUser.person_number,
+    ) // only logged-in salesperson
+    .map((person: any) => ({
+      value: person._id,
+      label: person.salesperson_name,
+    }));
+
+  // const salesPersonOptions = salesPersons.map((person: any) => ({
+  //   value: person._id,
+  //   label: person.salesperson_name,
+  // }));
 
   const customerOptions = customers.map((customer: any) => ({
     value: customer._id,
@@ -137,6 +150,22 @@ const CreateSalesRequest = () => {
     }));
   };
 
+  // useEffect(() => {
+  //   if (addressLineOptions.length === 1) {
+  //     setCustomerFormData((prev) => ({
+  //       ...prev,
+  //       address: addressLineOptions[0].value,
+  //     }));
+  //   }
+
+  //   if (accountNumberOptions.length === 1) {
+  //     setCustomerFormData((prev) => ({
+  //       ...prev,
+  //       account_number: accountNumberOptions[0].value,
+  //     }));
+  //   }
+  // }, [addressLineOptions, accountNumberOptions]);
+
   useEffect(() => {
     const fetchData = async () => {
       if (step !== 1 || !mode) return;
@@ -177,36 +206,28 @@ const CreateSalesRequest = () => {
 
   // Fetch all customers on page load
   useEffect(() => {
-    const fetchCustomers = async () => {
+    const fetchData = async () => {
       try {
-        const response = await apiService.get('/api/v1/customers/list', {});
-        setCustomers(response.data || []);
+        setLoading(true);
+
+        // Fetch all data in parallel
+        const [customersRes, salesPersonsRes, itemsRes] = await Promise.all([
+          apiService.get('/api/v1/customers/list', {}),
+          apiService.get('/api/v1/salesPersons/list', {}),
+          apiService.get('/api/v1/items/list', {}),
+        ]);
+
+        setCustomers(customersRes.data || []);
+        setSalesPersons(salesPersonsRes.data || []);
+        setItems(itemsRes.data || []);
       } catch (error) {
-        console.error('Error fetching customers:', error);
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false); // stop loading after all requests finish
       }
     };
 
-    const fetchSalesPersonsData = async () => {
-      try {
-        const response = await apiService.get('/api/v1/salesPersons/list', {});
-        if (response?.status === 200) setSalesPersons(response.data);
-      } catch (error: any) {
-        console.error('Error fetching sales persons:', error);
-      }
-    };
-
-    const fetchItems = async () => {
-      try {
-        const response = await apiService.get('/api/v1/items/list', {});
-        if (response?.status === 200) setItems(response.data);
-      } catch (error: any) {
-        console.error('Error fetching items:', error);
-      }
-    };
-
-    fetchCustomers();
-    fetchSalesPersonsData();
-    fetchItems();
+    fetchData();
   }, []);
 
   const handleClick = () => {
@@ -327,6 +348,7 @@ const CreateSalesRequest = () => {
           `/api/v1/customers/list?customer_name=${customerFormData.customer_name}&account_number=${selectedOption.label}`,
           {},
         );
+        console.log(response.data?.paymentTerms);
         setAddressLine(response.data?.addressLines || []);
         setPaymentTerm(response.data?.paymentTerms || []);
       } catch (error) {
@@ -367,6 +389,7 @@ const CreateSalesRequest = () => {
         {},
       );
       // If you still need itemDetail for other purposes
+      console.log(response.data);
       setItemDetail(response.data);
       setCustomerFormData((prevData) => ({
         ...prevData,
@@ -491,6 +514,14 @@ const CreateSalesRequest = () => {
       </components.MenuList>
     );
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[calc(100vh-200px)]">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-10">

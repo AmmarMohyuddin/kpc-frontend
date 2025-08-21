@@ -149,6 +149,16 @@ const ConfirmAddress = () => {
     );
   }
 
+  const isFormValid = () => {
+    return (
+      addressFormData.name &&
+      addressFormData.city &&
+      addressFormData.contactNumber &&
+      addressFormData.block &&
+      addressFormData.shippingAddress
+    );
+  };
+
   return (
     <>
       <SubmitModal
@@ -187,7 +197,9 @@ const ConfirmAddress = () => {
               {/* Left column - Original structure */}
               <div className="space-y-6">
                 <div>
-                  <label className="block text-md font-medium mb-2">Name</label>
+                  <label className="block text-md text-black font-medium mb-2">
+                    Name
+                  </label>
                   <input
                     type="text"
                     value={addressFormData.name}
@@ -197,7 +209,9 @@ const ConfirmAddress = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-md font-medium mb-2">City</label>
+                  <label className="block text-md text-black font-medium mb-2">
+                    City
+                  </label>
                   <Select
                     options={cityOptions}
                     value={
@@ -217,7 +231,7 @@ const ConfirmAddress = () => {
               {/* Right column - Original structure */}
               <div className="space-y-6">
                 <div>
-                  <label className="block text-md font-medium mb-2">
+                  <label className="block text-md text-black font-medium mb-2">
                     Contact Number
                   </label>
                   <input
@@ -231,7 +245,7 @@ const ConfirmAddress = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-md font-medium mb-2">
+                  <label className="block text-md text-black font-medium mb-2">
                     Block
                   </label>
                   <Select
@@ -253,7 +267,7 @@ const ConfirmAddress = () => {
 
             {/* Shipping Address - Original structure */}
             <div>
-              <label className="block text-md font-medium mb-2">
+              <label className="block text-md text-black font-medium mb-2">
                 Shipping Address
               </label>
               <textarea
@@ -280,8 +294,14 @@ const ConfirmAddress = () => {
               <button
                 type="button"
                 onClick={handleConfirm}
-                className="px-12 py-3 rounded-lg bg-[#C32033] text-white font-medium hover:bg-[#A91B2E]"
-                disabled={loading}
+                className={`px-15 py-3 rounded-lg font-medium transition-colors 
+    ${
+      isFormValid()
+        ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
+        : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
+    }
+  `}
+                disabled={!isFormValid()}
               >
                 Confirm
               </button>
