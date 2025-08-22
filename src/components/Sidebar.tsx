@@ -122,7 +122,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
                 <button
                   onClick={toggleSidebar}
-                  className="absolute right-[-15px] top-1/2 transform -translate-y-1/2 w-8 h-8 shadow-2xl bg-[#fff] border-2 border-[#C32033] rounded-full flex items-center justify-center hover:bg-[#C32033] transition-colors duration-200 z-50"
+                  className="absolute right-[-15px] top-1/2 transform -translate-y-1/2 w-8 h-8 shadow-2xl bg-[#fff] border-2 border-[#C32033] rounded-full flex items-center justify-center transition-colors duration-200 z-50"
                 >
                   {isCollapsed ? (
                     // 👉 Right Arrow (expand)
@@ -538,7 +538,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             }`}
                           >
                             <ul className="mt-4 mb-5.5 flex flex-col gap-4 pl-6">
-                              <li>
+                              {/* <li>
                                 <NavLink
                                   to="/leads/create"
                                   className={({ isActive }) =>
@@ -548,7 +548,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 >
                                   Create
                                 </NavLink>
-                              </li>
+                              </li> */}
                               <li>
                                 <NavLink
                                   to="/leads/manage"
@@ -560,7 +560,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                   Manage Leads
                                 </NavLink>
                               </li>
-                              <li>
+                              {/* <li>
                                 <NavLink
                                   to="/leads/follow-up"
                                   className={({ isActive }) =>
@@ -581,7 +581,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 >
                                   Closure Entries
                                 </NavLink>
-                              </li>
+                              </li> */}
                             </ul>
                           </div>
                         )}
@@ -686,7 +686,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             }`}
                           >
                             <ul className="mt-4 mb-5.5 flex flex-col gap-4 pl-6">
-                              <li>
+                              {/* <li>
                                 <NavLink
                                   to="/opportunities/create"
                                   className={({ isActive }) =>
@@ -696,7 +696,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 >
                                   Create
                                 </NavLink>
-                              </li>
+                              </li> */}
                               <li>
                                 <NavLink
                                   to="/opportunities/manage"
@@ -708,7 +708,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                   Manage Opportunities
                                 </NavLink>
                               </li>
-                              <li>
+                              {/* <li>
                                 <NavLink
                                   to="/opportunities/follow-up"
                                   className={({ isActive }) =>
@@ -729,7 +729,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 >
                                   Closure Entries
                                 </NavLink>
-                              </li>
+                              </li> */}
                             </ul>
                           </div>
                         )}
@@ -834,7 +834,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             }`}
                           >
                             <ul className="mt-4 mb-5.5 flex flex-col gap-4 pl-6">
-                              <li>
+                              {/* <li>
                                 <NavLink
                                   to="/forms/form-elements"
                                   className={({ isActive }) =>
@@ -842,7 +842,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                     (isActive && 'text-[#C32033]')
                                   }
                                 >
-                                  Create
+                                  Track Delivery Status
                                 </NavLink>
                               </li>
                               <li>
@@ -853,29 +853,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                     (isActive && 'text-[#C32033]')
                                   }
                                 >
-                                  Manage Orders
+                                  Closed Orders
                                 </NavLink>
-                              </li>
+                              </li> */}
                               <li>
                                 <NavLink
-                                  to="/forms/form-layout"
+                                  to="/sales-orders/uninvoiced"
                                   className={({ isActive }) =>
                                     'group relative flex items-center gap-6 rounded-md px-4 font-medium text-black text-lg duration-300 ease-in-out hover:text-black ' +
                                     (isActive && 'text-[#C32033]')
                                   }
                                 >
-                                  Follow-Up Entries
-                                </NavLink>
-                              </li>
-                              <li>
-                                <NavLink
-                                  to="/forms/form-layout"
-                                  className={({ isActive }) =>
-                                    'group relative flex items-center gap-6 rounded-md px-4 font-medium text-black text-lg duration-300 ease-in-out hover:text-black ' +
-                                    (isActive && 'text-[#C32033]')
-                                  }
-                                >
-                                  Closure Entries
+                                  Uninvoiced Orders
                                 </NavLink>
                               </li>
                             </ul>
@@ -1029,7 +1018,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Sales Requests --> */}
 
               {/* <!-- Menu Item Reports --> */}
-              {user?.role === 'salesPerson' && (
+              {/* {user?.role === 'salesPerson' && (
                 <SidebarLinkGroup
                   activeCondition={
                     pathname === '/forms' || pathname.includes('forms')
@@ -1112,7 +1101,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             </svg>
                           )}
                         </NavLink>
-                        {/* <!-- Dropdown Menu Start --> */}
                         {!isCollapsed && (
                           <div
                             className={`overflow-hidden transition-all duration-500 ease-in-out ${
@@ -1169,17 +1157,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             </ul>
                           </div>
                         )}
-                        {/* <!-- Dropdown Menu End --> */}
                       </React.Fragment>
                     );
                   }}
                 </SidebarLinkGroup>
-              )}
-              {/* <!-- Menu Item Reports --> */}
+              )} */}
             </ul>
           </div>
         </nav>
-        {/* <!-- Sidebar Menu --> */}
       </div>
     </aside>
   );

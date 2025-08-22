@@ -34,6 +34,8 @@ const ItemListing = lazy(() => import('../pages/SalesRequest/ItemListing'));
 const DetailSalesRequest = lazy(() => import('../pages/SalesRequest/DetailSalesRequest'));
 const DraftSalesRequest = lazy(() => import('../pages/SalesRequest/DraftSalesRequest'));
 const EditSalesRequest = lazy(() => import('../pages/SalesRequest/EditSalesRequest'));
+const UninvoicedOrders = lazy(() => import('../pages/SalesOrders/UninvoicedOrders'));
+const DetailUninvoicedOrder = lazy(() => import('../pages/SalesOrders/DetailUninvoiced'));
 
 const coreRoutes = [
   {
@@ -131,15 +133,25 @@ const coreRoutes = [
     title: 'Sales Request Details',
     component: DetailSalesRequest,
   },
-    {
+  {
     path: '/sales-request/edit/:order_header_id',
     title: 'Sales Request Edit',
     component: EditSalesRequest,
   },
-    {
+  {
     path: '/item-listing',
     title: 'Item Listing',
     component: ItemListing,
+  },
+  {
+    path: '/sales-orders/uninvoiced',
+    title: 'Uninvoiced Orders',
+    component: UninvoicedOrders,
+  },
+  {
+    path: '/sales-orders/uninvoiced/:order_no',
+    title: 'Uninvoiced Order Details',
+    component: DetailUninvoicedOrder,
   },
   {
     path: '/tables',

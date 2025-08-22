@@ -175,7 +175,7 @@ const EditSalesRequest = () => {
               item_detail: line.DESCRIPTION || '', // Changed from ITEM_DETAIL to DESCRIPTION
               item_number: line.ITEM_NUMBER || '',
               unit_of_measure: line.UOM || '', // Changed from UNIT_OF_MEASURE to UOM
-              sub_category: '', // Not available in the response, set empty or handle differently
+              sub_category: line.SUBCATEGORY || '',
               description: line.DESCRIPTION || '',
               instructions: line.INSTRUCTIONS || '',
               requested_shipment_date: line.REQUESTED_SHIP_DATE || '', // Changed from REQUESTED_SHIPMENT_DATE to REQUESTED_SHIP_DATE
@@ -195,8 +195,8 @@ const EditSalesRequest = () => {
               address: salesResponse.data.ADDRESS_LINE_1 || '',
               payment_term: salesResponse.data.PAYMENT_TERM || '',
               customer_po_number: salesResponse.data.CUSTOMER_PO_NUMBER || '',
-              salesperson_name: salesResponse.data.SALESPERSON_NAME || '',
-              salesperson_id: salesResponse.data.SALESPERSON || '',
+              salesperson_name: salesResponse.data.SALESPERSON || '',
+              // salesperson_id: salesResponse.data.SALESPERSON || '',
             }));
             setAddressFormData((prev) => ({
               ...prev,
@@ -445,11 +445,22 @@ const EditSalesRequest = () => {
     return match || { value: description, label: description };
   };
 
+  const loggedInUser = JSON.parse(localStorage.getItem('user') || '{}');
+
+  const salesPersonOptions = salesPersons
+    .filter(
+      (person: any) => person.employee_number === loggedInUser.person_number,
+    ) // only logged-in salesperson
+    .map((person: any) => ({
+      value: person._id,
+      label: person.salesperson_name,
+    }));
+
   // Select component options
-  const salesPersonOptions = salesPersons.map((person: any) => ({
-    value: person._id,
-    label: person.salesperson_name,
-  }));
+  // const salesPersonOptions = salesPersons.map((person: any) => ({
+  //   value: person._id,
+  //   label: person.salesperson_name,
+  // }));
 
   const customerOptions = customers.map((customer: any) => ({
     value: customer._id,
