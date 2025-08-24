@@ -20,7 +20,7 @@ const DetailLead = () => {
           <div className="flex items-center gap-2 text-md text-gray-600 mt-5">
             <span>Leads</span>
             <ChevronRight className="w-4 h-4" />
-            <span>Manage Leads</span>
+            <span>Detail Leads</span>
             <ChevronRight className="w-4 h-4" />
             <span className="text-[#C32033]">{leadData.lead_id}</span>
           </div>
