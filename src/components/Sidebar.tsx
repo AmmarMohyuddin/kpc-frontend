@@ -538,7 +538,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             }`}
                           >
                             <ul className="mt-4 mb-5.5 flex flex-col gap-4 pl-6">
-                              {/* <li>
+                              <li>
                                 <NavLink
                                   to="/leads/create"
                                   className={({ isActive }) =>
@@ -548,7 +548,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 >
                                   Create
                                 </NavLink>
-                              </li> */}
+                              </li>
                               <li>
                                 <NavLink
                                   to="/leads/manage"

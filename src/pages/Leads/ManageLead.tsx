@@ -1,88 +1,90 @@
-'use client';
+import { Search, Filter, ChevronLeft, ChevronRight, Edit } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import apiService from '../../services/ApiService';
+import Loader from '../../common/Loader';
 
-import { Search, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+interface Lead {
+  lead_id: number;
+  lead_type: string;
+  customer_name: string;
+  customer_type: string;
+  country: string;
+  city: string;
+  contact_address: string;
+  contact_number: string;
+  email_address: string;
+  contact_position: string;
+  source: string;
+  status_id: number;
+  status: string;
+  created_by: string;
+  salesperson_name: string;
+  salesperson_id: string | { salesperson_id: string };
+  last_updated_by: string;
+  creation_date: string;
+  last_update_date: string;
+}
+
+const ITEMS_PER_PAGE = 10;
 
 const ManageLeads = () => {
-  const leadsData = [
-    {
-      no: 1,
-      leadNumber: '12345',
-      company: 'abc',
-      contactJobRole: 'xxxxxxxxx',
-      salesPerson: 'John Smith',
-      status: 'Approved',
-      statusColor: 'green',
-    },
-    {
-      no: 2,
-      leadNumber: '123456',
-      company: 'abc',
-      contactJobRole: 'xxxxxxxxx',
-      salesPerson: 'John Smith',
-      status: 'Pending',
-      statusColor: 'yellow',
-    },
-    {
-      no: 1,
-      leadNumber: '12345',
-      company: 'abc',
-      contactJobRole: 'xxxxxxxxx',
-      salesPerson: 'John Smith',
-      status: 'Approved',
-      statusColor: 'green',
-    },
-    {
-      no: 2,
-      leadNumber: '123456',
-      company: 'abc',
-      contactJobRole: 'xxxxxxxxx',
-      salesPerson: 'John Smith',
-      status: 'Accepted',
-      statusColor: 'green',
-    },
-    {
-      no: 1,
-      leadNumber: '12345',
-      company: 'abc',
-      contactJobRole: 'xxxxxxxxx',
-      salesPerson: 'John Smith',
-      status: 'Approved',
-      statusColor: 'green',
-    },
-    {
-      no: 1,
-      leadNumber: '12345',
-      company: 'abc',
-      contactJobRole: 'xxxxxxxxx',
-      salesPerson: 'John Smith',
-      status: 'Approved',
-      statusColor: 'green',
-    },
-    {
-      no: 1,
-      leadNumber: '12345',
-      company: 'abc',
-      contactJobRole: 'xxxxxxxxx',
-      salesPerson: 'John Smith',
-      status: 'Approved',
-      statusColor: 'green',
-    },
+  const navigate = useNavigate();
+  const [leadsData, setLeadsData] = useState<Lead[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    const fetchSalesRequest = async () => {
+      try {
+        setIsLoading(true);
+        const response = await apiService.get(`/api/v1/leads/listLead`, {});
+
+        if (response?.status === 200) {
+          setLeadsData(response.data || []);
+        }
+      } catch (error) {
+        console.error('❌ Error fetching sales requests:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSalesRequest();
+  }, []);
+
+  // Filter leads based on lead_id search term
+  const filteredLeads = leadsData.filter((lead) =>
+    String(lead.lead_id || '')
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase()),
+  );
+
+  // Pagination
+  const totalPages = Math.ceil(filteredLeads.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedLeads = filteredLeads.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE,
+  );
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-[calc(100vh-200px)]">
+        <Loader />
+      </div>
+    );
+  }
+
+  const breadcrumbs = [
+    { label: 'Sales Requests', path: '/' },
+    { label: 'Listing', path: '', isActive: true },
   ];
-
-  // const getStatusBadge = (status: string, color: string) => {
-  //   const baseClasses =
-  //     'px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1';
-
-  //   switch (color) {
-  //     case 'green':
-  //       return `${baseClasses} bg-green-100 text-green-800`;
-  //     case 'yellow':
-  //       return `${baseClasses} bg-yellow-100 text-yellow-800`;
-  //     default:
-  //       return `${baseClasses} bg-gray-100 text-gray-800`;
-  //   }
-  // };
 
   return (
     <div className="flex flex-col gap-6">
@@ -92,19 +94,17 @@ const ManageLeads = () => {
             Manage Leads
           </h1>
 
-          {/* Top Bar: Breadcrumb + Search/Filter */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mt-5">
-            {/* Breadcrumb */}
-            <nav>
-              <ol className="flex items-center gap-2 text-md">
-                <li>
-                  <Link to="/" className="text-gray-600 hover:underline">
-                    Dashboard /
-                  </Link>
-                </li>
-                <li className="text-[#C32033] font-medium">Manage Leads</li>
-              </ol>
-            </nav>
+            <div className="flex items-center gap-2 text-md text-gray-600">
+              {breadcrumbs.map((crumb, i) => (
+                <div key={i} className="flex items-center">
+                  {i > 0 && <ChevronRight className="w-4 h-4 mx-2" />}
+                  <span className={crumb.isActive ? 'text-[#C32033]' : ''}>
+                    {crumb.label}
+                  </span>
+                </div>
+              ))}
+            </div>
 
             {/* Search and Filter */}
             <div className="flex items-center gap-3">
@@ -112,8 +112,13 @@ const ManageLeads = () => {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
                   type="text"
-                  placeholder="Search..."
+                  placeholder="Search by Lead ID..."
                   className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:border-transparent w-72"
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1); // Reset to first page when searching
+                  }}
                 />
               </div>
               <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
@@ -145,64 +150,104 @@ const ManageLeads = () => {
 
             {/* Table Body */}
             <tbody>
-              {leadsData.map((lead, index) => (
-                <tr
-                  key={index}
-                  className={`border-b border-gray-200 ${
-                    index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                  } hover:bg-gray-100 transition-colors`}
-                >
-                  <td className="px-6 py-4 text-gray-900">{lead.no}</td>
-                  <td className="px-6 py-4 text-gray-900">{lead.leadNumber}</td>
-                  <td className="px-6 py-4 text-gray-900">{lead.company}</td>
-                  <td className="px-6 py-4 text-gray-900">
-                    {lead.contactJobRole}
-                  </td>
-                  <td className="px-6 py-4 text-gray-900">
-                    {lead.salesPerson}
-                  </td>
-                  <td className="px-6 py-4">
-                    {lead.status === 'Approved' ? (
-                      <p className="inline-flex rounded-full bg-success bg-opacity-10 py-1 px-3 text-sm font-medium text-success">
-                        Approved
-                      </p>
-                    ) : (
-                      <p className="inline-flex rounded-full bg-warning bg-opacity-10 py-1 px-3 text-sm font-medium text-warning">
-                        Pending
-                      </p>
-                    )}
-                  </td>
-                  <td className="px-6 py-4">
-                    <button className="px-4 py-2 border border-[#C32033] text-[#C32033] rounded hover:bg-[#C32033] hover:text-white transition-colors font-medium">
-                      <Link to={`/leads/${lead.leadNumber}`}>View Details</Link>
-                    </button>
+              {paginatedLeads.length > 0 ? (
+                paginatedLeads.map((lead, index) => (
+                  <tr
+                    key={lead.lead_id}
+                    className={`border-b border-gray-200 ${
+                      index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                    } hover:bg-gray-100 transition-colors`}
+                  >
+                    <td className="px-6 py-4 text-gray-900">
+                      {startIndex + index + 1}
+                    </td>
+                    <td className="px-6 py-4 text-gray-900">{lead.lead_id}</td>
+                    <td className="px-6 py-4 text-gray-900">
+                      {lead.customer_type}
+                    </td>
+                    <td className="px-6 py-4 text-gray-900">
+                      {lead.contact_position}
+                    </td>
+                    <td className="px-6 py-4 text-gray-900">
+                      {lead.salesperson_name}
+                    </td>
+                    <td className="px-6 py-4 text-gray-900">{lead.status}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() =>
+                            navigate(`/leads/edit/${lead.lead_id}`, {
+                              state: { lead },
+                            })
+                          }
+                          className="hover:scale-110 transition-transform"
+                        >
+                          <Edit className="text-blue-600 hover:text-blue-800 w-5 h-5" />
+                        </button>
+                        <button
+                          className="px-4 py-2 border border-[#C32033] text-[#C32033] rounded hover:bg-[#C32033] hover:text-white transition-colors font-medium"
+                          onClick={() =>
+                            navigate(`/leads/${lead.lead_id}`, {
+                              state: { lead },
+                            })
+                          }
+                        >
+                          View Details
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="px-6 py-4 text-center text-gray-500"
+                  >
+                    {searchTerm
+                      ? 'No matching leads found'
+                      : 'No leads available'}
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
 
         {/* Pagination */}
-        <div className="flex items-center justify-end gap-2 p-4 border-t border-gray-200">
-          <button className="p-2 rounded hover:bg-gray-100 transition-colors">
-            <ChevronLeft className="w-4 h-4 text-gray-600" />
-          </button>
+        {totalPages > 0 && (
+          <div className="flex items-center justify-end gap-2 p-4 border-t border-gray-200">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="p-2 rounded hover:bg-gray-100 disabled:opacity-50 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4 text-gray-600" />
+            </button>
 
-          <button className="px-3 py-2 bg-[#C32033] text-white rounded font-medium">
-            1
-          </button>
-          <button className="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded transition-colors">
-            2
-          </button>
-          <button className="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded transition-colors">
-            3
-          </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => handlePageChange(page)}
+                className={`px-3 py-2 rounded font-medium transition-colors ${
+                  page === currentPage
+                    ? 'bg-[#C32033] text-white'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
 
-          <button className="p-2 rounded hover:bg-gray-100 transition-colors">
-            <ChevronRight className="w-4 h-4 text-gray-600" />
-          </button>
-        </div>
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="p-2 rounded hover:bg-gray-100 disabled:opacity-50 transition-colors"
+            >
+              <ChevronRight className="w-4 h-4 text-gray-600" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

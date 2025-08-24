@@ -18,6 +18,7 @@ const ShowCustomer = lazy(() => import('../pages/ShowCustomer'));
 const ShowUser = lazy(() => import('../pages/ShowUser'));
 const deactivateUsers = lazy(() => import('../pages/DeactivateUsers'));
 const CreateLead = lazy(() => import('../pages/Leads/CreateLead'));
+const EditLead = lazy(() => import('../pages/Leads/EditLead'));
 const FollowUp = lazy(() => import('../pages/Leads/FollowUp'));
 const ManageLead = lazy(() => import('../pages/Leads/ManageLead'));
 const DetailLead = lazy(() => import('../pages/Leads/DetailLead'));
@@ -62,6 +63,11 @@ const coreRoutes = [
     path: '/leads/create',
     title: 'Create Lead',
     component: CreateLead,
+  },
+    {
+    path: '/leads/edit/:lead_id',
+    title: 'Edit Lead',
+    component: EditLead,
   },
   {
     path: '/leads/follow-up',

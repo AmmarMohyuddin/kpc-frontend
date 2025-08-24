@@ -4,7 +4,7 @@ import Select from 'react-select';
 import apiService from '../../services/ApiService';
 import Loader from '../../common/Loader';
 import { toast } from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface OptionType {
   value: string;
@@ -16,7 +16,6 @@ interface FormData {
   customer_type: string;
   city: string;
   address: string;
-
   contact_number: string;
   customer_email: string;
   contact_position: string;
@@ -26,9 +25,36 @@ interface FormData {
   salesperson_name: string;
 }
 
-const CreateLead = () => {
+interface LeadDetail {
+  lead_id: number;
+  lead_number: string | null;
+  lead_type: string;
+  customer_name: string;
+  customer_type: string;
+  country: string;
+  city: string;
+  contact_address: string | null;
+  contact_number: string;
+  email_address: string;
+  contact_position: string;
+  source: string;
+  stage: string | null;
+  status_id: number;
+  status: string;
+  created_by: string;
+  last_updated_by: string;
+  creation_date: string;
+  last_update_date: string;
+  salesperson_id: string | null;
+  salesperson_name: string | null;
+  opportunity_id: string | null;
+}
+
+const EditLead = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { lead } = location.state;
   const [salesPersons, setSalesPersons] = useState([]);
   const [cityOptions, setCityOptions] = useState<OptionType[]>([]);
   const [leadSourceOptions, setLeadSourceOptions] = useState<OptionType[]>([]);
@@ -46,7 +72,55 @@ const CreateLead = () => {
     salesperson_name: '',
   });
 
+  console.log('Editing Lead:', lead);
   console.log('Leads Form Data:', leadsFormData);
+
+  // Fetch lead details on component mount
+  //   useEffect(() => {
+  //     const fetchLeadDetails = async () => {
+  //       try {
+  //         setLoading(true);
+  //         const response = await apiService.get(`/api/v1/leads/detailLead`, {
+  //           customer_name: lead.customer_name,
+  //         });
+  //         console.log('Lead Details Response:', response);
+
+  //         if (response?.status === 200) {
+  //           // Filter to find the specific lead by lead_id
+  //           const leadDetail = response.data.find(
+  //             (item: LeadDetail) => item.lead_id === lead.lead_id,
+  //           );
+
+  //           if (leadDetail) {
+  //             // Populate form with existing lead data
+  //             setLeadsFormData({
+  //               customer_name: leadDetail.customer_name || '',
+  //               customer_type: leadDetail.customer_type || '',
+  //               city: leadDetail.city || '',
+  //               address: leadDetail.contact_address || '',
+  //               contact_number: leadDetail.contact_number || '',
+  //               customer_email: leadDetail.email_address || '',
+  //               contact_position: leadDetail.contact_position || '',
+  //               source: leadDetail.source || '',
+  //               status: leadDetail.status || '',
+  //               salesperson_id: leadDetail.salesperson_id || '',
+  //               salesperson_name: leadDetail.salesperson_name || '',
+  //             });
+  //           } else {
+  //             toast.error('Lead details not found');
+  //             console.error('Lead not found with ID:', lead.lead_id);
+  //           }
+  //         }
+  //       } catch (error) {
+  //         console.error('❌ Error fetching lead details:', error);
+  //         toast.error('Failed to load lead details');
+  //       } finally {
+  //         setLoading(false);
+  //       }
+  //     };
+
+  //     fetchLeadDetails();
+  //   }, [lead.customer_name, lead.lead_id]);
 
   // Memoize custom styles to prevent recreation on every render
   const customSelectStyles = useMemo(
@@ -122,48 +196,113 @@ const CreateLead = () => {
         (person: any) => person.employee_number === loggedInUser.person_number,
       )
       .map((person: any) => ({
-        value: person._id,
+        value: person.salesperson_id,
         label: person.salesperson_name,
       }));
   }, [salesPersons, loggedInUser.person_number]);
 
   // Fetch data on component mount
+  //   useEffect(() => {
+  //     const fetchData = async () => {
+  //       try {
+  //         setLoading(true);
+
+  //         const [salesPersonsRes, citiesRes, leadSourcesRes] = await Promise.all([
+  //           apiService.get('/api/v1/salesPersons/list', {}),
+  //           apiService.get('/api/v1/cities/list', {}),
+  //           apiService.get('/api/v1/leadSources/list', {}),
+  //         ]);
+
+  //         setSalesPersons(salesPersonsRes.data || []);
+  //         setCityOptions(mapCitiesToOptions(citiesRes.data));
+  //         setLeadSourceOptions(mapSourcesToOptions(leadSourcesRes.data));
+  //       } catch (error) {
+  //         console.error('Error fetching data:', error);
+  //       } finally {
+  //         setLoading(false);
+  //       }
+  //     };
+
+  //     fetchData();
+  //   }, [mapCitiesToOptions, mapSourcesToOptions]);
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchAllData = async () => {
       try {
         setLoading(true);
+        // Fetch all data in parallel
+        const [salesPersonsRes, citiesRes, leadSourcesRes, leadDetailsRes] =
+          await Promise.all([
+            apiService.get('/api/v1/salesPersons/list', {}),
+            apiService.get('/api/v1/cities/list', {}),
+            apiService.get('/api/v1/leadSources/list', {}),
+            apiService.get(`/api/v1/leads/detailLead`, {
+              customer_name: lead.customer_name,
+            }),
+          ]);
 
-        const [salesPersonsRes, citiesRes, leadSourcesRes] = await Promise.all([
-          apiService.get('/api/v1/salesPersons/list', {}),
-          apiService.get('/api/v1/cities/list', {}),
-          apiService.get('/api/v1/leadSources/list', {}),
-        ]);
-
+        // Set basic data
         setSalesPersons(salesPersonsRes.data || []);
         setCityOptions(mapCitiesToOptions(citiesRes.data));
         setLeadSourceOptions(mapSourcesToOptions(leadSourcesRes.data));
+
+        // Process lead details
+        if (leadDetailsRes?.status === 200) {
+          const leadDetail = leadDetailsRes.data.find(
+            (item: LeadDetail) => item.lead_id === lead.lead_id,
+          );
+
+          if (leadDetail) {
+            setLeadsFormData({
+              customer_name: leadDetail.customer_name || '',
+              customer_type: leadDetail.customer_type || '',
+              city: leadDetail.city || '',
+              address: leadDetail.contact_address || '',
+              contact_number: leadDetail.contact_number || '',
+              customer_email: leadDetail.email_address || '',
+              contact_position: leadDetail.contact_position || '',
+              source: leadDetail.source || '',
+              status: leadDetail.status || '',
+              salesperson_id: leadDetail.salesperson_id || '',
+              salesperson_name: leadDetail.salesperson_name || '',
+            });
+          } else {
+            toast.error('Lead details not found');
+            console.error('Lead not found with ID:', lead.lead_id);
+          }
+        }
+
+        setLoading(false);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('❌ Error fetching data:', error);
+        toast.error('Failed to load data');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
-  }, [mapCitiesToOptions, mapSourcesToOptions]);
+    fetchAllData();
+  }, [
+    lead.customer_name,
+    lead.lead_id,
+    mapCitiesToOptions,
+    mapSourcesToOptions,
+  ]);
 
   // Handle input changes
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    console.log('Input change:', name, value);
     setLeadsFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   }, []);
 
-  // Handle select changes
+  // Handle select changes - FIXED VERSION
   const handleSelectChange = useCallback(
-    (name: keyof FormData, value: string) => {
+    (name: keyof FormData, selectedOption: any) => {
+      const value = selectedOption?.value || '';
+      console.log('Select change:', name, value);
       setLeadsFormData((prev) => ({
         ...prev,
         [name]: value,
@@ -172,38 +311,41 @@ const CreateLead = () => {
     [],
   );
 
-  // Handle sales person change
-  const handleSalesPersonChange = useCallback((selected: OptionType | null) => {
+  // Handle sales person change - FIXED VERSION
+  const handleSalesPersonChange = useCallback((selectedOption: any) => {
+    const value = selectedOption?.value || '';
+    const label = selectedOption?.label || '';
+    console.log('Sales person change:', value, label);
     setLeadsFormData((prev) => ({
       ...prev,
-      salesperson_id: selected?.value || '',
-      salesperson_name: selected?.label || '',
+      salesperson_id: value,
+      salesperson_name: label,
     }));
   }, []);
 
   const handleSave = async () => {
     try {
       setLoading(true);
-      const response = await apiService.post(
-        `/api/v1/leads/createLead`,
-        leadsFormData,
-      );
-      console.log('Create Lead Response:', response);
-      // Check based on your API response structure
-      if (response?.status === 201) {
-        console.log('..........................................');
-        toast.success(response.message || 'Lead Created');
+      const response = await apiService.put(`/api/v1/leads/updateLead`, {
+        ...leadsFormData,
+        lead_id: lead.lead_id, // Include the lead ID for updating
+      });
+
+      if (response?.status === 200) {
+        toast.success(response.data?.message || 'Lead updated successfully');
         navigate('/leads/manage');
       } else {
-        console.error('Failed to create lead:', response);
-        toast.error(response?.data?.message || 'Failed to create lead.');
+        console.error('Failed to update lead:', response);
+        toast.error(response?.data?.message || 'Failed to update lead.');
       }
     } catch (error: any) {
-      console.error('Error creating lead:', error);
+      console.error('Error updating lead:', error);
       toast.error(
         error.response?.data?.message ||
-          'Error creating lead. Please try again.',
+          'Error updating lead. Please try again.',
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -230,13 +372,15 @@ const CreateLead = () => {
     <div className="flex flex-col gap-10">
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
         <h2 className="text-2xl font-semibold mb-3 text-black dark:text-white">
-          Create Lead
+          Edit Lead
         </h2>
 
         <div className="flex items-center gap-2 text-md text-gray-600">
           <span>Leads</span>
           <ChevronRight className="w-4 h-4" />
-          <span className="text-[#C32033]">Create</span>
+          <span>Edit</span>
+          <ChevronRight className="w-4 h-4" />
+          <span className="text-[#C32033]">{lead.lead_id}</span>
         </div>
 
         <div className="py-4"></div>
@@ -262,10 +406,7 @@ const CreateLead = () => {
                       : null
                   }
                   onChange={(selectedOption) =>
-                    handleSelectChange(
-                      'customer_type',
-                      selectedOption?.value || '',
-                    )
+                    handleSelectChange('customer_type', selectedOption)
                   }
                   options={[
                     { value: 'Customer', label: 'Customer' },
@@ -337,8 +478,8 @@ const CreateLead = () => {
                       (opt) => opt.value === leadsFormData.source,
                     ) || null
                   }
-                  onChange={(opt) =>
-                    handleSelectChange('source', opt?.value || '')
+                  onChange={(selectedOption) =>
+                    handleSelectChange('source', selectedOption)
                   }
                   isSearchable
                   styles={customSelectStyles}
@@ -377,8 +518,8 @@ const CreateLead = () => {
                       (opt) => opt.value === leadsFormData.city,
                     ) || null
                   }
-                  onChange={(opt) =>
-                    handleSelectChange('city', opt?.value || '')
+                  onChange={(selectedOption) =>
+                    handleSelectChange('city', selectedOption)
                   }
                   isSearchable
                   styles={customSelectStyles}
@@ -418,7 +559,7 @@ const CreateLead = () => {
                       : null
                   }
                   onChange={(selectedOption) =>
-                    handleSelectChange('status', selectedOption?.value || '')
+                    handleSelectChange('status', selectedOption)
                   }
                   options={[{ value: 'New', label: 'New' }]}
                   placeholder="Select Status"
@@ -458,6 +599,7 @@ const CreateLead = () => {
           <div className="flex gap-4 pt-4">
             <button
               type="button"
+              onClick={() => navigate('/leads/manage')}
               className="w-[160px] h-[50px] rounded border border-[#C32033] text-md font-medium text-[#C32033] hover:bg-gray-2 dark:border-strokedark dark:text-white dark:hover:bg-meta-4 transition-colors"
             >
               Cancel
@@ -474,7 +616,7 @@ const CreateLead = () => {
     }
   `}
             >
-              Save
+              Update
             </button>
           </div>
         </form>
@@ -483,4 +625,4 @@ const CreateLead = () => {
   );
 };
 
-export default CreateLead;
+export default EditLead;
