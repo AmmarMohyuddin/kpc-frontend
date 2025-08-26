@@ -36,7 +36,15 @@ const DetailSalesRequest = lazy(() => import('../pages/SalesRequest/DetailSalesR
 const DraftSalesRequest = lazy(() => import('../pages/SalesRequest/DraftSalesRequest'));
 const EditSalesRequest = lazy(() => import('../pages/SalesRequest/EditSalesRequest'));
 const UninvoicedOrders = lazy(() => import('../pages/SalesOrders/UninvoicedOrders'));
+const OpenOrders = lazy(() => import('../pages/SalesOrders/OpenOrders'));
+const OrderHistory = lazy(() => import('../pages/SalesOrders/OrderHistory'));
 const DetailUninvoicedOrder = lazy(() => import('../pages/SalesOrders/DetailUninvoiced'));
+const DetailOrderHistory = lazy(() => import('../pages/SalesOrders/DetailOrderHistory'));
+const DetailOpenOrder = lazy(() => import('../pages/SalesOrders/DetailOpenOrders'));
+const EditOpportunity = lazy(() => import('../pages/Opportunities/EditOpportunity'));
+const Itemlisting = lazy(() => import('../pages/Opportunities/ItemListing'));
+const ItemDetail = lazy(() => import('../pages/Opportunities/DetailItem'));
+const EditOpportunityDetail = lazy(() => import('../pages/Opportunities/EditOpportunityDetail'));
 
 const coreRoutes = [
   {
@@ -109,6 +117,26 @@ const coreRoutes = [
     title: 'Detail Opportunity',
     component: DetailOpp,
   },
+    {
+    path: '/opportunities/edit/:id',
+    title: 'Edit Opportunity',
+    component: EditOpportunity,
+  },
+      {
+    path: '/opportunities/detail/edit/:id',
+    title: 'Edit Opportunity Detail',
+    component: EditOpportunityDetail,
+  },
+      {
+    path: '/opportunities/details/:id',
+    title: 'Opportunity Details',
+    component: ItemDetail,
+  },
+      {
+    path: '/opportunities/listing',
+    title: 'Opportunity Listing',
+    component: Itemlisting,
+  },
   {
     path: '/sales-request/create',
     title: 'Create Sales Request',
@@ -158,6 +186,26 @@ const coreRoutes = [
     path: '/sales-orders/uninvoiced/:order_no',
     title: 'Uninvoiced Order Details',
     component: DetailUninvoicedOrder,
+  },
+    {
+    path: '/sales-orders/history',
+    title: 'Order History',
+    component: OrderHistory,
+  },
+    {
+    path: '/sales-orders/history/:order_no',
+    title: 'Order History Details',
+    component: DetailOrderHistory,
+  },
+    {
+    path: '/sales-orders/open' ,
+    title: 'Open Orders',
+    component: OpenOrders,
+  },
+    {
+    path: '/sales-orders/open/:order_no',
+    title: 'Open Order Details',
+    component: DetailOpenOrder,
   },
   {
     path: '/tables',

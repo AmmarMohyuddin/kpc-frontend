@@ -205,7 +205,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   {!isCollapsed && 'Dashboard'}
                 </NavLink>
               </li>
-
               {/* <!-- Menu Item Users --> */}
               {user?.role === 'admin' && (
                 <li className="mb-1">
@@ -301,7 +300,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </li>
               )}
               {/* <!-- Menu Item Users --> */}
-
               {/* <!-- Menu Item Profile --> */}
               {user?.role === 'admin' && (
                 <li className="mb-1">
@@ -444,7 +442,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </li>
               )}
               {/* <!-- Menu Item Users --> */}
-
               {/* <!-- Menu Item Leads --> */}
               {user?.role === 'salesPerson' && (
                 <SidebarLinkGroup
@@ -519,6 +516,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               viewBox="0 0 20 20"
                               fill="none"
                               xmlns="http://www.w3.org/2000/svg"
+                              font-medium
+                              text-lg
                             >
                               <path
                                 fillRule="evenodd"
@@ -541,10 +540,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/leads/create"
-                                  className={({ isActive }) =>
-                                    'group relative flex items-center gap-6 rounded-md px-4 font-medium text-black text-lg duration-300 ease-in-out hover:text-black ' +
-                                    (isActive && 'text-[#C32033]')
-                                  }
+                                  className={`flex items-center px-4 py-2 font-medium text-lg rounded-lg transition-colors
+      ${
+        pathname === '/leads/create' || pathname.includes('/leads/create')
+          ? 'text-[#C32033]'
+          : 'text-black'
+      }
+    `}
                                 >
                                   Create
                                 </NavLink>
@@ -553,8 +555,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 <NavLink
                                   to="/leads/manage"
                                   className={({ isActive }) =>
-                                    'group relative flex items-center gap-6 rounded-md px-4 font-medium text-black text-lg duration-300 ease-in-out hover:text-black ' +
-                                    (isActive && 'text-[#C32033]')
+                                    `group relative flex items-center gap-6 rounded-md px-4 py-2 font-medium text-lg duration-300 ease-in-out
+     ${
+       isActive ||
+       pathname === '/leads/manage' ||
+       pathname.includes('/leads/manage')
+         ? 'text-[#C32033]'
+         : 'text-black '
+     }`
                                   }
                                 >
                                   Manage Leads
@@ -591,7 +599,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </SidebarLinkGroup>
               )}
               {/* <!-- Menu Item Leads --> */}
-
               {/* <!-- Menu Item Opportunities --> */}
               {user?.role === 'salesPerson' && (
                 <SidebarLinkGroup
@@ -638,6 +645,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 d="M1.43425 7.5093H2.278C2.44675 7.5093 2.55925 7.3968 2.58737 7.31243L2.98112 6.32805H5.90612L6.27175 7.31243C6.328 7.48118 6.46862 7.5093 6.58112 7.5093H7.453C7.76237 7.48118 7.87487 7.25618 7.76237 7.03118L5.428 1.4343C5.37175 1.26555 5.3155 1.23743 5.14675 1.23743H3.88112C3.76862 1.23743 3.59987 1.29368 3.57175 1.4343L1.153 7.08743C1.0405 7.2843 1.20925 7.5093 1.43425 7.5093ZM4.47175 2.98118L5.3155 5.17493H3.59987L4.47175 2.98118Z"
                                 fill=""
                               />
+                              sales
                               <path
                                 d="M10.1249 2.5031H16.8749C17.2124 2.5031 17.5218 2.22185 17.5218 1.85623C17.5218 1.4906 17.2405 1.20935 16.8749 1.20935H10.1249C9.7874 1.20935 9.47803 1.4906 9.47803 1.85623C9.47803 2.22185 9.75928 2.5031 10.1249 2.5031Z"
                                 fill=""
@@ -686,24 +694,32 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             }`}
                           >
                             <ul className="mt-4 mb-5.5 flex flex-col gap-4 pl-6">
-                              {/* <li>
+                              <li>
                                 <NavLink
                                   to="/opportunities/create"
-                                  className={({ isActive }) =>
-                                    'group relative flex items-center gap-6 rounded-md px-4 font-medium text-black text-lg duration-300 ease-in-out hover:text-black ' +
-                                    (isActive && 'text-[#C32033]')
-                                  }
+                                  className={`flex items-center px-4 py-2 font-medium text-lg rounded-lg transition-colors
+      ${
+        pathname === '/opportunities/create' ||
+        pathname.includes('/opportunities/create')
+          ? 'text-[#C32033]'
+          : 'text-black'
+      }
+    `}
                                 >
                                   Create
                                 </NavLink>
-                              </li> */}
+                              </li>
                               <li>
                                 <NavLink
                                   to="/opportunities/manage"
-                                  className={({ isActive }) =>
-                                    'group relative flex items-center gap-6 rounded-md px-4 font-medium text-black text-lg duration-300 ease-in-out hover:text-black ' +
-                                    (isActive && 'text-[#C32033]')
-                                  }
+                                  className={`flex items-center px-4 py-2 font-medium text-lg rounded-lg transition-colors
+      ${
+        pathname === '/opportunities/manage' ||
+        pathname.includes('/opportunities/manage')
+          ? 'text-[#C32033]'
+          : 'text-black'
+      }
+    `}
                                 >
                                   Manage Opportunities
                                 </NavLink>
@@ -738,8 +754,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   }}
                 </SidebarLinkGroup>
               )}
-              {/* <!-- Menu Item Opportunities --> */}
 
+              {/* <!-- Menu Item Opportunities --> */}
               {/* <!-- Menu Item Sales Orders --> */}
               {user?.role === 'salesPerson' && (
                 <SidebarLinkGroup
@@ -834,9 +850,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             }`}
                           >
                             <ul className="mt-4 mb-5.5 flex flex-col gap-4 pl-6">
-                              {/* <li>
+                              <li>
                                 <NavLink
-                                  to="/forms/form-elements"
+                                  to="/sales-orders/history"
                                   className={({ isActive }) =>
                                     'group relative flex items-center gap-6 rounded-md px-4 font-medium text-black text-lg duration-300 ease-in-out hover:text-black ' +
                                     (isActive && 'text-[#C32033]')
@@ -847,7 +863,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               </li>
                               <li>
                                 <NavLink
-                                  to="/forms/form-layout"
+                                  to="/sales-orders/open"
                                   className={({ isActive }) =>
                                     'group relative flex items-center gap-6 rounded-md px-4 font-medium text-black text-lg duration-300 ease-in-out hover:text-black ' +
                                     (isActive && 'text-[#C32033]')
@@ -855,14 +871,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 >
                                   Closed Orders
                                 </NavLink>
-                              </li> */}
+                              </li>
                               <li>
                                 <NavLink
                                   to="/sales-orders/uninvoiced"
-                                  className={({ isActive }) =>
-                                    'group relative flex items-center gap-6 rounded-md px-4 font-medium text-black text-lg duration-300 ease-in-out hover:text-black ' +
-                                    (isActive && 'text-[#C32033]')
-                                  }
+                                  className={`flex items-center px-4 py-2 font-medium text-lg  rounded-lg transition-colors
+      ${
+        pathname === '/sales-orders/uninvoiced' ||
+        pathname.includes('/sales-orders/uninvoiced')
+          ? 'text-[#C32033]'
+          : 'text-black'
+      }
+    `}
                                 >
                                   Uninvoiced Orders
                                 </NavLink>
@@ -876,8 +896,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   }}
                 </SidebarLinkGroup>
               )}
-              {/* <!-- Menu Item Sales Orders --> */}
-
+              {/* <!-- Menu Item SalesclassName={`flex items-center px-4 py-2 rounded-lg transition-colors
+      ${
+        pathname === '/sales-orders/uninvoiced' ||
+        pathname.includes('/sales-orders/uninvoiced')
+          ? 'text-[#C32033]'
+          : 'text-black'
+      }
+    `} Orders --> */}
               {/* <!-- Menu Item Sales Requests --> */}
               {user?.role === 'salesPerson' && (
                 <SidebarLinkGroup
@@ -892,11 +918,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         <NavLink
                           to="#"
                           className={`group relative flex items-center ${
-                            isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
-                          } rounded-sm py-2 mb-1 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${
-                            (pathname === '/sales-request' ||
-                              pathname.includes('sales-request')) &&
-                            'bg-[#FFD7D7] text-black'
+                            isCollapsed
+                              ? 'justify-center px-2 py-2'
+                              : 'gap-6 px-4 py-2'
+                          } rounded-sm py-2 mb-1 font-medium text-black text-lg whitespace-nowrap duration-600 ease-in-out hover:bg-[#FFD7D7] ${
+                            pathname === '/sales-request' ||
+                            pathname.includes('sales-request')
+                              ? 'bg-[#FFD7D7]'
+                              : 'bg-transparent'
                           }`}
                           onClick={(e) => {
                             e.preventDefault();
@@ -912,7 +941,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           >
                             <svg
                               className={`fill-current ${
-                                open ? 'text-[#C32033]' : 'text-white'
+                                open ? 'text-[#C32033]px-4 py-2' : 'text-white'
                               }`}
                               width="20"
                               height="20"
@@ -976,10 +1005,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/sales-request/create"
-                                  className={({ isActive }) =>
-                                    'group relative flex items-center gap-6 rounded-md px-4 font-medium text-black text-lg duration-300 ease-in-out hover:text-black ' +
-                                    (isActive && 'text-[#C32033]')
-                                  }
+                                  className={`flex items-center px-4 py-2 font-medium text-lg rounded-lg transition-colors
+      ${
+        pathname === '/sales-request/create' ||
+        pathname.includes('/sales-request/create')
+          ? 'text-[#C32033]'
+          : 'text-black'
+      }
+    `}
                                 >
                                   Create
                                 </NavLink>
@@ -987,10 +1020,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/sales-request/manage"
-                                  className={({ isActive }) =>
-                                    'group relative flex items-center gap-6 rounded-md px-4 font-medium text-black text-lg duration-300 ease-in-out hover:text-black ' +
-                                    (isActive && 'text-[#C32033]')
-                                  }
+                                  className={`flex items-center px-4 py-2 font-medium text-lg rounded-lg transition-colors
+      ${
+        pathname === '/sales-request/manage' ||
+        pathname.includes('/sales-request/manage')
+          ? 'text-[#C32033]'
+          : 'text-black'
+      }
+    `}
                                 >
                                   Manage Requests
                                 </NavLink>
@@ -998,10 +1035,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/sales-request/draft"
-                                  className={({ isActive }) =>
-                                    'group relative flex items-center gap-6 rounded-md px-4 font-medium text-black text-lg duration-300 ease-in-out hover:text-black ' +
-                                    (isActive && 'text-[#C32033]')
-                                  }
+                                  className={`flex items-center px-4 py-2 font-medium text-lg rounded-lg transition-colors
+      ${
+        pathname === '/sales-request/draft' ||
+        pathname.includes('/sales-request/draft')
+          ? 'text-[#C32033]'
+          : 'text-black'
+      }
+    `}
                                 >
                                   Manage Drafts
                                 </NavLink>
@@ -1016,7 +1057,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </SidebarLinkGroup>
               )}
               {/* <!-- Menu Item Sales Requests --> */}
-
               {/* <!-- Menu Item Reports --> */}
               {/* {user?.role === 'salesPerson' && (
                 <SidebarLinkGroup
@@ -1045,7 +1085,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         >
                           <div
                             className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${
-                              open ? 'bg-white' : 'bg-[#C32033]'
+                              open ? 'bg-white' /sales-request/manage: 'bg-[#C32033]'
                             }`}
                           >
                             <svg

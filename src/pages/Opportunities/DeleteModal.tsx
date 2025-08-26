@@ -1,0 +1,120 @@
+import { X } from 'lucide-react';
+import apiService from '../../services/ApiService';
+import toast from 'react-hot-toast';
+import { useState } from 'react';
+import Loader from '../../common/Loader';
+
+interface DeleteModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  id?: number; // can be OPPORTUNITY_ID or OPPORTUNITY_DETAIL_ID
+  type?: 'header' | 'detail';
+  onItemDeleted: () => void;
+}
+
+const DeleteModal = ({
+  isOpen,
+  onClose,
+  id,
+  type = 'header',
+  onItemDeleted,
+}: DeleteModalProps) => {
+  const [loading, setLoading] = useState(false);
+
+  if (!isOpen) return null;
+
+  const handleCancel = () => {
+    if (!loading) onClose();
+  };
+
+  const handleDelete = async () => {
+    try {
+      setLoading(true);
+
+      if (!id) {
+        toast.error('Missing ID.');
+        setLoading(false);
+        return;
+      }
+
+      const response = await apiService.post(
+        `/api/v1/opportunities/deleteOpportunity`,
+        { id, type },
+      );
+
+      if (response?.status === 200) {
+        type === 'detail'
+          ? toast.success(`Detail deleted!`)
+          : toast.success(`Header deleted!`);
+        onItemDeleted(); // remove from UI
+        onClose();
+      } else {
+        toast.error('Failed to delete.');
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('❌ Error deleting opportunity:', error);
+      toast.error('Failed to delete.');
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div
+        className="absolute inset-0 bg-black bg-opacity-50"
+        onClick={!loading ? onClose : undefined}
+      ></div>
+
+      {loading && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-30">
+          <Loader />
+        </div>
+      )}
+
+      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 z-50">
+        <div className="flex items-center justify-between p-6 pb-4">
+          <div className="flex-1 text-center">
+            <h2 className="text-xl font-semibold text-black">
+              Delete Opportunity
+            </h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+            disabled={loading}
+          >
+            <X className="w-5 h-5 text-gray-500" />
+          </button>
+        </div>
+
+        <div className="px-6 pb-6 space-y-6">
+          <div className="text-center">
+            <p className="text-gray-600 text-lg">
+              Do you really want to delete this {type}?
+            </p>
+          </div>
+
+          <div className="flex gap-4">
+            <button
+              onClick={handleCancel}
+              className="flex-1 px-6 py-3 rounded-lg border border-[#C32033] text-[#C32033] font-medium hover:bg-gray-50 transition-colors"
+              disabled={loading}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDelete}
+              className="flex-1 px-6 py-3 rounded-lg bg-[#C32033] text-white font-medium hover:bg-[#A91B2E] transition-colors"
+              disabled={loading}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DeleteModal;

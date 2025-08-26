@@ -1,252 +1,693 @@
-import OptionModal from '../Opportunities/OptionModal';
-import { useState } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import Select from 'react-select';
+import toast from 'react-hot-toast';
+import { useNavigate, useLocation } from 'react-router-dom';
+import apiService from '../../services/ApiService';
+
+interface OptionType {
+  value: string;
+  label: string;
+}
+
+interface OpportunityHeader {
+  generation_date: string;
+  close_date: string;
+  status_id: number;
+  salesperson_id: string;
+  salesperson_name: string;
+  remarks: string;
+  order_lines: OpportunityDetails[];
+}
+
+interface OpportunityDetails {
+  item_number: string;
+  item_detail: string;
+  sub_category: string;
+  description: string;
+  unit_of_measure: string;
+  order_quantity: number;
+  price: number;
+  line_amount: number;
+  instructions: string;
+  requested_ship_date: string;
+}
+
+interface ItemDetail {
+  unit_of_measure: string;
+  sub_cat: string;
+  description: string;
+  base_price?: number;
+}
 
 const CreateOpportunity = () => {
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [loading, setLoading] = useState(false);
+  const [currentStep, setCurrentStep] = useState(
+    location.state?.step || 1, // 👈 default is 1, but will be 2 if passed
+  ); // 1: Header, 2: Details
+  const opportunityId = location.state?.opportunityId || null;
+  const [salesPersons, setSalesPersons] = useState<any[]>([]);
+  const [items, setItems] = useState<any[]>([]);
+  const [itemDetail, setItemDetail] = useState<ItemDetail | null>(null);
+  const [price, setPrice] = useState<number>(0);
+
+  const [opportunityHeader, setOpportunityHeader] = useState<OpportunityHeader>(
+    {
+      generation_date: new Date().toISOString().split('T')[0],
+      close_date: new Date().toISOString().split('T')[0],
+      status_id: 0,
+      salesperson_id: '',
+      salesperson_name: '',
+      remarks: '',
+      order_lines: [],
+    },
+  );
+
+  const [opportunityDetails, setOpportunityDetails] =
+    useState<OpportunityDetails>({
+      item_number: '',
+      item_detail: '',
+      sub_category: '',
+      description: '',
+      unit_of_measure: '',
+      order_quantity: 0,
+      price: 0,
+      line_amount: 0,
+      instructions: '',
+      requested_ship_date: new Date().toISOString().split('T')[0],
+    });
+
+  console.log('Opportunity Header:', opportunityHeader);
+  console.log('Opportunity Details:', opportunityDetails);
+
+  // Status options
+  const statusOptions: OptionType[] = [{ value: '1', label: 'Open' }];
+
+  const itemsOptions = items.map((item: any) => ({
+    value: item.item_number,
+    label: item.item_detail,
+  }));
+
+  // Fetch sales persons and items
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [salesPersonsRes, itemsRes] = await Promise.all([
+          apiService.get('/api/v1/salesPersons/list', {}),
+          apiService.get('/api/v1/items/list', {}),
+        ]);
+        setSalesPersons(salesPersonsRes.data || []);
+        setItems(itemsRes.data || []);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // Logged in user
+  const loggedInUser = useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem('user') || '{}');
+    } catch {
+      return {};
+    }
+  }, []);
+
+  // Filter salesperson options
+  const salesPersonOptions = useMemo(() => {
+    return salesPersons
+      .filter(
+        (person: any) => person.employee_number === loggedInUser.person_number,
+      )
+      .map((person: any) => ({
+        value: person._id,
+        label: person.salesperson_name,
+      }));
+  }, [salesPersons, loggedInUser.person_number]);
+
+  // Handle salesperson change
+  const handleSalesPersonChange = useCallback((selected: OptionType | null) => {
+    setOpportunityHeader((prev) => ({
+      ...prev,
+      salesperson_id: selected?.value || '',
+      salesperson_name: selected?.label || '',
+    }));
+  }, []);
+
+  // Custom Select styles
+  const customSelectStyles = useMemo(
+    () => ({
+      control: (provided: any, state: any) => ({
+        ...provided,
+        minHeight: '50px',
+        height: '50px',
+        borderColor: state.isFocused ? '#C32033' : provided.borderColor,
+        boxShadow: state.isFocused ? '0 0 0 1px #C32033' : provided.boxShadow,
+        '&:hover': {
+          borderColor: state.isFocused ? '#C32033' : provided.borderColor,
+        },
+      }),
+      valueContainer: (provided: any) => ({
+        ...provided,
+        height: '50px',
+        padding: '0 8px',
+      }),
+      input: (provided: any) => ({
+        ...provided,
+        margin: '0px',
+      }),
+      option: (provided: any, state: any) => ({
+        ...provided,
+        backgroundColor: state.isSelected
+          ? '#FFD7D7'
+          : state.isFocused
+          ? '#FFD7D7'
+          : provided.backgroundColor,
+        color: '#000',
+      }),
+      singleValue: (provided: any) => ({
+        ...provided,
+        color: '#C32033',
+      }),
+    }),
+    [],
+  );
+
+  // Handle header input changes
+  const handleHeaderInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    setOpportunityHeader((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Handle header select changes
+  const handleHeaderSelectChange = (
+    name: keyof OpportunityHeader,
+    selectedOption: OptionType | null,
+  ) => {
+    const value = selectedOption?.value || '';
+    setOpportunityHeader((prev) => ({
+      ...prev,
+      [name]: name === 'status_id' ? Number(value) : value,
+    }));
+  };
+
+  // Handle details input changes
+  const handleDetailsInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    setOpportunityDetails((prev) => ({
+      ...prev,
+      [name]:
+        name === 'order_quantity' || name === 'price' || name === 'line_amount'
+          ? Number(value)
+          : value,
+    }));
+
+    // Recalculate line amount if quantity or price changes
+    if (name === 'order_quantity' || name === 'price') {
+      const quantity =
+        name === 'order_quantity'
+          ? Number(value)
+          : opportunityDetails.order_quantity;
+      const priceValue =
+        name === 'price' ? Number(value) : opportunityDetails.price;
+      setOpportunityDetails((prev) => ({
+        ...prev,
+        line_amount: quantity * priceValue,
+      }));
+    }
+  };
+
+  // Handle price change specifically
+  const handlePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value);
+    setPrice(value);
+    setOpportunityDetails((prev) => ({
+      ...prev,
+      price: value,
+      line_amount: prev.order_quantity * value,
+    }));
+  };
+
+  // Handle item number selection
+  const handleItemNumberSelect = async (selectedOption: any) => {
+    if (!selectedOption) return;
+
+    setOpportunityDetails((prevData) => ({
+      ...prevData,
+      item_number: selectedOption.value,
+      item_detail: selectedOption.label,
+    }));
+
+    try {
+      // Fetch item details
+      const [itemDetailRes, priceRes] = await Promise.all([
+        apiService.get(`/api/v1/items/detail/${selectedOption.value}`, {}),
+        apiService.get(`/api/v1/prices/detail/${selectedOption.value}`, {}),
+      ]);
+
+      const itemData = itemDetailRes.data[0];
+      console.log('Item Data:', itemData);
+      const priceData = priceRes.data;
+
+      if (itemData) {
+        setItemDetail(itemData);
+        setOpportunityDetails((prevData) => ({
+          ...prevData,
+          sub_category: itemData.sub_cat || '',
+          description: itemData.description || '',
+          unit_of_measure: itemData.unit_of_measure || '',
+        }));
+      }
+
+      if (priceData && priceData.length > 0) {
+        const basePrice = priceData[0].base_price || 0;
+        setPrice(basePrice);
+        setOpportunityDetails((prevData) => ({
+          ...prevData,
+          price: basePrice,
+          line_amount: prevData.order_quantity * basePrice,
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching item details:', error);
+    }
+  };
+
+  // Handle next button click
+  const handleNext = () => {
+    setCurrentStep(2);
+  };
+
+  // Handle back button click
+  const handleBack = () => {
+    setCurrentStep(1);
+  };
+
+  // Submit both forms
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   try {
+  //     const completeOpportunity = {
+  //       ...opportunityHeader,
+  //       ...opportunityDetails,
+  //     };
+  //     console.log('Complete Opportunity Data:', completeOpportunity);
+
+  //     const response = await apiService.post(
+  //       '/api/v1/opportunities/createOpportunity',
+  //       completeOpportunity,
+  //     );
+
+  //     if (response.status === 201) {
+  //       toast.success('Opportunity created!');
+  //       navigate('/opportunities/manage');
+  //     } else {
+  //       console.error('Failed to create opportunity:', response);
+  //       toast.error('Failed to create opportunity.');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error submitting form:', error);
+  //     toast.error('Something went wrong.');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // Submit header + details (new) OR only details (add more)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      if (opportunityId) {
+        // 👉 Add details to existing opportunity
+        const detailPayload = {
+          OPPORTUNITY_ID: opportunityId,
+          ...opportunityDetails,
+        };
+        console.log('Adding detail:', detailPayload);
+
+        const response = await apiService.post(
+          '/api/v1/opportunities/createOpportunity',
+          detailPayload,
+        );
+
+        if (response.status === 201) {
+          toast.success('Opportunity Detail added!');
+          navigate(`/opportunities/listing`, {
+            state: { opportunity_id: opportunityId },
+          });
+        } else {
+          toast.error('Failed to add opportunity detail.');
+        }
+      } else {
+        // 👉 Create new opportunity (header + details)
+        const completeOpportunity = {
+          ...opportunityHeader,
+          ...opportunityDetails,
+        };
+        console.log('Complete Opportunity Data:', completeOpportunity);
+
+        const response = await apiService.post(
+          '/api/v1/opportunities/createOpportunity',
+          completeOpportunity,
+        );
+
+        if (response.status === 201) {
+          toast.success('Opportunity created!');
+          navigate('/opportunities/manage');
+        } else {
+          toast.error('Failed to create opportunity.');
+        }
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error('Something went wrong.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
-      <OptionModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSelectOption={(option) => {
-          console.log('Selected option:', option);
-          setIsModalOpen(false);
-        }}
-      />
-
       <div className="flex flex-col gap-10">
         <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
           <h2 className="text-2xl font-semibold mb-6 text-black dark:text-white">
-            Create Opportunity
+            Create Opportunity{' '}
+            {currentStep === 1 ? '(Step 1 of 2)' : '(Step 2 of 2)'}
           </h2>
 
-          <form className="space-y-6">
-            {/* Two Column Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Left Column */}
-              <div className="space-y-6">
-                {/* Choose a Type */}
-                <div>
-                  <label className="block text-md font-medium text-black mb-2">
-                    Opportunity Number
-                  </label>
-                  <div className="relative z-20 bg-transparent dark:bg-form-input">
+          {currentStep === 1 ? (
+            // Opportunity Header Form
+            <form className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Left Column */}
+                <div className="space-y-6">
+                  {/* Generation Date */}
+                  <div>
+                    <label className="block text-md font-medium text-black mb-2">
+                      Generation Date
+                    </label>
                     <input
-                      type="text"
-                      name="name"
-                      placeholder="Enter Name"
-                      className="w-full px-4 py-3 bg-gray border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                      type="date"
+                      name="generation_date"
+                      value={opportunityHeader.generation_date}
+                      onChange={handleHeaderInputChange}
+                      className="custom-input-date w-full text-[#C32033] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 outline-none focus:border-[#C32033]"
+                    />
+                  </div>
+
+                  {/* Sales Person */}
+                  <div>
+                    <label className="block text-md font-medium text-black mb-2">
+                      Sales Person
+                    </label>
+                    <Select
+                      name="salesperson_id"
+                      value={
+                        salesPersonOptions.find(
+                          (o) => o.value === opportunityHeader.salesperson_id,
+                        ) || null
+                      }
+                      onChange={handleSalesPersonChange}
+                      options={salesPersonOptions}
+                      placeholder="Select Sales Person"
+                      isSearchable
+                      styles={customSelectStyles}
+                    />
+                  </div>
+                </div>
+
+                {/* Right Column */}
+                <div className="space-y-6">
+                  {/* Status */}
+                  <div>
+                    <label className="block text-md font-medium text-black mb-2">
+                      Status
+                    </label>
+                    <Select
+                      options={statusOptions}
+                      value={
+                        statusOptions.find(
+                          (o) =>
+                            Number(o.value) === opportunityHeader.status_id,
+                        ) || null
+                      }
+                      onChange={(selectedOption) =>
+                        handleHeaderSelectChange('status_id', selectedOption)
+                      }
+                      isSearchable
+                      styles={customSelectStyles}
+                      placeholder="Select Status"
                       required
                     />
                   </div>
-                </div>
 
-                {/* Email */}
-                <div>
-                  <label className="block text-md font-medium text-black mb-2">
-                    Sales Person
-                  </label>
-                  <div className="relative z-20 bg-transparent dark:bg-form-input">
-                    <select className="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-[#C32033] active:border-[#C32033]">
-                      <option value="">Select Status</option>
-                      <option value="">USA</option>
-                      <option value="">UK</option>
-                      <option value="">Canada</option>
-                    </select>
-                    <span className="absolute top-1/2 right-4 z-30 -translate-y-1/2">
-                      <svg
-                        className="fill-current"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <g opacity="0.8">
-                          <path
-                            fillRule="evenodd"
-                            clipRule="evenodd"
-                            d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z"
-                            fill=""
-                          ></path>
-                        </g>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-
-                {/* Contact Number */}
-                <div>
-                  <label className="block text-md font-medium text-black mb-2">
-                    UOM
-                  </label>
-                  <div className="relative z-20 bg-transparent dark:bg-form-input">
-                    <select className="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-[#C32033] active:border-[#C32033]">
-                      <option value="">Select Status</option>
-                      <option value="">USA</option>
-                      <option value="">UK</option>
-                      <option value="">Canada</option>
-                    </select>
-                    <span className="absolute top-1/2 right-4 z-30 -translate-y-1/2">
-                      <svg
-                        className="fill-current"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <g opacity="0.8">
-                          <path
-                            fillRule="evenodd"
-                            clipRule="evenodd"
-                            d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z"
-                            fill=""
-                          ></path>
-                        </g>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-
-                {/* Status */}
-                <div>
-                  <label className="block text-md font-medium text-black mb-2">
-                    Amount
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Enter Name"
-                    className="w-full px-4 py-3 bg-gray border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* Right Column */}
-              <div className="space-y-6">
-                {/* Name */}
-                <div>
-                  <label className="block text-md font-medium text-black mb-2">
-                    Generation Date
-                  </label>
-                  <div className="relative">
+                  {/* Close Date */}
+                  <div>
+                    <label className="block text-md font-medium text-black mb-2">
+                      Close Date
+                    </label>
                     <input
                       type="date"
-                      className="custom-input-date custom-input-date-1 w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                    />
-                  </div>
-                </div>
-
-                {/* Address */}
-                <div>
-                  <label className="block text-md font-medium text-black mb-2">
-                    Item
-                  </label>
-                  <div className="relative z-20 bg-transparent dark:bg-form-input">
-                    <select className="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-[#C32033] active:border-[#C32033]">
-                      <option value="">Select Status</option>
-                      <option value="">USA</option>
-                      <option value="">UK</option>
-                      <option value="">Canada</option>
-                    </select>
-                    <span className="absolute top-1/2 right-4 z-30 -translate-y-1/2">
-                      <svg
-                        className="fill-current"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <g opacity="0.8">
-                          <path
-                            fillRule="evenodd"
-                            clipRule="evenodd"
-                            d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z"
-                            fill=""
-                          ></path>
-                        </g>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-
-                {/* Contact Job Role */}
-                <div>
-                  <label className="block text-md font-medium text-black mb-2">
-                    Quantity
-                  </label>
-                  <div className="relative z-20 bg-transparent dark:bg-form-input">
-                    <select className="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-[#C32033] active:border-[#C32033]">
-                      <option value="">Select Status</option>
-                      <option value="">USA</option>
-                      <option value="">UK</option>
-                      <option value="">Canada</option>
-                    </select>
-                    <span className="absolute top-1/2 right-4 z-30 -translate-y-1/2">
-                      <svg
-                        className="fill-current"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <g opacity="0.8">
-                          <path
-                            fillRule="evenodd"
-                            clipRule="evenodd"
-                            d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z"
-                            fill=""
-                          ></path>
-                        </g>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-
-                {/* Sales Person */}
-                <div>
-                  <label className="block text-md font-medium text-black mb-2">
-                    Follow Up Date
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="date"
-                      className="custom-input-date custom-input-date-1 w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                      name="close_date"
+                      value={opportunityHeader.close_date}
+                      onChange={handleHeaderInputChange}
+                      className="custom-input-date w-full text-[#C32033] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 outline-none focus:border-[#C32033]"
                     />
                   </div>
                 </div>
               </div>
-            </div>
-            <div>
-              <label className="block text-md font-medium text-black mb-1">
-                Description
-              </label>
-              <textarea
-                placeholder="Write..."
-                rows={4}
-                className="w-full px-4 py-3 bg-gray border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C32033] placeholder-gray-500 resize-none"
-              ></textarea>
-            </div>
-            {/* Action Buttons */}
-            <div className="flex gap-4 pt-4">
-              <button
-                type="button"
-                className="w-[160px] h-[50px] rounded border border-[#C32033] text-md font-medium text-[#C32033] hover:bg-gray-2 dark:border-strokedark dark:text-white dark:hover:bg-meta-4 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="w-[160px] h-[50px] rounded bg-[#C32033] text-md font-medium text-white hover:bg-[#A91B2E] transition-colors"
-              >
-                Save
-              </button>
-            </div>
-          </form>
+
+              {/* Remarks */}
+              <div>
+                <label className="block text-md font-medium text-black mb-1">
+                  Remarks
+                </label>
+                <textarea
+                  name="remarks"
+                  value={opportunityHeader.remarks}
+                  onChange={handleHeaderInputChange}
+                  placeholder="Write your remarks here..."
+                  rows={2}
+                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#c32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] resize-none"
+                />
+              </div>
+
+              {/* Next Button */}
+              <div className="flex gap-4 pt-4">
+                <button
+                  type="button"
+                  className="w-[160px] h-[50px] rounded border border-[#C32033] text-md font-medium text-[#C32033] hover:bg-gray-2 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  className="w-[160px] h-[50px] rounded bg-[#C32033] text-md font-medium text-white hover:bg-[#A91B2E] transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+            </form>
+          ) : (
+            // Opportunity Details Form
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {/* Add Item Section */}
+              <div>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-xl font-semibold mb-4 text-black dark:text-white">
+                    Add Item
+                  </h1>
+                </div>
+                <div className="space-y-6 mt-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-md font-medium text-black mb-2">
+                          Item Number
+                        </label>
+                        <Select
+                          name="item_number"
+                          value={
+                            itemsOptions.find(
+                              (o) => o.value === opportunityDetails.item_number,
+                            ) || null
+                          }
+                          onChange={handleItemNumberSelect}
+                          options={itemsOptions}
+                          placeholder="Select Item Number"
+                          isSearchable
+                          styles={customSelectStyles}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-md font-medium text-black mb-2">
+                          UOM
+                        </label>
+                        <input
+                          type="text"
+                          name="unit_of_measure"
+                          readOnly
+                          value={opportunityDetails.unit_of_measure}
+                          onChange={handleDetailsInputChange}
+                          placeholder="Unit of Measure"
+                          className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-md font-medium text-black mb-2">
+                          Sub Category
+                        </label>
+                        <input
+                          type="text"
+                          name="sub_category"
+                          readOnly
+                          value={opportunityDetails.sub_category}
+                          onChange={handleDetailsInputChange}
+                          placeholder="Sub Category"
+                          className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-md font-medium text-black mb-2">
+                          Price
+                        </label>
+                        <input
+                          type="number"
+                          name="price"
+                          value={opportunityDetails.price}
+                          onChange={handlePrice}
+                          min={0}
+                          step="any"
+                          placeholder="Enter Price"
+                          className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-md font-medium text-black mb-1">
+                          Line Amount
+                        </label>
+                        <input
+                          type="number"
+                          name="line_amount"
+                          step="any"
+                          value={opportunityDetails.line_amount}
+                          readOnly
+                          className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-md font-medium text-black mb-2">
+                          Description
+                        </label>
+                        <input
+                          type="text"
+                          name="description"
+                          readOnly
+                          value={opportunityDetails.description}
+                          onChange={handleDetailsInputChange}
+                          placeholder="Description"
+                          className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-md font-medium text-black mb-2">
+                          Instructions (Optional)
+                        </label>
+                        <input
+                          type="text"
+                          name="instructions"
+                          value={opportunityDetails.instructions}
+                          onChange={handleDetailsInputChange}
+                          placeholder="Enter Instructions"
+                          className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-md font-medium text-black mb-2">
+                          Order Quantity
+                        </label>
+                        <input
+                          type="number"
+                          name="order_quantity"
+                          value={opportunityDetails.order_quantity}
+                          onChange={handleDetailsInputChange}
+                          min={0}
+                          placeholder="Enter Order Quantity"
+                          className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-md font-medium text-black mb-2">
+                          Requested Shipment Date
+                        </label>
+                        <input
+                          type="date"
+                          name="requested_ship_date"
+                          value={opportunityDetails.requested_ship_date}
+                          onChange={handleDetailsInputChange}
+                          className="custom-input-date w-full text-[#C32033] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 outline-none focus:border-[#C32033]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-md font-medium text-black mb-1">
+                          Status
+                        </label>
+                        <input
+                          type="text"
+                          value={'Pending'}
+                          readOnly
+                          className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-4 pt-4">
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="w-[160px] h-[50px] rounded border border-[#C32033] text-md font-medium text-[#C32033] hover:bg-gray-2 transition-colors"
+                >
+                  Back
+                </button>
+                <button
+                  type="submit"
+                  className="w-[160px] h-[50px] rounded bg-[#C32033] text-md font-medium text-white hover:bg-[#A91B2E] transition-colors"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </>

@@ -1,7 +1,7 @@
 import { ChevronRight } from 'lucide-react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-const DetailUninvoiced = () => {
+const DetailOrderHistory = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { order_no } = useParams();
@@ -30,14 +30,14 @@ const DetailUninvoiced = () => {
       {/* Page Header */}
       <div className="animate-slideDown">
         <h1 className="text-2xl font-semibold text-black dark:text-white mb-2">
-          Uninvoiced Order {order.order_no} Details
+          Order History - {order.order_no} Details
         </h1>
 
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-md text-gray-600">
           <span>Sales Orders</span>
           <ChevronRight className="w-4 h-4" />
-          <span>Uninvoiced</span>
+          <span>Order History</span>
           <ChevronRight className="w-4 h-4" />
           <span className="text-[#C32033] font-medium">{order.order_no}</span>
         </div>
@@ -105,4 +105,4 @@ const DetailUninvoiced = () => {
   );
 };
 
-export default DetailUninvoiced;
+export default DetailOrderHistory;

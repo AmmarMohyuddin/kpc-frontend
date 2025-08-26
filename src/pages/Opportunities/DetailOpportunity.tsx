@@ -27,6 +27,9 @@ interface Opportunity {
     QUANTITY: number;
     PRICE: number;
     AMOUNT: number;
+    SUB_CAT: string;
+    ITEM_DETAIL: string;
+    ITEM_NUMBER: string;
     CREATION_DATE: string;
     CREATED_BY: string;
     LAST_UPDATE_DATE: string;
@@ -142,8 +145,23 @@ const DetailOpportunity = () => {
                       <span className="font-bold text-black dark:text-white">
                         Item Number:
                       </span>
-                      <span>{line.ITEM_ID}</span>
+                      <span>{line.ITEM_NUMBER}</span>
                     </div>
+
+                    <div className="flex items-center justify-between py-1 border-b border-gray">
+                      <span className="font-bold text-black dark:text-white">
+                        Item Detail:
+                      </span>
+                      <span>{line.ITEM_DETAIL}</span>
+                    </div>
+
+                    <div className="flex items-center justify-between py-1 border-b border-gray">
+                      <span className="font-bold text-black dark:text-white">
+                        Sub Category:
+                      </span>
+                      <span>{line.SUB_CAT}</span>
+                    </div>
+
                     <div className="flex items-center justify-between py-1 border-b border-gray">
                       <span className="font-bold text-black dark:text-white">
                         Description:
