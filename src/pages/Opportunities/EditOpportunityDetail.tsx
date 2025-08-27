@@ -9,7 +9,7 @@ const EditOpportunityDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const opportunityDetail = location.state?.line;
-
+  console.log('Editing Opportunity Detail:', opportunityDetail);
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -132,35 +132,38 @@ const EditOpportunityDetail = () => {
   // Submit updated data
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!opportunityDetail?._id) {
+    if (!opportunityDetail?.OPPORTUNITY_ID) {
       toast.error('Missing Opportunity ID');
       return;
     }
-
     try {
       setLoading(true);
-
       // Adjust payload as your API expects (likely UPPERCASE keys)
       const payload = {
-        ITEM_NUMBER: opportunityDetails.item_number,
-        DESCRIPTION: opportunityDetails.description,
-        SUB_CATEGORY: opportunityDetails.sub_category,
-        UNIT_OF_MEASURE: opportunityDetails.unit_of_measure,
-        ORDER_QUANTITY: Number(opportunityDetails.order_quantity),
-        PRICE: Number(opportunityDetails.price),
-        LINE_AMOUNT: Number(opportunityDetails.line_amount),
-        INSTRUCTIONS: opportunityDetails.instructions,
-        REQUESTED_SHIP_DATE: opportunityDetails.requested_ship_date,
-        STATUS: opportunityDetails.status,
+        opportunity_id: opportunityDetail.OPPORTUNITY_ID,
+        opportunity_detail_id: opportunityDetail.OPPORTUNITY_DETAIL_ID,
+        item_number: opportunityDetails.item_number,
+        description: opportunityDetails.description,
+        sub_category: opportunityDetails.sub_category,
+        unit_of_measure: opportunityDetails.unit_of_measure,
+        order_quantity: Number(opportunityDetails.order_quantity),
+        price: Number(opportunityDetails.price),
+        line_amount: Number(opportunityDetails.line_amount),
+        instructions: opportunityDetails.instructions,
+        requested_ship_date: opportunityDetails.requested_ship_date,
+        status: opportunityDetails.status,
       };
 
-      await apiService.put(
-        `/api/v1/opportunities/detailOpportunity/${opportunityDetail._id}`,
+      const response = await apiService.post(
+        '/api/v1/opportunities/editOpportunity',
         payload,
       );
-
-      toast.success('Opportunity detail updated!');
-      navigate('/opportunities/manage');
+      if (response.status === 200) {
+        toast.success('Opportunity updated!');
+        navigate('/opportunities/listing');
+      } else {
+        toast.error('Failed to update.');
+      }
     } catch (error) {
       console.error('Error updating opportunity:', error);
       toast.error('Something went wrong.');

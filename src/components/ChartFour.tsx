@@ -129,13 +129,13 @@ const ChartFour: React.FC = () => {
         </h3>
       </div>
 
-      <div className="mb-2">
+      <div>
         <div id="chartFour" className="-ml-5">
           <ReactApexChart
             options={options}
             series={state.series}
             type="bar"
-            height={350}
+            height={340}
           />
         </div>
       </div>

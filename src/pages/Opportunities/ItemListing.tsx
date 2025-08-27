@@ -1,7 +1,7 @@
 import {
   ChevronLeft,
   ChevronRight,
-  // Edit,
+  Edit,
   Trash2,
   Search,
   Filter,
@@ -89,12 +89,12 @@ const ItemListing = () => {
     setIsModalOpen(true);
   };
 
-  // const handleEdit = (line: OpportunityLine) => {
-  //   console.log('Editing line:', line);
-  //   navigate(`/opportunities/detail/edit/${line.OPPORTUNITY_DETAIL_ID}`, {
-  //     state: { line },
-  //   });
-  // };
+  const handleEdit = (line: OpportunityLine) => {
+    console.log('Editing line:', line);
+    navigate(`/opportunities/detail/edit/${line.OPPORTUNITY_DETAIL_ID}`, {
+      state: { line },
+    });
+  };
 
   const handleDetails = (line: OpportunityLine) => {
     navigate(`/opportunities/details/${line.OPPORTUNITY_DETAIL_ID}`, {
@@ -224,12 +224,12 @@ const ItemListing = () => {
                           >
                             <Trash2 className="text-[#C32033] hover:text-red-800 w-5 h-5" />
                           </button>
-                          {/* <button
+                          <button
                             onClick={() => handleEdit(line)}
                             className="hover:scale-110 transition-transform"
                           >
                             <Edit className="text-blue-600 hover:text-blue-800 w-5 h-5" />
-                          </button> */}
+                          </button>
                           <button
                             className="px-4 py-2 border border-[#C32033] text-[#C32033] rounded hover:bg-[#C32033] hover:text-white transition-colors font-medium"
                             onClick={() => handleDetails(line)}

@@ -245,20 +245,20 @@ const DetailSalesRequest = () => {
                 </div>
               </div>
             ))}
-            {/* Back Button */}
-            <div className="flex gap-4 pt-8">
-              <button
-                type="button"
-                onClick={() => navigate(-1)}
-                className="px-12 py-3 rounded-lg border border-[#C32033] text-[#C32033] font-medium hover:bg-[#C32033] hover:text-white transition-colors duration-300"
-              >
-                Back
-              </button>
-            </div>
           </div>
         ) : (
           <p>No order lines available</p>
         )}
+      </div>
+      {/* Back Button */}
+      <div className="flex gap-4 pt-8">
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="px-12 py-3 rounded-lg border border-[#C32033] text-[#C32033] font-medium hover:bg-[#C32033] hover:text-white transition-colors duration-300"
+        >
+          Back
+        </button>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import {
   Filter,
   ChevronLeft,
   ChevronRight,
-  // Edit,
+  Edit,
   Trash2,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -112,15 +112,15 @@ const ManageOpportunity = () => {
     });
   };
 
-  // const handleEdit = (opportunityId: number) => {
-  //   navigate(`/opportunities/edit/${opportunityId}`, {
-  //     state: {
-  //       opportunity: opportunityData.find(
-  //         (opp) => opp.OPPORTUNITY_ID === opportunityId,
-  //       ),
-  //     },
-  //   });
-  // };
+  const handleEdit = (opportunityId: number) => {
+    navigate(`/opportunities/edit/${opportunityId}`, {
+      state: {
+        opportunity: opportunityData.find(
+          (opp) => opp.OPPORTUNITY_ID === opportunityId,
+        ),
+      },
+    });
+  };
 
   const handleDelete = (opportunityId: number) => {
     setSelectedItem(
@@ -262,14 +262,14 @@ const ManageOpportunity = () => {
                           >
                             <Trash2 className="text-[#C32033] hover:text-red-800 w-5 h-5" />
                           </button>
-                          {/* <button
+                          <button
                             onClick={() =>
                               handleEdit(opportunity.OPPORTUNITY_ID)
                             }
                             className="hover:scale-110 transition-transform"
                           >
                             <Edit className="text-blue-600 hover:text-blue-800 w-5 h-5" />
-                          </button> */}
+                          </button>
                           <button
                             className="px-4 py-2 border border-[#C32033] text-[#C32033] rounded hover:bg-[#C32033] hover:text-white transition-colors font-medium"
                             onClick={() =>

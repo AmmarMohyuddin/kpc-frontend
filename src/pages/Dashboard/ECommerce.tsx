@@ -3,6 +3,10 @@ import CardFour from '../../components/CardFour.tsx';
 import CardOne from '../../components/CardOne.tsx';
 import CardThree from '../../components/CardThree.tsx';
 import CardTwo from '../../components/CardTwo.tsx';
+import ChartFour from '../../components/ChartFour';
+import ChartOne from '../../components/ChartOne.tsx';
+import ChartThree from '../../components/ChartThree.tsx';
+import ChartTwo from '../../components/ChartTwo.tsx';
 import apiService from '../../services/ApiService.ts';
 
 const ECommerce = () => {
@@ -45,6 +49,16 @@ const ECommerce = () => {
         <CardTwo title="Customers" count={counts.customers} />
         <CardThree title="Sales Persons" count={counts.salesPersons} />
         <CardFour title="Registered Users" count={counts.users} />
+      </div>
+      {/* <ChartOne /> */}
+      {/* <ChartTwo /> */}
+      <div className="grid grid-cols-2 mt-10 gap-5">
+        <div>
+          <ChartThree />
+        </div>
+        <div>
+          <ChartFour />
+        </div>
       </div>
     </>
   );

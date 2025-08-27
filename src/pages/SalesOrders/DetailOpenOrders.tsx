@@ -76,7 +76,7 @@ const DetailOrderOrders = () => {
                       key={key}
                       className="flex items-center justify-between py-1 border-b border-gray"
                     >
-                      <span className="font-bold text-lg text-bold text-black dark:text-white">
+                      <span className="font-bold text-lg !capitalize text-black dark:text-white">
                         {key.replace(/_/g, ' ')}:
                       </span>{' '}
                       {String(value)}

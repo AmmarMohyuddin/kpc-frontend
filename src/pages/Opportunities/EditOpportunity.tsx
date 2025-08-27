@@ -17,7 +17,7 @@ interface OpportunityHeader {
   salesperson_id: string;
   salesperson_name: string;
   remarks: string;
-  order_lines: any[];
+  // order_lines: any[];
 }
 
 const EditOpportunity = () => {
@@ -33,7 +33,7 @@ const EditOpportunity = () => {
       salesperson_id: '',
       salesperson_name: '',
       remarks: '',
-      order_lines: [],
+      // order_lines: [],
     },
   );
   console.log('Opportunity Header:', opportunityHeader);
@@ -41,7 +41,7 @@ const EditOpportunity = () => {
   // Status options
   const statusOptions: OptionType[] = [
     { value: '1', label: 'Open' },
-    { value: '2', label: 'New' },
+    // { value: '2', label: 'New' },
   ];
 
   // Logged in user
@@ -86,7 +86,7 @@ const EditOpportunity = () => {
             salesperson_id: opp.SALESPERSON_ID || '',
             salesperson_name: opp.SALESPERSON_NAME || '',
             remarks: opp.REMARKS || '',
-            order_lines: opp.ORDER_LINES || [],
+            // order_lines: opp.ORDER_LINES || [],
           });
         }
       } catch (error) {
@@ -130,17 +130,17 @@ const EditOpportunity = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      //   setLoading(true);
-      //   const response = await apiService.post(
-      //     '/api/v1/opportunities/updateOpportunity',
-      //     { id, ...opportunityHeader },
-      //   );
-      //   if (response.status === 200) {
-      //     toast.success('Opportunity updated!');
-      //     navigate('/opportunities/manage');
-      //   } else {
-      //     toast.error('Failed to update.');
-      //   }
+      setLoading(true);
+      const response = await apiService.post(
+        '/api/v1/opportunities/editOpportunity',
+        { id, ...opportunityHeader },
+      );
+      if (response.status === 200) {
+        toast.success('Opportunity updated!');
+        navigate('/opportunities/manage');
+      } else {
+        toast.error('Failed to update.');
+      }
     } catch (error) {
       console.error('Error updating opportunity:', error);
       toast.error('Something went wrong.');
@@ -313,7 +313,7 @@ const EditOpportunity = () => {
               className="w-[160px] h-[50px] rounded bg-[#C32033] text-md font-medium text-white hover:bg-[#A91B2E] transition-colors"
               disabled={loading}
             >
-              {loading ? 'Saving...' : 'Save'}
+              {loading ? 'Updating' : 'Update'}
             </button>
           </div>
         </form>
