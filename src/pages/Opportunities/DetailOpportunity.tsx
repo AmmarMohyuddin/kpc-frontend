@@ -1,4 +1,4 @@
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, ArrowRight } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 interface Opportunity {
@@ -121,6 +121,19 @@ const DetailOpportunity = () => {
             </span>
             <span>{opportunityData.REMARKS || 'N/A'}</span>
           </div>
+        </div>
+        <div className="flex justify-center pt-4">
+          <button
+            onClick={() =>
+              navigate(`/opportunities/follow-up`, {
+                state: { opportunity_id: opportunityData.OPPORTUNITY_ID },
+              })
+            }
+            className="flex items-center gap-2 text-[#C32033] hover:text-[#A91B2E] font-medium transition-colors"
+          >
+            Follow Up
+            <ArrowRight className="w-4 h-4" />
+          </button>
         </div>
       </div>
 

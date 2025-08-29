@@ -568,7 +568,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                   Manage Leads
                                 </NavLink>
                               </li>
-                              {/* <li>
+                              <li>
                                 <NavLink
                                   to="/leads/follow-up"
                                   className={({ isActive }) =>
@@ -580,6 +580,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 </NavLink>
                               </li>
                               <li>
+                                <NavLink
+                                  to="/leads/follow-up/manage"
+                                  className={({ isActive }) =>
+                                    'group relative flex items-center gap-6 rounded-md px-4 font-medium text-black text-lg duration-300 ease-in-out hover:text-black ' +
+                                    (isActive && 'text-[#C32033]')
+                                  }
+                                >
+                                  Manage Follow-Up
+                                </NavLink>
+                              </li>
+                              {/* <li>
                                 <NavLink
                                   to="/leads/closure"
                                   className={({ isActive }) =>
@@ -724,7 +735,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                   Manage Opportunities
                                 </NavLink>
                               </li>
-                              {/* <li>
+                              <li>
                                 <NavLink
                                   to="/opportunities/follow-up"
                                   className={({ isActive }) =>
@@ -736,6 +747,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 </NavLink>
                               </li>
                               <li>
+                                <NavLink
+                                  to="/opportunities/follow-up/manage"
+                                  className={({ isActive }) =>
+                                    'group relative flex items-center gap-6 rounded-md px-4 font-medium text-black text-lg duration-300 ease-in-out hover:text-black ' +
+                                    (isActive && 'text-[#C32033]')
+                                  }
+                                >
+                                  Manage Follow-Up
+                                </NavLink>
+                              </li>
+                              {/* <li>
                                 <NavLink
                                   to="/opportunities/closure"
                                   className={({ isActive }) =>

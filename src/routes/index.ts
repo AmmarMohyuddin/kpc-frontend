@@ -45,6 +45,9 @@ const EditOpportunity = lazy(() => import('../pages/Opportunities/EditOpportunit
 const Itemlisting = lazy(() => import('../pages/Opportunities/ItemListing'));
 const ItemDetail = lazy(() => import('../pages/Opportunities/DetailItem'));
 const EditOpportunityDetail = lazy(() => import('../pages/Opportunities/EditOpportunityDetail'));
+const FollowUpOpportunity = lazy(() => import('../pages/Opportunities/FollowUp'));
+const ManageFollowUp = lazy(() => import('../pages/Leads/manageFollowUp'));
+const DetailFollowUp = lazy(() => import('../pages/Leads/DetailFollowUp'));
 
 const coreRoutes = [
   {
@@ -81,6 +84,16 @@ const coreRoutes = [
     path: '/leads/follow-up',
     title: 'Follow Up',
     component: FollowUp,
+  },
+  {
+    path: '/leads/follow-up/manage',
+    title: 'Manage Follow Up',
+    component: ManageFollowUp,
+  },
+  {
+    path: '/leads/follow-up/detail/:id',
+    title: 'Follow Up Detail',
+    component: DetailFollowUp,
   },
   {
     path: '/leads/manage',
@@ -136,6 +149,21 @@ const coreRoutes = [
     path: '/opportunities/listing',
     title: 'Opportunity Listing',
     component: Itemlisting,
+  },
+        {
+    path: '/opportunities/follow-up',
+    title: 'Opportunity Follow Up',
+    component: FollowUpOpportunity,
+  },
+    {
+    path: '/opportunities/follow-up/manage',
+    title: 'Manage Follow Up',
+    component: ManageFollowUp,
+  },
+      {
+    path: '/opportunities/follow-up/detail/:id',
+    title: 'Follow Up Detail',
+    component: DetailFollowUp,
   },
   {
     path: '/sales-request/create',

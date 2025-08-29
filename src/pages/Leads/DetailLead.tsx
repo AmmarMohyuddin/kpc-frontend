@@ -1,4 +1,4 @@
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, ArrowRight } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const DetailLead = () => {
@@ -106,14 +106,19 @@ const DetailLead = () => {
             </div>
 
             {/* View Opportunity Button */}
-            {/* <div className="flex justify-center pt-4">
-              <Link to={`/leads/${leadData.id}/opportunity`}>
-                <button className="flex items-center gap-2 text-[#C32033] hover:text-[#A91B2E] font-medium transition-colors">
-                  View Opportunity
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </Link>
-            </div> */}
+            <div className="flex justify-center pt-4">
+              <button
+                onClick={() =>
+                  navigate(`/leads/follow-up`, {
+                    state: { lead_id: leadData.lead_id },
+                  })
+                }
+                className="flex items-center gap-2 text-[#C32033] hover:text-[#A91B2E] font-medium transition-colors"
+              >
+                Follow Up
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
         <div className="flex gap-4 pt-8">
