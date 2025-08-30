@@ -60,7 +60,7 @@ const ManageOpportunity = () => {
   const [opportunityData, setOpportunityData] = useState<Opportunity[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
-
+  console.log('opportunityData', opportunityData);
   useEffect(() => {
     const fetchOpportunities = async () => {
       try {

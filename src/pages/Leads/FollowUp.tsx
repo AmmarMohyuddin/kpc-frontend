@@ -320,7 +320,7 @@ const CreateFollowUp = () => {
               type="button"
               onClick={handleSave}
               disabled={!isFormValid()}
-              className={`px-15 py-3 rounded-lg font-medium transition-colors 
+              className={`px-15 py-3 rounded font-medium transition-colors 
                 ${
                   isFormValid()
                     ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'

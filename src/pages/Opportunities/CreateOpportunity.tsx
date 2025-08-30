@@ -3,6 +3,7 @@ import Select from 'react-select';
 import toast from 'react-hot-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
 import apiService from '../../services/ApiService';
+import Loader from '../../common/Loader';
 
 interface OptionType {
   value: string;
@@ -295,37 +296,6 @@ const CreateOpportunity = () => {
     setCurrentStep(1);
   };
 
-  // Submit both forms
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   try {
-  //     const completeOpportunity = {
-  //       ...opportunityHeader,
-  //       ...opportunityDetails,
-  //     };
-  //     console.log('Complete Opportunity Data:', completeOpportunity);
-
-  //     const response = await apiService.post(
-  //       '/api/v1/opportunities/createOpportunity',
-  //       completeOpportunity,
-  //     );
-
-  //     if (response.status === 201) {
-  //       toast.success('Opportunity created!');
-  //       navigate('/opportunities/manage');
-  //     } else {
-  //       console.error('Failed to create opportunity:', response);
-  //       toast.error('Failed to create opportunity.');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error submitting form:', error);
-  //     toast.error('Something went wrong.');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   // Submit header + details (new) OR only details (add more)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -380,6 +350,38 @@ const CreateOpportunity = () => {
     }
   };
 
+  const isFormValid = () => {
+    return (
+      opportunityHeader.generation_date &&
+      opportunityHeader.close_date &&
+      opportunityHeader.status_id &&
+      opportunityHeader.salesperson_id &&
+      opportunityHeader.remarks
+    );
+  };
+
+  const isItemFormValid = () => {
+    return (
+      opportunityDetails.item_number &&
+      opportunityDetails.item_detail &&
+      opportunityDetails.sub_category &&
+      opportunityDetails.description &&
+      opportunityDetails.unit_of_measure &&
+      opportunityDetails.order_quantity &&
+      opportunityDetails.price &&
+      opportunityDetails.line_amount &&
+      opportunityDetails.instructions &&
+      opportunityDetails.requested_ship_date
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[calc(100vh-200px)]">
+        <Loader />
+      </div>
+    );
+  }
   return (
     <>
       <div className="flex flex-col gap-10">
@@ -490,14 +492,14 @@ const CreateOpportunity = () => {
               <div className="flex gap-4 pt-4">
                 <button
                   type="button"
-                  className="w-[160px] h-[50px] rounded border border-[#C32033] text-md font-medium text-[#C32033] hover:bg-gray-2 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
                   onClick={handleNext}
-                  className="w-[160px] h-[50px] rounded bg-[#C32033] text-md font-medium text-white hover:bg-[#A91B2E] transition-colors"
+                  disabled={!isFormValid()}
+                  className={`w-[160px] h-[50px] rounded font-medium transition-colors 
+    ${
+      isFormValid()
+        ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
+        : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
+    }`}
                 >
                   Next
                 </button>
@@ -681,7 +683,13 @@ const CreateOpportunity = () => {
                 </button>
                 <button
                   type="submit"
-                  className="w-[160px] h-[50px] rounded bg-[#C32033] text-md font-medium text-white hover:bg-[#A91B2E] transition-colors"
+                  disabled={!isItemFormValid()}
+                  className={`w-[160px] h-[50px] rounded font-medium transition-colors 
+    ${
+      isItemFormValid()
+        ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
+        : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
+    }`}
                 >
                   Save
                 </button>

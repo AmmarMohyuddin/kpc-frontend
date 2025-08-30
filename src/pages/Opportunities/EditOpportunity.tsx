@@ -40,8 +40,8 @@ const EditOpportunity = () => {
 
   // Status options
   const statusOptions: OptionType[] = [
-    { value: '1', label: 'Open' },
-    // { value: '2', label: 'New' },
+    { value: 'New', label: 'New' },
+    { value: 'Open', label: 'Open' },
   ];
 
   // Logged in user
@@ -79,10 +79,11 @@ const EditOpportunity = () => {
 
         if (oppRes.data && oppRes.data[0]) {
           const opp = oppRes.data[0];
+          console.log(opp);
           setOpportunityHeader({
             generation_date: opp.GENERATION_DATE?.split('T')[0] || '',
             close_date: opp.CLOSE_DATE?.split('T')[0] || '',
-            status: String(opp.STATUS || ''), // always string
+            status: opp.STATUS || '',
             salesperson_id: opp.SALESPERSON_ID || '',
             salesperson_name: opp.SALESPERSON_NAME || '',
             remarks: opp.REMARKS || '',
@@ -236,9 +237,14 @@ const EditOpportunity = () => {
                 <Select
                   name="salesperson_id"
                   value={
-                    salesPersonOptions.find(
-                      (o) => o.value === opportunityHeader.salesperson_id,
-                    ) || null
+                    salesPersonOptions.length > 0
+                      ? salesPersonOptions.find(
+                          (o) => o.value === opportunityHeader.salesperson_id,
+                        ) || null
+                      : {
+                          value: opportunityHeader.salesperson_id,
+                          label: opportunityHeader.salesperson_name,
+                        }
                   }
                   onChange={handleSalesPersonChange}
                   options={salesPersonOptions}
@@ -313,7 +319,7 @@ const EditOpportunity = () => {
               className="w-[160px] h-[50px] rounded bg-[#C32033] text-md font-medium text-white hover:bg-[#A91B2E] transition-colors"
               disabled={loading}
             >
-              {loading ? 'Updating' : 'Update'}
+              Update
             </button>
           </div>
         </form>
