@@ -99,6 +99,12 @@ const DetailLead = () => {
               <span>{leadData.salesperson_name}</span>
             </div>
 
+            {/* Stage */}
+            <div className="flex items-center justify-between py-1 border-b border-gray">
+              <span className="text-lg font-bold text-black">Stage:</span>
+              <div>{leadData.stage}</div>
+            </div>
+
             {/* Status */}
             <div className="flex items-center justify-between py-1 border-b border-gray">
               <span className="text-lg font-bold text-black">Status:</span>
@@ -107,17 +113,31 @@ const DetailLead = () => {
 
             {/* View Opportunity Button */}
             <div className="flex justify-center pt-4">
-              <button
-                onClick={() =>
-                  navigate(`/leads/follow-up`, {
-                    state: { lead_id: leadData.lead_id },
-                  })
-                }
-                className="flex items-center gap-2 text-[#C32033] hover:text-[#A91B2E] font-medium transition-colors"
-              >
-                Follow Up
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              {leadData.opportunity_id ? (
+                <button
+                  onClick={() =>
+                    navigate(`/opportunities/${leadData.opportunity_id}`, {
+                      state: { opportunity_id: leadData.opportunity_id },
+                    })
+                  }
+                  className="flex items-center gap-2 text-[#C32033] hover:text-[#A91B2E] font-medium transition-colors"
+                >
+                  View Opportunity Details
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              ) : (
+                <button
+                  onClick={() =>
+                    navigate(`/opportunities/create`, {
+                      state: { lead_id: leadData.lead_id },
+                    })
+                  }
+                  className="flex items-center gap-2 text-[#C32033] hover:text-[#A91B2E] font-medium transition-colors"
+                >
+                  Create Opportunity
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              )}
             </div>
           </div>
         </div>

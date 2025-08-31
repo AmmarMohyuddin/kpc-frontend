@@ -1,5 +1,8 @@
 import { ChevronRight, ArrowRight } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import apiService from '../../services/ApiService';
+import Loader from '../../common/Loader';
 
 interface Opportunity {
   OPPORTUNITY_ID: number;
@@ -40,13 +43,65 @@ interface Opportunity {
 const DetailOpportunity = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const opportunityData: Opportunity = location.state?.opportunity;
-  console.log('Opportunity Data:', opportunityData);
+  const [opportunityData, setOpportunityData] = useState<Opportunity | null>(
+    null,
+  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!opportunityData) {
+  // Check if opportunity data is passed via state or need to fetch from API
+  useEffect(() => {
+    const fetchOpportunityData = async () => {
+      try {
+        setLoading(true);
+
+        // If full opportunity data is passed via state, use it
+        if (location.state?.opportunity) {
+          setOpportunityData(location.state.opportunity);
+          setLoading(false);
+          return;
+        }
+
+        // If only opportunity_id is provided in state, fetch from API
+        if (location.state?.opportunity_id) {
+          const response = await apiService.get(
+            `/api/v1/opportunities/detailOpportunity/${location.state.opportunity_id}`,
+            {},
+          );
+
+          if (response.data) {
+            setOpportunityData(response.data[0]);
+          } else {
+            setError('Opportunity not found');
+          }
+        } else {
+          setError('Opportunity ID is required');
+        }
+      } catch (err) {
+        console.error('Error fetching opportunity details:', err);
+        setError('Failed to fetch opportunity details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOpportunityData();
+  }, [location.state]);
+
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-[calc(100vh-200px)]">
-        <div className="text-red-500 text-lg">Opportunity data not found</div>
+        <Loader />
+      </div>
+    );
+  }
+
+  if (error || !opportunityData) {
+    return (
+      <div className="flex justify-center items-center h-[calc(100vh-200px)]">
+        <div className="text-red-500 text-lg">
+          {error || 'Opportunity data not found'}
+        </div>
       </div>
     );
   }
@@ -74,6 +129,16 @@ const DetailOpportunity = () => {
       {/* Detail Card */}
       <div className="rounded border border-stroke bg-white px-5 pt-6 pb-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5">
         <div className="space-y-6">
+          {/* Lead ID */}
+          {opportunityData.LEAD_ID ? (
+            <div className="flex items-center justify-between py-1 border-b border-gray">
+              <span className="font-bold text-lg text-black dark:text-white">
+                Lead ID:
+              </span>
+              <span>{opportunityData.LEAD_ID}</span>
+            </div>
+          ) : null}
+
           {/* Opportunity ID */}
           <div className="flex items-center justify-between py-1 border-b border-gray">
             <span className="font-bold text-lg text-black dark:text-white">
@@ -122,7 +187,7 @@ const DetailOpportunity = () => {
             <span>{opportunityData.REMARKS || 'N/A'}</span>
           </div>
         </div>
-        <div className="flex justify-center pt-4">
+        <div className="flex flex-col items-center pt-4 gap-3">
           <button
             onClick={() =>
               navigate(`/opportunities/follow-up`, {
@@ -132,6 +197,22 @@ const DetailOpportunity = () => {
             className="flex items-center gap-2 text-[#C32033] hover:text-[#A91B2E] font-medium transition-colors"
           >
             Follow Up
+            <ArrowRight className="w-4 h-4" />
+          </button>
+
+          <button
+            onClick={() =>
+              navigate(`/opportunities/convert`, {
+                state: {
+                  lead_id: opportunityData.LEAD_ID,
+                  opportunity_id: opportunityData.OPPORTUNITY_ID,
+                  opportunity_details: opportunityData.ORDER_LINES,
+                },
+              })
+            }
+            className="flex items-center gap-2 text-[#C32033] hover:text-[#A91B2E] font-medium transition-colors"
+          >
+            Convert to Sales Request
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

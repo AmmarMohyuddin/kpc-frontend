@@ -16,6 +16,7 @@ interface Lead {
   email_address: string;
   contact_position: string;
   source: string;
+  stage: string;
   status_id: number;
   status: string;
   created_by: string;
@@ -53,6 +54,7 @@ const ManageLeads = () => {
 
     fetchSalesRequest();
   }, []);
+  console.log('leadsData:', leadsData);
 
   // Filter leads based on lead_id search term
   const filteredLeads = leadsData.filter((lead) =>

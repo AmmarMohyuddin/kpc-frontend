@@ -11,6 +11,7 @@ interface OptionType {
 }
 
 interface OpportunityHeader {
+  lead_id: string;
   generation_date: string;
   close_date: string;
   status_id: number;
@@ -48,6 +49,7 @@ const CreateOpportunity = () => {
     location.state?.step || 1, // 👈 default is 1, but will be 2 if passed
   ); // 1: Header, 2: Details
   const opportunityId = location.state?.opportunityId || null;
+  const lead_id = location.state?.lead_id || null;
   const [salesPersons, setSalesPersons] = useState<any[]>([]);
   const [items, setItems] = useState<any[]>([]);
   const [itemDetail, setItemDetail] = useState<ItemDetail | null>(null);
@@ -55,6 +57,7 @@ const CreateOpportunity = () => {
 
   const [opportunityHeader, setOpportunityHeader] = useState<OpportunityHeader>(
     {
+      lead_id: lead_id ? lead_id : '',
       generation_date: new Date().toISOString().split('T')[0],
       close_date: new Date().toISOString().split('T')[0],
       status_id: 0,

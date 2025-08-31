@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import Select from 'react-select';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -8,23 +8,25 @@ import Loader from '../../common/Loader';
 interface OptionType {
   value: string;
   label: string;
+  stage?: string;
 }
 
 interface OpportunityHeader {
   generation_date: string;
   close_date: string;
-  status: string; // always keep it string for consistency
+  status: string;
   salesperson_id: string;
   salesperson_name: string;
   remarks: string;
-  // order_lines: any[];
+  stage: string;
 }
 
 const EditOpportunity = () => {
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>(); // /opportunities/edit/:id
+  const { id } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(false);
   const [salesPersons, setSalesPersons] = useState<any[]>([]);
+  const [status, setStatus] = useState<string>('');
   const [opportunityHeader, setOpportunityHeader] = useState<OpportunityHeader>(
     {
       generation_date: '',
@@ -33,16 +35,78 @@ const EditOpportunity = () => {
       salesperson_id: '',
       salesperson_name: '',
       remarks: '',
-      // order_lines: [],
+      stage: '',
     },
   );
   console.log('Opportunity Header:', opportunityHeader);
 
-  // Status options
-  const statusOptions: OptionType[] = [
-    { value: 'New', label: 'New' },
-    { value: 'Open', label: 'Open' },
-  ];
+  // Status flow for opportunities
+  const getNextStatusOptions = useCallback((status: string): OptionType[] => {
+    switch (status) {
+      case 'Open':
+        return [
+          { value: 'Negotiating', label: 'Negotiating', stage: 'Engagement' },
+          { value: 'On Hold', label: 'On Hold', stage: 'Decision' },
+          { value: 'Closed', label: 'Closed', stage: 'Closure' },
+        ];
+
+      case 'Negotiating':
+        return [
+          {
+            value: 'Proposal Sent',
+            label: 'Proposal Sent',
+            stage: 'Engagement',
+          },
+          { value: 'On Hold', label: 'On Hold', stage: 'Decision' },
+          { value: 'Closed', label: 'Closed', stage: 'Closure' },
+        ];
+
+      case 'Proposal Sent':
+        return [
+          { value: 'Won', label: 'Won', stage: 'Decision' },
+          { value: 'Lost', label: 'Lost', stage: 'Decision' },
+          { value: 'On Hold', label: 'On Hold', stage: 'Decision' },
+        ];
+
+      case 'Won':
+        return [
+          {
+            value: 'Won - Converted to Sales Request',
+            label: 'Won - Converted to Sales Request',
+            stage: 'Closure',
+          },
+        ];
+
+      case 'Lost':
+        return [{ value: 'Closed', label: 'Closed', stage: 'Closure' }];
+
+      case 'On Hold':
+        return [
+          {
+            value: 'Follow-up with Customer',
+            label: 'Follow-up with Customer',
+            stage: 'Decision',
+          },
+        ];
+
+      case 'Closed':
+      case 'Won - Converted to Sales Request':
+        return []; // terminal states
+
+      default:
+        return [];
+    }
+  }, []);
+
+  const currentStatusOption = useMemo(() => {
+    if (!opportunityHeader.status) return null;
+    return { value: opportunityHeader.status, label: opportunityHeader.status };
+  }, [opportunityHeader.status]);
+
+  const nextStatusOptions = useMemo(
+    () => getNextStatusOptions(status),
+    [status, getNextStatusOptions],
+  );
 
   // Logged in user
   const loggedInUser = useMemo(() => {
@@ -87,8 +151,9 @@ const EditOpportunity = () => {
             salesperson_id: opp.SALESPERSON_ID || '',
             salesperson_name: opp.SALESPERSON_NAME || '',
             remarks: opp.REMARKS || '',
-            // order_lines: opp.ORDER_LINES || [],
+            stage: opp.STAGE || '',
           });
+          setStatus(opp.STATUS || '');
         }
       } catch (error) {
         console.error('Error fetching opportunity:', error);
@@ -127,6 +192,15 @@ const EditOpportunity = () => {
     }));
   };
 
+  // Handle status change - updated to set both status and stage
+  const handleStatusChange = useCallback((selectedOption: any) => {
+    setOpportunityHeader((prev) => ({
+      ...prev,
+      status: selectedOption?.value || '',
+      stage: selectedOption?.stage || '', // Set the stage from the selected option
+    }));
+  }, []);
+
   // Save updated header
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -150,7 +224,7 @@ const EditOpportunity = () => {
     }
   };
 
-  // Custom select styles (same as create)
+  // Custom select styles
   const customSelectStyles = {
     control: (provided: any, state: any) => ({
       ...provided,
@@ -262,20 +336,29 @@ const EditOpportunity = () => {
                   Status
                 </label>
                 <Select
-                  options={statusOptions}
-                  value={
-                    statusOptions.find(
-                      (o) => o.value === opportunityHeader.status,
-                    ) || null
-                  }
-                  onChange={(selectedOption) =>
-                    handleHeaderSelectChange('status', selectedOption)
-                  }
-                  isSearchable
-                  styles={customSelectStyles}
+                  name="status"
+                  value={currentStatusOption}
+                  onChange={handleStatusChange}
+                  options={nextStatusOptions}
                   placeholder="Select Status"
+                  isSearchable={false}
+                  styles={customSelectStyles}
+                  isDisabled={nextStatusOptions.length === 0}
                 />
               </div>
+
+              {/* <div>
+                <label className="block text-md font-medium text-black mb-2">
+                  Stage
+                </label>
+                <input
+                  type="text"
+                  name="stage"
+                  value={opportunityHeader.stage}
+                  readOnly
+                  className="w-full px-4 py-3 bg-gray-100 border-0 rounded-lg text-gray-600"
+                />
+              </div> */}
 
               <div>
                 <label className="block text-md font-medium text-black mb-2">

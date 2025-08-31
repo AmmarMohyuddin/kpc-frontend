@@ -9,6 +9,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 interface OptionType {
   value: string;
   label: string;
+  stage?: string;
 }
 
 interface FormData {
@@ -21,14 +22,14 @@ interface FormData {
   contact_position: string;
   source: string;
   status: string;
+  status_id: string;
+  stage: string;
   salesperson_id: string;
   salesperson_name: string;
 }
 
 interface LeadDetail {
   lead_id: number;
-  lead_number: string | null;
-  lead_type: string;
   customer_name: string;
   customer_type: string;
   country: string;
@@ -38,16 +39,11 @@ interface LeadDetail {
   email_address: string;
   contact_position: string;
   source: string;
-  stage: string | null;
   status_id: number;
   status: string;
-  created_by: string;
-  last_updated_by: string;
-  creation_date: string;
-  last_update_date: string;
+  stage: string;
   salesperson_id: string | null;
   salesperson_name: string | null;
-  opportunity_id: string | null;
 }
 
 const EditLead = () => {
@@ -55,9 +51,10 @@ const EditLead = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { lead } = location.state;
-  const [salesPersons, setSalesPersons] = useState([]);
+  const [salesPersons, setSalesPersons] = useState<any[]>([]);
   const [cityOptions, setCityOptions] = useState<OptionType[]>([]);
   const [leadSourceOptions, setLeadSourceOptions] = useState<OptionType[]>([]);
+  const [status, setStatus] = useState('');
   const [leadsFormData, setLeadsFormData] = useState<FormData>({
     customer_name: '',
     customer_type: '',
@@ -67,62 +64,57 @@ const EditLead = () => {
     customer_email: '',
     contact_position: '',
     source: '',
+    stage: '',
     status: '',
+    status_id: '',
     salesperson_id: '',
     salesperson_name: '',
   });
 
-  console.log('Editing Lead:', lead);
   console.log('Leads Form Data:', leadsFormData);
 
-  // Fetch lead details on component mount
-  //   useEffect(() => {
-  //     const fetchLeadDetails = async () => {
-  //       try {
-  //         setLoading(true);
-  //         const response = await apiService.get(`/api/v1/leads/detailLead`, {
-  //           customer_name: lead.customer_name,
-  //         });
-  //         console.log('Lead Details Response:', response);
+  // ---- Hard-coded status flow ----
+  const getNextStatusOptions = useCallback((status: string): OptionType[] => {
+    switch (status) {
+      case 'New':
+        return [
+          { value: 'Contacted', label: 'Contacted', stage: 'Prospecting' },
+          { value: 'Qualified', label: 'Qualified', stage: 'Evaluation' },
+          { value: 'Unqualified', label: 'Unqualified', stage: 'Evaluation' },
+        ];
+      case 'Contacted':
+        return [
+          { value: 'Qualified', label: 'Qualified', stage: 'Evaluation' },
+          { value: 'Unqualified', label: 'Unqualified', stage: 'Evaluation' },
+        ];
+      case 'Qualified':
+        return [
+          {
+            value: 'Converted to Opportunity',
+            label: 'Converted to Opportunity',
+            stage: 'Closure',
+          },
+        ];
+      case 'Unqualified':
+        return [{ value: 'Closed', label: 'Closed', stage: 'Closure' }];
+      case 'Closed':
+      case 'Converted to Opportunity':
+        return []; // terminal states
+      default:
+        return [];
+    }
+  }, []);
 
-  //         if (response?.status === 200) {
-  //           // Filter to find the specific lead by lead_id
-  //           const leadDetail = response.data.find(
-  //             (item: LeadDetail) => item.lead_id === lead.lead_id,
-  //           );
+  const currentStatusOption = useMemo(() => {
+    if (!leadsFormData.status) return null;
+    return { value: leadsFormData.status, label: leadsFormData.status };
+  }, [leadsFormData.status]);
 
-  //           if (leadDetail) {
-  //             // Populate form with existing lead data
-  //             setLeadsFormData({
-  //               customer_name: leadDetail.customer_name || '',
-  //               customer_type: leadDetail.customer_type || '',
-  //               city: leadDetail.city || '',
-  //               address: leadDetail.contact_address || '',
-  //               contact_number: leadDetail.contact_number || '',
-  //               customer_email: leadDetail.email_address || '',
-  //               contact_position: leadDetail.contact_position || '',
-  //               source: leadDetail.source || '',
-  //               status: leadDetail.status || '',
-  //               salesperson_id: leadDetail.salesperson_id || '',
-  //               salesperson_name: leadDetail.salesperson_name || '',
-  //             });
-  //           } else {
-  //             toast.error('Lead details not found');
-  //             console.error('Lead not found with ID:', lead.lead_id);
-  //           }
-  //         }
-  //       } catch (error) {
-  //         console.error('❌ Error fetching lead details:', error);
-  //         toast.error('Failed to load lead details');
-  //       } finally {
-  //         setLoading(false);
-  //       }
-  //     };
+  const nextStatusOptions = useMemo(
+    () => getNextStatusOptions(status),
+    [status, getNextStatusOptions],
+  );
 
-  //     fetchLeadDetails();
-  //   }, [lead.customer_name, lead.lead_id]);
-
-  // Memoize custom styles to prevent recreation on every render
   const customSelectStyles = useMemo(
     () => ({
       control: (provided: any, state: any) => ({
@@ -140,10 +132,6 @@ const EditLead = () => {
         height: '50px',
         padding: '0 8px',
       }),
-      input: (provided: any) => ({
-        ...provided,
-        margin: '0px',
-      }),
       option: (provided: any, state: any) => ({
         ...provided,
         backgroundColor: state.isSelected
@@ -152,9 +140,6 @@ const EditLead = () => {
           ? '#FFD7D7'
           : provided.backgroundColor,
         color: '#000',
-        '&:active': {
-          backgroundColor: state.isSelected ? '#FFD7D7' : '#FFD7D7',
-        },
       }),
       singleValue: (provided: any) => ({
         ...provided,
@@ -164,23 +149,25 @@ const EditLead = () => {
     [],
   );
 
-  // Memoize data transformation functions
-  const mapCitiesToOptions = useCallback((data: any[]): OptionType[] => {
-    return Array.isArray(data)
-      ? data.map((item) => ({ value: item.name, label: item.name }))
-      : [];
-  }, []);
+  const mapCitiesToOptions = useCallback(
+    (data: any[]): OptionType[] =>
+      Array.isArray(data)
+        ? data.map((item) => ({ value: item.name, label: item.name }))
+        : [],
+    [],
+  );
 
-  const mapSourcesToOptions = useCallback((data: any[]): OptionType[] => {
-    return Array.isArray(data)
-      ? data.map((item) => ({
-          value: item.lead_source,
-          label: item.lead_source,
-        }))
-      : [];
-  }, []);
+  const mapSourcesToOptions = useCallback(
+    (data: any[]): OptionType[] =>
+      Array.isArray(data)
+        ? data.map((item) => ({
+            value: item.lead_source,
+            label: item.lead_source,
+          }))
+        : [],
+    [],
+  );
 
-  // Get logged in user only once
   const loggedInUser = useMemo(() => {
     try {
       return JSON.parse(localStorage.getItem('user') || '{}');
@@ -189,7 +176,6 @@ const EditLead = () => {
     }
   }, []);
 
-  // Memoize salesperson options
   const salesPersonOptions = useMemo(() => {
     return salesPersons
       .filter(
@@ -201,35 +187,11 @@ const EditLead = () => {
       }));
   }, [salesPersons, loggedInUser.person_number]);
 
-  // Fetch data on component mount
-  //   useEffect(() => {
-  //     const fetchData = async () => {
-  //       try {
-  //         setLoading(true);
-
-  //         const [salesPersonsRes, citiesRes, leadSourcesRes] = await Promise.all([
-  //           apiService.get('/api/v1/salesPersons/list', {}),
-  //           apiService.get('/api/v1/cities/list', {}),
-  //           apiService.get('/api/v1/leadSources/list', {}),
-  //         ]);
-
-  //         setSalesPersons(salesPersonsRes.data || []);
-  //         setCityOptions(mapCitiesToOptions(citiesRes.data));
-  //         setLeadSourceOptions(mapSourcesToOptions(leadSourcesRes.data));
-  //       } catch (error) {
-  //         console.error('Error fetching data:', error);
-  //       } finally {
-  //         setLoading(false);
-  //       }
-  //     };
-
-  //     fetchData();
-  //   }, [mapCitiesToOptions, mapSourcesToOptions]);
   useEffect(() => {
     const fetchAllData = async () => {
       try {
         setLoading(true);
-        // Fetch all data in parallel
+
         const [salesPersonsRes, citiesRes, leadSourcesRes, leadDetailsRes] =
           await Promise.all([
             apiService.get('/api/v1/salesPersons/list', {}),
@@ -240,17 +202,14 @@ const EditLead = () => {
             }),
           ]);
 
-        // Set basic data
         setSalesPersons(salesPersonsRes.data || []);
         setCityOptions(mapCitiesToOptions(citiesRes.data));
         setLeadSourceOptions(mapSourcesToOptions(leadSourcesRes.data));
 
-        // Process lead details
         if (leadDetailsRes?.status === 200) {
           const leadDetail = leadDetailsRes.data.find(
             (item: LeadDetail) => item.lead_id === lead.lead_id,
           );
-
           if (leadDetail) {
             setLeadsFormData({
               customer_name: leadDetail.customer_name || '',
@@ -260,18 +219,16 @@ const EditLead = () => {
               contact_number: leadDetail.contact_number || '',
               customer_email: leadDetail.email_address || '',
               contact_position: leadDetail.contact_position || '',
+              stage: leadDetail.stage || '',
               source: leadDetail.source || '',
               status: leadDetail.status || '',
+              status_id: leadDetail.status_id.toString() || '',
               salesperson_id: leadDetail.salesperson_id || '',
               salesperson_name: leadDetail.salesperson_name || '',
             });
-          } else {
-            toast.error('Lead details not found');
-            console.error('Lead not found with ID:', lead.lead_id);
+            setStatus(leadDetail.status || '');
           }
         }
-
-        setLoading(false);
       } catch (error) {
         console.error('❌ Error fetching data:', error);
         toast.error('Failed to load data');
@@ -281,45 +238,37 @@ const EditLead = () => {
     };
 
     fetchAllData();
-  }, [
-    lead.customer_name,
-    lead.lead_id,
-    mapCitiesToOptions,
-    mapSourcesToOptions,
-  ]);
+  }, [lead, mapCitiesToOptions, mapSourcesToOptions]);
 
-  // Handle input changes
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    console.log('Input change:', name, value);
-    setLeadsFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setLeadsFormData((prev) => ({ ...prev, [name]: value }));
   }, []);
 
-  // Handle select changes - FIXED VERSION
   const handleSelectChange = useCallback(
     (name: keyof FormData, selectedOption: any) => {
-      const value = selectedOption?.value || '';
-      console.log('Select change:', name, value);
       setLeadsFormData((prev) => ({
         ...prev,
-        [name]: value,
+        [name]: selectedOption?.value || '',
       }));
     },
     [],
   );
 
-  // Handle sales person change - FIXED VERSION
   const handleSalesPersonChange = useCallback((selectedOption: any) => {
-    const value = selectedOption?.value || '';
-    const label = selectedOption?.label || '';
-    console.log('Sales person change:', value, label);
     setLeadsFormData((prev) => ({
       ...prev,
-      salesperson_id: value,
-      salesperson_name: label,
+      salesperson_id: selectedOption?.value || '',
+      salesperson_name: selectedOption?.label || '',
+    }));
+  }, []);
+
+  // Updated to set both status and stage
+  const handleStatusChange = useCallback((selectedOption: any) => {
+    setLeadsFormData((prev) => ({
+      ...prev,
+      status: selectedOption?.value || '',
+      stage: selectedOption?.stage || '', // Set the stage from the selected option
     }));
   }, []);
 
@@ -328,37 +277,30 @@ const EditLead = () => {
       setLoading(true);
       const response = await apiService.put(`/api/v1/leads/updateLead`, {
         ...leadsFormData,
-        lead_id: lead.lead_id, // Include the lead ID for updating
+        lead_id: lead.lead_id,
       });
 
       if (response?.status === 200) {
         toast.success(response.data?.message || 'Lead updated successfully');
         navigate('/leads/manage');
       } else {
-        console.error('Failed to update lead:', response);
         toast.error(response?.data?.message || 'Failed to update lead.');
       }
     } catch (error: any) {
       console.error('Error updating lead:', error);
-      toast.error(
-        error.response?.data?.message ||
-          'Error updating lead. Please try again.',
-      );
+      toast.error(error.response?.data?.message || 'Error updating lead.');
     } finally {
       setLoading(false);
     }
   };
 
-  const isFormValid = () => {
-    return (
-      leadsFormData.customer_type &&
-      leadsFormData.customer_email &&
-      leadsFormData.customer_name &&
-      leadsFormData.contact_number &&
-      leadsFormData.source &&
-      leadsFormData.salesperson_name
-    );
-  };
+  const isFormValid = () =>
+    leadsFormData.customer_type &&
+    leadsFormData.customer_email &&
+    leadsFormData.customer_name &&
+    leadsFormData.contact_number &&
+    leadsFormData.source &&
+    leadsFormData.salesperson_name;
 
   if (loading) {
     return (
@@ -371,9 +313,7 @@ const EditLead = () => {
   return (
     <div className="flex flex-col gap-10">
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
-        <h2 className="text-2xl font-semibold mb-3 text-black dark:text-white">
-          Edit Lead
-        </h2>
+        <h2 className="text-2xl font-semibold mb-3 text-black">Edit Lead</h2>
 
         <div className="flex items-center gap-2 text-md text-gray-600">
           <span>Leads</span>
@@ -383,14 +323,10 @@ const EditLead = () => {
           <span className="text-[#C32033]">{lead.lead_id}</span>
         </div>
 
-        <div className="py-4"></div>
-
-        <form className="space-y-6">
-          {/* Two Column Grid */}
+        <form className="space-y-6 mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Left Column */}
             <div className="space-y-6">
-              {/* Choose a Type */}
               <div>
                 <label className="block text-md font-medium text-black mb-2">
                   Customer Type
@@ -405,9 +341,7 @@ const EditLead = () => {
                         }
                       : null
                   }
-                  onChange={(selectedOption) =>
-                    handleSelectChange('customer_type', selectedOption)
-                  }
+                  onChange={(opt) => handleSelectChange('customer_type', opt)}
                   options={[
                     { value: 'Customer', label: 'Customer' },
                     { value: 'Individual', label: 'Individual' },
@@ -418,7 +352,6 @@ const EditLead = () => {
                 />
               </div>
 
-              {/* Email */}
               <div>
                 <label className="block text-md font-medium text-black mb-2">
                   Email
@@ -429,12 +362,11 @@ const EditLead = () => {
                   value={leadsFormData.customer_email}
                   onChange={handleChange}
                   placeholder="Enter Email"
-                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:ring-2 focus:ring-[#C32033]"
                   required
                 />
               </div>
 
-              {/* Address */}
               <div>
                 <label className="block text-md font-medium text-black mb-2">
                   Address
@@ -445,12 +377,10 @@ const EditLead = () => {
                   value={leadsFormData.address}
                   onChange={handleChange}
                   placeholder="Enter Address"
-                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
-                  required
+                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:ring-2 focus:ring-[#C32033]"
                 />
               </div>
 
-              {/* Contact Number */}
               <div>
                 <label className="block text-md font-medium text-black mb-2">
                   Contact Number
@@ -461,12 +391,10 @@ const EditLead = () => {
                   value={leadsFormData.contact_number}
                   onChange={handleChange}
                   placeholder="Enter Contact Number"
-                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
-                  required
+                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:ring-2 focus:ring-[#C32033]"
                 />
               </div>
 
-              {/* Source */}
               <div>
                 <label className="block text-md font-medium text-black mb-2">
                   Source
@@ -475,13 +403,10 @@ const EditLead = () => {
                   options={leadSourceOptions}
                   value={
                     leadSourceOptions.find(
-                      (opt) => opt.value === leadsFormData.source,
+                      (o) => o.value === leadsFormData.source,
                     ) || null
                   }
-                  onChange={(selectedOption) =>
-                    handleSelectChange('source', selectedOption)
-                  }
-                  isSearchable
+                  onChange={(opt) => handleSelectChange('source', opt)}
                   styles={customSelectStyles}
                   placeholder="Select Source"
                 />
@@ -490,7 +415,6 @@ const EditLead = () => {
 
             {/* Right Column */}
             <div className="space-y-6">
-              {/* Customer Name */}
               <div>
                 <label className="block text-md font-medium text-black mb-2">
                   Customer Name
@@ -501,12 +425,10 @@ const EditLead = () => {
                   value={leadsFormData.customer_name}
                   onChange={handleChange}
                   placeholder="Enter Name"
-                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
-                  required
+                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:ring-2 focus:ring-[#C32033]"
                 />
               </div>
 
-              {/* City */}
               <div>
                 <label className="block text-md font-medium text-black mb-2">
                   City
@@ -514,20 +436,15 @@ const EditLead = () => {
                 <Select
                   options={cityOptions}
                   value={
-                    cityOptions.find(
-                      (opt) => opt.value === leadsFormData.city,
-                    ) || null
+                    cityOptions.find((o) => o.value === leadsFormData.city) ||
+                    null
                   }
-                  onChange={(selectedOption) =>
-                    handleSelectChange('city', selectedOption)
-                  }
-                  isSearchable
+                  onChange={(opt) => handleSelectChange('city', opt)}
                   styles={customSelectStyles}
                   placeholder="Select City"
                 />
               </div>
 
-              {/* Contact Job Role */}
               <div>
                 <label className="block text-md font-medium text-black mb-2">
                   Contact Job Role
@@ -538,37 +455,39 @@ const EditLead = () => {
                   value={leadsFormData.contact_position}
                   onChange={handleChange}
                   placeholder="Enter Contact Job Role"
-                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
-                  required
+                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:ring-2 focus:ring-[#C32033]"
                 />
               </div>
 
-              {/* Status */}
               <div>
                 <label className="block text-md font-medium text-black mb-2">
                   Status
                 </label>
                 <Select
                   name="status"
-                  value={
-                    leadsFormData.status
-                      ? {
-                          value: leadsFormData.status,
-                          label: leadsFormData.status,
-                        }
-                      : null
-                  }
-                  onChange={(selectedOption) =>
-                    handleSelectChange('status', selectedOption)
-                  }
-                  options={[{ value: 'New', label: 'New' }]}
+                  value={currentStatusOption}
+                  onChange={handleStatusChange}
+                  options={nextStatusOptions}
                   placeholder="Select Status"
                   isSearchable={false}
                   styles={customSelectStyles}
+                  isDisabled={nextStatusOptions.length === 0}
                 />
               </div>
 
-              {/* Sales Person */}
+              {/* <div>
+                <label className="block text-md font-medium text-black mb-2">
+                  Stage
+                </label>
+                <input
+                  type="text"
+                  name="stage"
+                  value={leadsFormData.stage}
+                  readOnly
+                  className="w-full px-4 py-3 bg-gray-100 border-0 rounded-lg text-gray-600"
+                />
+              </div> */}
+
               <div>
                 <label className="block text-md font-medium text-black mb-2">
                   Sales Person
@@ -576,31 +495,27 @@ const EditLead = () => {
                 <Select
                   name="salesperson_id"
                   value={
-                    salesPersonOptions.length > 0
-                      ? salesPersonOptions.find(
-                          (o) => o.value === leadsFormData.salesperson_id,
-                        ) || null
-                      : {
-                          value: leadsFormData.salesperson_id,
-                          label: leadsFormData.salesperson_name,
-                        }
+                    salesPersonOptions.find(
+                      (o) => o.value === leadsFormData.salesperson_id,
+                    ) || {
+                      value: leadsFormData.salesperson_id,
+                      label: leadsFormData.salesperson_name,
+                    }
                   }
                   onChange={handleSalesPersonChange}
                   options={salesPersonOptions}
                   placeholder="Select Sales Person"
-                  isSearchable
                   styles={customSelectStyles}
                 />
               </div>
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex gap-4 pt-4">
             <button
               type="button"
               onClick={() => navigate('/leads/manage')}
-              className="w-[160px] h-[50px] rounded border border-[#C32033] text-md font-medium text-[#C32033] hover:bg-gray-2 dark:border-strokedark dark:text-white dark:hover:bg-meta-4 transition-colors"
+              className="w-[160px] h-[50px] rounded border border-[#C32033] text-md font-medium text-[#C32033] hover:bg-gray-200"
             >
               Cancel
             </button>
@@ -608,13 +523,11 @@ const EditLead = () => {
               type="button"
               onClick={handleSave}
               disabled={!isFormValid()}
-              className={`px-15 py-3 rounded-lg font-medium transition-colors 
-    ${
-      isFormValid()
-        ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
-        : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
-    }
-  `}
+              className={`px-15 py-3 rounded-lg font-medium ${
+                isFormValid()
+                  ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
+                  : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
+              }`}
             >
               Update
             </button>

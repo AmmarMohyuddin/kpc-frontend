@@ -48,6 +48,7 @@ const EditOpportunityDetail = lazy(() => import('../pages/Opportunities/EditOppo
 const FollowUpOpportunity = lazy(() => import('../pages/Opportunities/FollowUp'));
 const ManageFollowUp = lazy(() => import('../pages/Leads/manageFollowUp'));
 const DetailFollowUp = lazy(() => import('../pages/Leads/DetailFollowUp'));
+const ConvertToSalesRequest = lazy(() => import('../pages/Opportunities/ConvertSalesRequest'));
 
 const coreRoutes = [
   {
@@ -164,6 +165,11 @@ const coreRoutes = [
     path: '/opportunities/follow-up/detail/:id',
     title: 'Follow Up Detail',
     component: DetailFollowUp,
+  },
+        {
+    path: '/opportunities/convert',
+    title: 'Convert to Sales Request',
+    component: ConvertToSalesRequest,
   },
   {
     path: '/sales-request/create',
