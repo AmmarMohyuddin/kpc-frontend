@@ -158,9 +158,12 @@ const EditOpportunityDetail = () => {
         '/api/v1/opportunities/editOpportunity',
         payload,
       );
+      console.log('Response:', response.status);
       if (response.status === 200) {
         toast.success('Opportunity updated!');
-        navigate('/opportunities/listing');
+        navigate('/opportunities/listing', {
+          state: { opportunity_id: opportunityDetail.OPPORTUNITY_ID },
+        });
       } else {
         toast.error('Failed to update.');
       }
@@ -386,7 +389,7 @@ const EditOpportunityDetail = () => {
               className="w-[160px] h-[50px] rounded bg-[#C32033] text-md font-medium text-white hover:bg-[#A91B2E] transition-colors"
               disabled={loading}
             >
-              {loading ? 'Saving...' : 'Save'}
+              {loading ? 'Updating...' : 'Update'}
             </button>
           </div>
         </form>

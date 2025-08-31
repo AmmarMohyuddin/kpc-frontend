@@ -50,10 +50,6 @@ const DetailItem = () => {
       : null,
     { label: 'Price', value: `${line.PRICE} KWD` },
     { label: 'Amount', value: `${line.AMOUNT} KWD` },
-    { label: 'Created By', value: line.CREATED_BY },
-    { label: 'Creation Date', value: line.CREATION_DATE },
-    { label: 'Last Updated By', value: line.LAST_UPDATED_BY },
-    { label: 'Last Update Date', value: line.LAST_UPDATE_DATE },
   ].filter(Boolean);
 
   return (

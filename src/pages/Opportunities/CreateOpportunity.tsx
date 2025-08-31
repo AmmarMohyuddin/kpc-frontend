@@ -373,7 +373,6 @@ const CreateOpportunity = () => {
       opportunityDetails.order_quantity &&
       opportunityDetails.price &&
       opportunityDetails.line_amount &&
-      opportunityDetails.instructions &&
       opportunityDetails.requested_ship_date
     );
   };

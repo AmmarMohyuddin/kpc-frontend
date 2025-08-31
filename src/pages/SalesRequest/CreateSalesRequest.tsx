@@ -278,11 +278,14 @@ const CreateSalesRequest = () => {
         `/api/v1/salesRequests/create`,
         customerFormData,
       );
-
+      console.log('Response:', response);
       if (response?.status === 201) {
         toast.success('Item Added');
         navigate('/item-listing', {
-          state: { customer: response.data },
+          state: {
+            customer: response.data,
+            order_header_id: response.data.order_header_id,
+          },
         });
       } else {
         console.error('Failed to create sales request:', response);
@@ -451,6 +454,16 @@ const CreateSalesRequest = () => {
       customerFormData.description &&
       customerFormData.order_quantity > 0 &&
       customerFormData.price > 0
+    );
+  };
+
+  const isCustomerFormValid = () => {
+    return (
+      customerFormData.customer_name &&
+      customerFormData.account_number &&
+      customerFormData.address &&
+      customerFormData.payment_term &&
+      customerFormData.salesperson_name
     );
   };
 
@@ -739,7 +752,14 @@ const CreateSalesRequest = () => {
                 <button
                   type="button"
                   onClick={() => setActiveStep((prev) => Math.min(prev + 1, 1))}
-                  className="w-[160px] h-[50px] rounded bg-[#C32033] text-md font-medium text-white hover:bg-[#A91B2E] transition-colors"
+                  disabled={!isCustomerFormValid()}
+                  className={`px-15 py-3 rounded font-medium transition-colors 
+    ${
+      isCustomerFormValid()
+        ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
+        : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
+    }
+  `}
                 >
                   Next
                 </button>

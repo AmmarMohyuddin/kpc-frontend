@@ -63,7 +63,7 @@ const ItemListing = () => {
       }
     };
 
-    if (opportunityId) fetchData();
+    fetchData();
   }, [opportunityId]);
 
   // Filtered & paginated lines
@@ -107,13 +107,13 @@ const ItemListing = () => {
     { label: 'Opportunity Details', path: '', isActive: true },
   ];
 
-  // if (loading) {
-  //   return (
-  //     <div className="flex justify-center items-center h-[calc(100vh-200px)]">
-  //       <Loader />
-  //     </div>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[calc(100vh-200px)]">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -132,12 +132,6 @@ const ItemListing = () => {
           setIsModalOpen(false);
         }}
       />
-
-      {loading && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-30">
-          <Loader />
-        </div>
-      )}
 
       <div className="flex flex-col gap-6">
         <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">

@@ -138,6 +138,8 @@ const EditSalesRequest = () => {
   useEffect(() => {
     const fetchAllData = async () => {
       try {
+        setLoading(true); // 🔹 Start loader before API calls
+
         // First fetch initial data (customers, salespersons, items, etc.)
         const [
           citiesResponse,
@@ -172,20 +174,21 @@ const EditSalesRequest = () => {
           ).forEach((line: any) => {
             setItemFormData((prev) => ({
               ...prev,
-              item_detail: line.DESCRIPTION || '', // Changed from ITEM_DETAIL to DESCRIPTION
+              item_detail: line.DESCRIPTION || '',
               item_number: line.ITEM_NUMBER || '',
-              unit_of_measure: line.UOM || '', // Changed from UNIT_OF_MEASURE to UOM
+              unit_of_measure: line.UOM || '',
               sub_category: line.SUBCATEGORY || '',
               description: line.DESCRIPTION || '',
               instructions: line.INSTRUCTIONS || '',
-              requested_shipment_date: line.REQUESTED_SHIP_DATE || '', // Changed from REQUESTED_SHIPMENT_DATE to REQUESTED_SHIP_DATE
+              requested_shipment_date: line.REQUESTED_SHIP_DATE || '',
               order_quantity: line.ORDER_QUANTITY || 0,
               price: line.PRICE || 0.0,
-              line_amount: line.AMOUNT || 0.0, // Changed from LINE_AMOUNT to AMOUNT
+              line_amount: line.AMOUNT || 0.0,
             }));
           });
 
           console.log('Sales Request Data Response:', salesResponse);
+
           if (salesResponse?.status === 200 && salesResponse.data) {
             setCustomerFormData((prev) => ({
               ...prev,
@@ -196,7 +199,6 @@ const EditSalesRequest = () => {
               payment_term: salesResponse.data.PAYMENT_TERM || '',
               customer_po_number: salesResponse.data.CUSTOMER_PO_NUMBER || '',
               salesperson_name: salesResponse.data.SALESPERSON || '',
-              // salesperson_id: salesResponse.data.SALESPERSON || '',
             }));
             setAddressFormData((prev) => ({
               ...prev,
@@ -210,6 +212,8 @@ const EditSalesRequest = () => {
         }
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -563,14 +567,17 @@ const EditSalesRequest = () => {
     );
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[calc(100vh-200px)]">
+        <Loader />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-10">
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
-        {loading && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-30">
-            <Loader />
-          </div>
-        )}
         {/* Header Section */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-2 gap-4">
           <h2 className="text-2xl font-semibold text-black dark:text-white">

@@ -343,7 +343,7 @@ const EditLead = () => {
                   }
                   onChange={(opt) => handleSelectChange('customer_type', opt)}
                   options={[
-                    { value: 'Customer', label: 'Customer' },
+                    { value: 'Company', label: 'Company' },
                     { value: 'Individual', label: 'Individual' },
                   ]}
                   placeholder="Select Type"

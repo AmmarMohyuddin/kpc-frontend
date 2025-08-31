@@ -420,7 +420,7 @@ const CreateLead = () => {
                   onChange={(selectedOption) =>
                     handleSelectChange('status', selectedOption?.value || '')
                   }
-                  options={[{ value: '1', label: 'New' }]}
+                  options={[{ value: 'New', label: 'New' }]}
                   placeholder="Select Status"
                   isSearchable={false}
                   styles={customSelectStyles}

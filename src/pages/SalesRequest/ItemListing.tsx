@@ -51,6 +51,8 @@ const ItemListing = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { customer, order_header_id } = location.state || {};
+  console.log('Customer:', customer);
+  console.log('Order Header Id:', order_header_id);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<{

@@ -20,6 +20,7 @@ const DetailItem = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { item_number, customer_id } = location.state || {};
+  console.log(location.state);
   const [itemData, setItemData] = useState<SalesItem | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
