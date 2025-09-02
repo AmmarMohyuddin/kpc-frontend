@@ -5,6 +5,8 @@ import apiService from '../../services/ApiService';
 import Loader from '../../common/Loader';
 import { toast } from 'react-hot-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { customSelectStyles } from "../../styles/selectStyle.ts";
+
 
 interface OptionType {
   value: string;
@@ -38,39 +40,39 @@ const CreateFollowUp = () => {
   });
 
   // Memoized custom styles for react-select
-  const customSelectStyles = useMemo(
-    () => ({
-      control: (provided: any, state: any) => ({
-        ...provided,
-        minHeight: '50px',
-        height: '50px',
-        borderColor: state.isFocused ? '#C32033' : provided.borderColor,
-        boxShadow: state.isFocused ? '0 0 0 1px #C32033' : provided.boxShadow,
-        '&:hover': {
-          borderColor: state.isFocused ? '#C32033' : provided.borderColor,
-        },
-      }),
-      valueContainer: (provided: any) => ({
-        ...provided,
-        height: '50px',
-        padding: '0 8px',
-      }),
-      option: (provided: any, state: any) => ({
-        ...provided,
-        backgroundColor: state.isSelected
-          ? '#FFD7D7'
-          : state.isFocused
-          ? '#FFD7D7'
-          : provided.backgroundColor,
-        color: '#000',
-      }),
-      singleValue: (provided: any) => ({
-        ...provided,
-        color: '#C32033',
-      }),
-    }),
-    [],
-  );
+  // const customSelectStyles = useMemo(
+  //   () => ({
+  //     control: (provided: any, state: any) => ({
+  //       ...provided,
+  //       minHeight: '50px',
+  //       height: '50px',
+  //       borderColor: state.isFocused ? '#C32033' : provided.borderColor,
+  //       boxShadow: state.isFocused ? '0 0 0 1px #C32033' : provided.boxShadow,
+  //       '&:hover': {
+  //         borderColor: state.isFocused ? '#C32033' : provided.borderColor,
+  //       },
+  //     }),
+  //     valueContainer: (provided: any) => ({
+  //       ...provided,
+  //       height: '50px',
+  //       padding: '0 8px',
+  //     }),
+  //     option: (provided: any, state: any) => ({
+  //       ...provided,
+  //       backgroundColor: state.isSelected
+  //         ? '#FFD7D7'
+  //         : state.isFocused
+  //         ? '#FFD7D7'
+  //         : provided.backgroundColor,
+  //       color: '#000',
+  //     }),
+  //     singleValue: (provided: any) => ({
+  //       ...provided,
+  //       color: '#C32033',
+  //     }),
+  //   }),
+  //   [],
+  // );
 
   // Fetch salespersons
   useEffect(() => {
@@ -157,7 +159,7 @@ const CreateFollowUp = () => {
       console.error('Error creating follow-up:', error);
       toast.error(
         error.response?.data?.message ||
-          'Error creating follow-up. Please try again.',
+        'Error creating follow-up. Please try again.',
       );
     } finally {
       setLoading(false);
@@ -184,7 +186,7 @@ const CreateFollowUp = () => {
 
   return (
     <div className="flex flex-col gap-10">
-      <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
+      <div className="rounded-3xl border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
         <h2 className="text-2xl font-semibold mb-3 text-black dark:text-white">
           Follow-Up Entry
         </h2>
@@ -208,9 +210,9 @@ const CreateFollowUp = () => {
                 value={
                   formData.reference_type
                     ? {
-                        value: formData.reference_type,
-                        label: formData.reference_type,
-                      }
+                      value: formData.reference_type,
+                      label: formData.reference_type,
+                    }
                     : null
                 }
                 onChange={(selected) =>
@@ -234,8 +236,10 @@ const CreateFollowUp = () => {
                 value={formData.reference_id}
                 onChange={handleChange}
                 placeholder="Enter Reference Id"
-                className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] 
-                focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
+                className='custom-input'
+
+                // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] 
+                // focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                 required
               />
             </div>
@@ -270,8 +274,10 @@ const CreateFollowUp = () => {
                 name="followup_date"
                 value={formData.followup_date}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] 
-                focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
+                className='custom-input'
+
+                // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] 
+                // focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                 required
               />
             </div>
@@ -286,8 +292,10 @@ const CreateFollowUp = () => {
                 name="next_followup_date"
                 value={formData.next_followup_date}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] 
-                focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
+                className='custom-input'
+
+              // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] 
+              // focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
               />
             </div>
 
@@ -302,8 +310,10 @@ const CreateFollowUp = () => {
                 onChange={handleChange}
                 placeholder="Enter Notes"
                 rows={4}
-                className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] 
-                focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
+                className='custom-input'
+
+              // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] 
+              // focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
               />
             </div>
           </div>
@@ -321,10 +331,9 @@ const CreateFollowUp = () => {
               onClick={handleSave}
               disabled={!isFormValid()}
               className={`px-15 py-3 rounded font-medium transition-colors 
-                ${
-                  isFormValid()
-                    ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
-                    : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
+                ${isFormValid()
+                  ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
+                  : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
                 }`}
             >
               Save

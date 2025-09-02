@@ -231,15 +231,69 @@ const OrderHistory = () => {
             <table className="w-full">
               <thead>
                 <tr className="bg-[#C32033] text-white">
-                  <th className="px-6 py-4 text-left">No.</th>
-                  <th className="px-6 py-4 text-left">Order Number</th>
-                  <th className="px-6 py-4 text-left">Customer Name</th>
-                  <th className="px-6 py-4 text-left">Salesperson</th>
-                  <th className="px-6 py-4 text-left">Price</th>
-                  <th className="px-6 py-4 text-left">Actions</th>
+                  <th className="tableTitle">No.</th>
+                  <th className="tableTitle">Order Number</th>
+                  <th className="tableTitle">Customer Name</th>
+                  <th className="tableTitle">Salesperson</th>
+                  <th className="tableTitle">Price</th>
+                  <th className="tableTitle">Actions</th>
                 </tr>
               </thead>
               <tbody>
+                {paginatedItems.length > 0 ? (
+                  paginatedItems.map((order, index) => (
+                    <tr key={`${order.order_no}-${index}`}>
+                      <td colSpan={6} className="p-0">
+                        <div
+                          className="flex w-full items-center justify-between bg-white hover:bg-gray-50 transition-colors"
+                          style={{
+                            backgroundColor: index % 2 === 0 ? '#FFFFFF' : '#F5F5F5',
+                            boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.12)',
+                            borderRadius: '8px',
+                            margin: '8px 0', // vertical spacing between tiles
+                            padding: '12px 0', // optional: padding inside the tile
+                          }}
+                        >
+                          <td className="tableValues my-0">{startIndex + index + 1}</td>
+                          <td className="tableValues my-0">{String(order.order_no || '-')}</td>
+                          <td className="tableValues my-0">
+                            {order.customer_name
+                              ? order.customer_name.length > 15
+                                ? `${order.customer_name.slice(0, 15)}...`
+                                : order.customer_name
+                              : '-'}
+                          </td>         <td className="tableValues my-0">
+                            {order.salesperson
+                              ? order.salesperson.length > 15
+                                ? `${order.salesperson.slice(0, 15)}...`
+                                : order.salesperson
+                              : '-'}
+                          </td>
+                          <td className="tableValues my-0">{Number(order.price || 0).toFixed(2)}</td>
+                          <td className="tableValues my-0">
+                            <div className="flex items-center gap-3">
+                              <button
+                                onClick={() => handleViewDetails(String(order.order_no))}
+                                className="px-4 py-2 border border-[#C32033] text-[#C32033] rounded hover:bg-[#C32033] hover:text-white transition-colors"
+                              >
+                                View Details
+                              </button>
+                            </div>
+                          </td>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
+                      {searchTerm ? 'No matching Orders found' : 'No Orders found'}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+
+              {/* <tbody>
                 {paginatedItems.length > 0 ? (
                   paginatedItems.map((order, index) => (
                     <tr
@@ -287,7 +341,7 @@ const OrderHistory = () => {
                     </td>
                   </tr>
                 )}
-              </tbody>
+              </tbody> */}
             </table>
           </div>
 
@@ -307,11 +361,10 @@ const OrderHistory = () => {
                   <button
                     key={page}
                     onClick={() => handlePageChange(page)}
-                    className={`px-3 py-2 rounded font-medium transition-colors ${
-                      page === currentPage
+                    className={`px-3 py-2 rounded font-medium transition-colors ${page === currentPage
                         ? 'bg-[#C32033] text-white'
                         : 'text-gray-600 hover:bg-gray-100'
-                    }`}
+                      }`}
                   >
                     {page}
                   </button>

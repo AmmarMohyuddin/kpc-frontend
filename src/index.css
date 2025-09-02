@@ -9,6 +9,20 @@
 }
 
 @layer components {
+    .custom-input {
+    @apply w-full px-4 py-3 rounded-lg bg-[#F4F4F4] text-[#C32033] 
+           border-0 focus:outline-none focus:ring-1 focus:ring-[#C32033] 
+       
+           focus:bg-white placeholder-[#999999] transition-all duration-200;
+  }
+.tableTitle {
+  @apply pl-2 py-4 text-[#FFFFFF] text-[16px] font-semibold;
+}
+  .tableValues {
+  @apply  pl-10 py-4 text-[#161616] text-[14px] font-normal;
+}
+  
+  
 }
 
 @layer utilities {
@@ -28,6 +42,7 @@
   .inbox-height {
     @apply h-[calc(100vh_-_8.125rem)] lg:h-[calc(100vh_-_5.625rem)];
   }
+
 }
 
 /* third-party libraries CSS */

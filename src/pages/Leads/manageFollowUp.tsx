@@ -82,7 +82,7 @@ const ManageFollowUp = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
+      <div className="rounded-3xl border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
         <div>
           <h1 className="text-2xl font-semibold text-black dark:text-white mb-2">
             Manage Follow Ups
@@ -127,72 +127,75 @@ const ManageFollowUp = () => {
           <table className="w-full">
             <thead>
               <tr className="bg-[#C32033] text-white">
-                <th className="px-6 py-4 text-left font-medium">No.</th>
-                <th className="px-6 py-4 text-left font-medium">FollowUp ID</th>
-                <th className="px-6 py-4 text-left font-medium">Source</th>
-                <th className="px-6 py-4 text-left font-medium">Assigned To</th>
-                <th className="px-6 py-4 text-left font-medium">
+                <th className="tableTitle">No.</th>
+                <th className="tableTitle">FollowUp ID</th>
+                <th className="tableTitle">Source</th>
+                <th className="tableTitle">Assigned To</th>
+                <th className="tableTitle">
                   FollowUp Date
                 </th>
-                <th className="px-6 py-4 text-left font-medium">
+                <th className="tableTitle">
                   Next FollowUp
                 </th>
                 <th className="px-6 py-4 text-left font-medium">Status</th>
                 <th className="px-6 py-4 text-left font-medium">Actions</th>
               </tr>
             </thead>
-            <tbody>
-              {paginatedFollowUps.length > 0 ? (
-                paginatedFollowUps.map((fu, index) => (
-                  <tr
-                    key={fu.followup_id}
-                    className={`border-b border-gray-200 ${
-                      index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                    } hover:bg-gray-100 transition-colors`}
-                  >
-                    <td className="px-6 py-4">{startIndex + index + 1}</td>
-                    <td className="px-6 py-4">{fu.followup_id}</td>
-                    <td className="px-6 py-4">{fu.source}</td>
-                    <td className="px-6 py-4">{fu.assigned_to}</td>
-                    <td className="px-6 py-4">
-                      {new Date(fu.followup_date).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4">
-                      {new Date(fu.next_followup_date).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4">{fu.status}</td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <button
-                          className="px-4 py-2 border border-[#C32033] text-[#C32033] rounded hover:bg-[#C32033] hover:text-white transition-colors font-medium"
-                          onClick={() =>
-                            navigate(
-                              `/opportunities/follow-up/detail/${fu.followup_id}`,
-                              {
-                                state: { followup: fu },
-                              },
-                            )
-                          }
-                        >
-                          View Details
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan={8}
-                    className="px-6 py-4 text-center text-gray-500"
-                  >
-                    {searchTerm
-                      ? 'No matching follow-ups found'
-                      : 'No follow-ups available'}
-                  </td>
-                </tr>
-              )}
-            </tbody>
+       <tbody>
+  {paginatedFollowUps.length > 0 ? (
+    paginatedFollowUps.map((fu, index) => (
+      <tr key={fu.followup_id}>
+        <td colSpan={8} className="p-0">
+          <div
+            className={`flex w-full items-center justify-between bg-white hover:bg-gray-50 transition-colors`}
+            style={{
+              backgroundColor: index % 2 === 0 ? '#FFFFFF' : '#F5F5F5',
+              boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.12)',
+              borderRadius: '8px',
+              margin: '8px 0', // adds vertical space between rows
+            }}
+          >
+            <td className="tableValues px-6 py-4">{startIndex + index + 1}</td>
+            <td className="tableValues px-6 py-4">{fu.followup_id}</td>
+            <td className="tableValues px-6 py-4">{fu.source}</td>
+            <td className="tableValues px-6 py-4">{fu.assigned_to}</td>
+            <td className="tableValues px-6 py-4">
+              {new Date(fu.followup_date).toLocaleDateString()}
+            </td>
+            <td className="tableValues px-6 py-4">
+              {new Date(fu.next_followup_date).toLocaleDateString()}
+            </td>
+            <td className="tableValues px-6 py-4">{fu.status}</td>
+            <td className="tableValues px-6 py-4">
+              <div className="flex items-center gap-3">
+                <button
+                  className="px-4 py-2 border border-[#C32033] text-[#C32033] rounded hover:bg-[#C32033] hover:text-white transition-colors font-medium"
+                  onClick={() =>
+                    navigate(
+                      `/opportunities/follow-up/detail/${fu.followup_id}`,
+                      { state: { followup: fu } }
+                    )
+                  }
+                >
+                  View Details
+                </button>
+              </div>
+            </td>
+          </div>
+        </td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan={8} className="px-6 py-4 text-center text-gray-500">
+        {searchTerm
+          ? 'No matching follow-ups found'
+          : 'No follow-ups available'}
+      </td>
+    </tr>
+  )}
+</tbody>
+
           </table>
         </div>
 

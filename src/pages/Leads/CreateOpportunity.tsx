@@ -35,7 +35,7 @@ const CreateOpportunity = ({
             {/* Header */}
             <div className="flex items-center justify-between p-6">
               <h2 className="text-xl font-semibold text-black">
-                Create Opportunity
+                Creatsse Opportunity
               </h2>
               <button onClick={handleCancel}>
                 <X className="w-5 h-5 text-[#C32033]" />

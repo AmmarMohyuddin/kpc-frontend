@@ -7,6 +7,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import apiService from '../../services/ApiService';
 import toast from 'react-hot-toast';
 import Loader from '../../common/Loader';
+import { customSelectStyles } from "../../styles/selectStyle.ts";
+
 
 type Address = string;
 
@@ -467,43 +469,43 @@ const CreateSalesRequest = () => {
     );
   };
 
-  const customSelectStyles = {
-    control: (provided: any, state: any) => ({
-      ...provided,
-      minHeight: '50px',
-      height: '50px',
-      borderColor: state.isFocused ? '#C32033' : provided.borderColor,
-      boxShadow: state.isFocused ? '0 0 0 1px #C32033' : provided.boxShadow,
-      '&:hover': {
-        borderColor: state.isFocused ? '#C32033' : provided.borderColor,
-      },
-    }),
-    valueContainer: (provided: any) => ({
-      ...provided,
-      height: '50px',
-      padding: '0 8px',
-    }),
-    input: (provided: any) => ({
-      ...provided,
-      margin: '0px',
-    }),
-    option: (provided: any, state: any) => ({
-      ...provided,
-      backgroundColor: state.isSelected
-        ? '#FFD7D7'
-        : state.isFocused
-        ? '#FFD7D7'
-        : provided.backgroundColor,
-      color: '#000',
-      '&:active': {
-        backgroundColor: state.isSelected ? '#FFD7D7' : '#FFD7D7',
-      },
-    }),
-    singleValue: (provided: any) => ({
-      ...provided,
-      color: '#C32033',
-    }),
-  };
+  // const customSelectStyles = {
+  //   control: (provided: any, state: any) => ({
+  //     ...provided,
+  //     minHeight: '50px',
+  //     height: '50px',
+  //     borderColor: state.isFocused ? '#C32033' : provided.borderColor,
+  //     boxShadow: state.isFocused ? '0 0 0 1px #C32033' : provided.boxShadow,
+  //     '&:hover': {
+  //       borderColor: state.isFocused ? '#C32033' : provided.borderColor,
+  //     },
+  //   }),
+  //   valueContainer: (provided: any) => ({
+  //     ...provided,
+  //     height: '50px',
+  //     padding: '0 8px',
+  //   }),
+  //   input: (provided: any) => ({
+  //     ...provided,
+  //     margin: '0px',
+  //   }),
+  //   option: (provided: any, state: any) => ({
+  //     ...provided,
+  //     backgroundColor: state.isSelected
+  //       ? '#FFD7D7'
+  //       : state.isFocused
+  //       ? '#FFD7D7'
+  //       : provided.backgroundColor,
+  //     color: '#000',
+  //     '&:active': {
+  //       backgroundColor: state.isSelected ? '#FFD7D7' : '#FFD7D7',
+  //     },
+  //   }),
+  //   singleValue: (provided: any) => ({
+  //     ...provided,
+  //     color: '#C32033',
+  //   }),
+  // };
 
   // For Customer Name
   const MenuList = (props: any) => {
@@ -538,7 +540,7 @@ const CreateSalesRequest = () => {
 
   return (
     <div className="flex flex-col gap-10">
-      <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
+      <div className="rounded-3xl border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
         <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
           New Order
         </h2>
@@ -741,7 +743,8 @@ const CreateSalesRequest = () => {
                       value={customerFormData.customer_po_number}
                       onChange={handleChange}
                       placeholder="Enter Customer PO Number"
-                      className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                      className='custom-input'
+                      // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
                     />
                   </div>
                 </div>
@@ -769,7 +772,7 @@ const CreateSalesRequest = () => {
         ) : (
           <>
             <div className="flex items-center gap-2 text-xl text-black font-bold">
-              <h1>Add Item</h1>
+              <h1>Adds Item</h1>
             </div>
             <form className="space-y-6 mt-3">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -866,7 +869,8 @@ const CreateSalesRequest = () => {
                       step="any"
                       onChange={handlePrice}
                       placeholder="Enter Price"
-                      className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                                    className='custom-input'
+                      // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
                     />
                   </div>
 
@@ -882,7 +886,8 @@ const CreateSalesRequest = () => {
                       onChange={handleChange}
                       placeholder="Select Line Amount"
                       readOnly
-                      className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                                    className='custom-input'
+                      // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
                     />
                   </div>
                 </div>
@@ -923,7 +928,8 @@ const CreateSalesRequest = () => {
                       value={customerFormData.instructions}
                       onChange={handleChange}
                       placeholder="Enter Instructions"
-                      className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                                    className='custom-input'
+                      // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
                     />
                   </div>
 
@@ -938,7 +944,8 @@ const CreateSalesRequest = () => {
                       onChange={handleChange}
                       min={0}
                       placeholder="Enter Order Quantity"
-                      className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                                    className='custom-input'
+                      // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
                     />
                   </div>
 
@@ -950,7 +957,8 @@ const CreateSalesRequest = () => {
                       <input
                         type="date"
                         defaultValue={new Date().toISOString().split('T')[0]}
-                        className="custom-input-date custom-input-date-1 w-full text-[#C32033] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5  outline-none transition focus:border-[#C32033] active:border-[#C32033] dark:border-form-strokedark dark:bg-form-input dark:focus:border-[#C32033]"
+                                      className='custom-input'
+                        // className="custom-input-date custom-input-date-1 w-full text-[#C32033] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5  outline-none transition focus:border-[#C32033] active:border-[#C32033] dark:border-form-strokedark dark:bg-form-input dark:focus:border-[#C32033]"
                       />
                     </div>
                   </div>
@@ -966,7 +974,8 @@ const CreateSalesRequest = () => {
                       readOnly
                       onChange={handleChange}
                       placeholder="Enter Order Status"
-                      className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                                    className='custom-input'
+                      // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
                     />
                   </div>
                 </div>

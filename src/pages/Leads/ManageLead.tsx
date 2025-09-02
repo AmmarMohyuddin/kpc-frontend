@@ -90,7 +90,7 @@ const ManageLeads = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
+      <div className="rounded-3xl border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
         <div>
           <h1 className="text-2xl font-semibold text-black dark:text-white mb-2">
             Manage Leads
@@ -123,7 +123,7 @@ const ManageLeads = () => {
                   }}
                 />
               </div>
-              <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="p-2  rounded-lg hover:bg-gray-50 transition-colors">
                 <Filter className="w-4 h-4 text-gray-600" />
               </button>
             </div>
@@ -136,17 +136,13 @@ const ManageLeads = () => {
             {/* Table Header */}
             <thead>
               <tr className="bg-[#C32033] text-white">
-                <th className="px-6 py-4 text-left font-medium">No.</th>
-                <th className="px-6 py-4 text-left font-medium">Lead Number</th>
-                <th className="px-6 py-4 text-left font-medium">Company</th>
-                <th className="px-6 py-4 text-left font-medium">
-                  Contact Job Role
-                </th>
-                <th className="px-6 py-4 text-left font-medium">
-                  Sales Person
-                </th>
-                <th className="px-6 py-4 text-left font-medium">Status</th>
-                <th className="px-6 py-4 text-left font-medium">Actions</th>
+                <th className="tableTitle">No.</th>
+                <th className="tableTitle">Lead Number</th>
+                <th className="tableTitle">Company</th>
+                <th className="tableTitle">Contact Job Role</th>
+                <th className="tableTitle">Sales Person</th>
+                <th className="tableTitle">Status</th>
+                <th className="tableTitle">Actions</th>
               </tr>
             </thead>
 
@@ -156,9 +152,56 @@ const ManageLeads = () => {
                 paginatedLeads.map((lead, index) => (
                   <tr
                     key={lead.lead_id}
-                    className={`border-b border-gray-200 ${
-                      index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                    } hover:bg-gray-100 transition-colors`}
+                    className={` hover:bg-gray-100 transition-colors`}
+                    style={{
+                      backgroundColor: index % 2 === 0 ? '#FFFFFF' : '#F5F5F5',
+                      boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.12)',
+                    }}
+                  >
+                    <td className="tableValues my-5">{startIndex + index + 1}</td>
+                    <td className="tableValues my-5">{lead.lead_id}</td>
+                    <td className="tableValues my-5">{lead.customer_type}</td>
+                    <td className="tableValues my-5">{lead.contact_position}</td>
+                    <td className="tableValues my-5">{lead.salesperson_name}</td>
+                    <td className="tableValues my-5">{lead.status}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() =>
+                            navigate(`/leads/edit/${lead.lead_id}`, { state: { lead } })
+                          }
+                          className="hover:scale-110 transition-transform"
+                        >
+                          <Edit className="text-blue-600 hover:text-blue-800 w-5 h-5" />
+                        </button>
+                        <button
+                          className="px-4 py-2 border border-[#C32033] text-[#C32033] rounded hover:bg-[#C32033] hover:text-white transition-colors font-medium"
+                          onClick={() =>
+                            navigate(`/leads/${lead.lead_id}`, { state: { lead } })
+                          }
+                        >
+                          View Details
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
+                    {searchTerm ? 'No matching leads found' : 'No leads available'}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+
+            {/* <tbody>
+              {paginatedLeads.length > 0 ? (
+                paginatedLeads.map((lead, index) => (
+                  <tr
+                    key={lead.lead_id}
+                    className={`border-b border-gray-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                      } hover:bg-gray-100 transition-colors`}
                   >
                     <td className="px-6 py-4 text-gray-900">
                       {startIndex + index + 1}
@@ -212,7 +255,7 @@ const ManageLeads = () => {
                   </td>
                 </tr>
               )}
-            </tbody>
+            </tbody> */}
           </table>
         </div>
 
@@ -231,11 +274,10 @@ const ManageLeads = () => {
               <button
                 key={page}
                 onClick={() => handlePageChange(page)}
-                className={`px-3 py-2 rounded font-medium transition-colors ${
-                  page === currentPage
-                    ? 'bg-[#C32033] text-white'
-                    : 'text-gray-600 hover:bg-gray-100'
-                }`}
+                className={`px-3 py-2 rounded font-medium transition-colors ${page === currentPage
+                  ? 'bg-[#C32033] text-white'
+                  : 'text-gray-600 hover:bg-gray-100'
+                  }`}
               >
                 {page}
               </button>
