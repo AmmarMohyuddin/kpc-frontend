@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import apiService from '../../services/ApiService';
 import Loader from '../../common/Loader';
+import TitleValueRow from "../../components/TitleValueRow.js";
+
 
 interface Opportunity {
   OPPORTUNITY_ID: number;
@@ -107,85 +109,47 @@ const DetailOpportunity = () => {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col py-1 px-5 gap-6 bg-white rounded-[20px]">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-semibold text-black dark:text-white mb-2">
+        <h1 className="text-2xl mt-5 font-semibold text-black dark:text-white mb-2">
           Opportunity #{opportunityData.OPPORTUNITY_ID}
         </h1>
 
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-md text-gray-600 mt-5">
-          <span>Opportunities</span>
+          <span className="text-[rgba(22,22,22,0.7)]">Opportunities</span>
           <ChevronRight className="w-4 h-4" />
-          <span>Detail</span>
+          <span className="text-[rgba(22,22,22,0.7)]">Detail</span>
           <ChevronRight className="w-4 h-4" />
-          <span className="text-[#C32033]">
+          <span className="text-[#161616]">
             {opportunityData.OPPORTUNITY_ID}
           </span>
         </div>
       </div>
 
       {/* Detail Card */}
-      <div className="rounded border border-stroke bg-white px-5 pt-6 pb-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5">
-        <div className="space-y-6">
+      <div className="rounded-[10px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
+        <div className="space-y-3">
           {/* Lead ID */}
-          {opportunityData.LEAD_ID ? (
-            <div className="flex items-center justify-between py-1 border-b border-gray">
-              <span className="font-bold text-lg text-black dark:text-white">
-                Lead ID:
-              </span>
-              <span>{opportunityData.LEAD_ID}</span>
-            </div>
-          ) : null}
+          {opportunityData.LEAD_ID && (
+            <TitleValueRow title="Lead ID" value={opportunityData.LEAD_ID} />
 
-          {/* Opportunity ID */}
-          <div className="flex items-center justify-between py-1 border-b border-gray">
-            <span className="font-bold text-lg text-black dark:text-white">
-              Opportunity ID:
-            </span>
-            <span>{opportunityData.OPPORTUNITY_ID}</span>
-          </div>
+          )}
 
-          {/* Generation Date */}
-          <div className="flex items-center justify-between py-1 border-b border-gray">
-            <span className="font-bold text-lg text-black dark:text-white">
-              Generation Date:
-            </span>
-            <span>{opportunityData.GENERATION_DATE}</span>
-          </div>
 
-          {/* Stage */}
-          <div className="flex items-center justify-between py-1 border-b border-gray">
-            <span className="font-bold text-lg text-black dark:text-white">
-              Stage:
-            </span>
-            <span>{opportunityData.STAGE}</span>
-          </div>
+          <TitleValueRow title="Opportunity ID" value={opportunityData.OPPORTUNITY_ID} />
+          <hr className="custom-divider my-2" />
+          <TitleValueRow title="Generation Date" value={opportunityData.GENERATION_DATE} />
+          <hr className="custom-divider my-2" />
+          <TitleValueRow title="Stage" value={opportunityData.STAGE} />
+          <hr className="custom-divider my-2" />
+          <TitleValueRow title="Status" value={opportunityData.STATUS} />
+          <hr className="custom-divider my-2" />
+          <TitleValueRow title="Sales Person" value={opportunityData.SALESPERSON_NAME} />
+          <hr className="custom-divider my-2" />
+          <TitleValueRow title="Remarks" value={opportunityData.REMARKS || "N/A"} />
 
-          {/* Status */}
-          <div className="flex items-center justify-between py-1 border-b border-gray">
-            <span className="font-bold text-lg text-black dark:text-white">
-              Status:
-            </span>
-            <span>{opportunityData.STATUS}</span>
-          </div>
-
-          {/* Sales Person */}
-          <div className="flex items-center justify-between py-1 border-b border-gray">
-            <span className="font-bold text-lg text-black dark:text-white">
-              Sales Person:
-            </span>
-            <span>{opportunityData.SALESPERSON_NAME}</span>
-          </div>
-
-          {/* Remarks */}
-          <div className="flex items-center justify-between py-1 border-b border-gray">
-            <span className="font-bold text-lg text-black dark:text-white">
-              Remarks:
-            </span>
-            <span>{opportunityData.REMARKS || 'N/A'}</span>
-          </div>
         </div>
         <div className="flex flex-col items-center pt-4 gap-3">
           <button
@@ -221,7 +185,7 @@ const DetailOpportunity = () => {
       {/* Order Lines Section */}
       {opportunityData.ORDER_LINES &&
         opportunityData.ORDER_LINES.length > 0 && (
-          <div className="rounded border border-stroke bg-white px-5 pt-6 pb-6 shadow-default">
+          <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
             <h2 className="text-xl font-semibold mb-4 text-[#C32033] dark:text-white">
               Order Items
             </h2>
@@ -229,61 +193,33 @@ const DetailOpportunity = () => {
               {opportunityData.ORDER_LINES.map((line, index) => (
                 <div
                   key={line.OPPORTUNITY_DETAIL_ID}
-                  className="rounded-lg border border-stroke p-4"
+                  className="rounded-[20px] border border-stroke p-4 bg-white"
                 >
                   <h3 className="font-semibold text-lg mb-3">
                     Item #{index + 1}
                   </h3>
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between py-1 border-b border-gray">
-                      <span className="font-bold text-black dark:text-white">
-                        Item Number:
-                      </span>
-                      <span>{line.ITEM_NUMBER}</span>
-                    </div>
+                    <TitleValueRow title="Item Number" value={line.ITEM_NUMBER} />
+                    <hr className="custom-divider my-2" />
 
-                    <div className="flex items-center justify-between py-1 border-b border-gray">
-                      <span className="font-bold text-black dark:text-white">
-                        Item Detail:
-                      </span>
-                      <span>{line.ITEM_DETAIL}</span>
-                    </div>
+                    <TitleValueRow title="Item Detail" value={line.ITEM_DETAIL} />
+                    <hr className="custom-divider my-2" />
 
-                    <div className="flex items-center justify-between py-1 border-b border-gray">
-                      <span className="font-bold text-black dark:text-white">
-                        Sub Category:
-                      </span>
-                      <span>{line.SUB_CAT}</span>
-                    </div>
+                    <TitleValueRow title="Sub Category" value={line.SUB_CAT} />
+                    <hr className="custom-divider my-2" />
 
-                    <div className="flex items-center justify-between py-1 border-b border-gray">
-                      <span className="font-bold text-black dark:text-white">
-                        Description:
-                      </span>
-                      <span>{line.DESCRIPTION}</span>
-                    </div>
+                    <TitleValueRow title="Description" value={line.DESCRIPTION} />
+                    <hr className="custom-divider my-2" />
 
-                    <div className="flex items-center justify-between py-1 border-b border-gray">
-                      <span className="font-bold text-black dark:text-white">
-                        Quantity:
-                      </span>
-                      <span>{line.QUANTITY}</span>
-                    </div>
+                    <TitleValueRow title="Quantity" value={line.QUANTITY} />
+                    <hr className="custom-divider my-2" />
 
-                    <div className="flex items-center justify-between py-1 border-b border-gray">
-                      <span className="font-bold text-black dark:text-white">
-                        UOM:
-                      </span>
-                      <span>{line.UOM}</span>
-                    </div>
+                    <TitleValueRow title="UOM" value={line.UOM} />
+                    <hr className="custom-divider my-2" />
+
 
                     {line.INSTRUCTIONS && (
-                      <div className="flex items-center justify-between py-1 border-b border-gray">
-                        <span className="font-bold text-black dark:text-white">
-                          Instructions:
-                        </span>
-                        <span>{line.INSTRUCTIONS}</span>
-                      </div>
+                      <TitleValueRow title="Instructions" value={line.INSTRUCTIONS} />
                     )}
                   </div>
                 </div>

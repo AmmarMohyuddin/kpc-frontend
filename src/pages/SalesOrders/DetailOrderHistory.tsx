@@ -1,5 +1,8 @@
 import { ChevronRight } from 'lucide-react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import TitleValueRow from "../../components/TitleValueRow.js";
+import React from 'react';
+
 
 const DetailOrderHistory = () => {
   const navigate = useNavigate();
@@ -26,51 +29,71 @@ const DetailOrderHistory = () => {
   }
 
   return (
-    <div className="flex flex-col gap-6 animate-fadeIn">
+    <div className="flex flex-col py-1 px-5 gap-6 bg-white rounded-[20px]">
       {/* Page Header */}
       <div className="animate-slideDown">
-        <h1 className="text-2xl font-semibold text-black dark:text-white mb-2">
+        <h1 className="text-[#161616] mt-5 mb-3 text-[24px] font-semibold">
           Order History - {order.order_no} Details
         </h1>
 
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-md text-gray-600">
-          <span>Sales Orders</span>
+          <span className="text-[rgba(22,22,22,0.7)]">Sales Orders</span>
           <ChevronRight className="w-4 h-4" />
-          <span>Order History</span>
+          <span className="text-[rgba(22,22,22,0.7)]">Order History</span>
           <ChevronRight className="w-4 h-4" />
-          <span className="text-[#C32033] font-medium">{order.order_no}</span>
+          <span className="text-[#161616]">{order.order_no}</span>
         </div>
       </div>
 
       {/* Header Information */}
-      <div className="rounded border border-stroke bg-white px-5 pt-6 pb-6 shadow-default animate-slideUp">
-        <h2 className="text-xl text-[#C32033] font-semibold mb-4">
-          Header Information
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <b>Order Number:</b> {order.order_no}
+      <div className="rounded-[20px] border border-stroke  bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default animate-slideUp">
+        {/* <h2 className="text-xl text-[#C32033] font-semibold mb-4 text-center">
+    Header Information
+  </h2> */}
+        <div className="flex justify-center">
+          <div className="flex items-center gap-2">
+            <span className="text-xl text-[#C32033] font-semibold text-center">Order Number:</span>
+            <span>{order.order_no}</span>
           </div>
         </div>
       </div>
 
+
       {/* Order Lines */}
-      <div className="rounded border border-stroke bg-white px-5 pt-6 pb-6 shadow-default animate-slideUp">
-        <h2 className="text-xl text-[#C32033] font-semibold mb-4">
+      <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
+        <h2 className="text-xl text-[#C32033] text-center font-semibold mb-4">
           Order Lines
         </h2>
         {order.lines && order.lines.length > 0 ? (
-          <div className="space-y-6">
+          <div className="space-y-2">
             {order.lines.map((line: any, index: number) => (
               <div
                 key={line.order_line_id || index}
-                className="p-4 border rounded-lg shadow-sm bg-gray-50"
+                className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-white px-5 pt-6 pb-6 shadow-default sm:px-7.5"
               >
-                <h3 className="font-semibold mb-2">
+                <h3 className="font-semibold mb-6">
                   Line {index + 1} - {line.item_code}
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-1 gap-3">
+                <div className="grid grid-cols-1 gap-2">
+                  {Object.entries(line).map(([key, value], index, arr) => (
+                    <React.Fragment key={key}>
+                      <TitleValueRow
+                        title={key
+                          .replace(/_/g, " ")                // replace underscores
+                          .toLowerCase()                     // lowercase first
+                          .replace(/\b\w/g, (c) => c.toUpperCase())} // Title Case
+                        value={String(value ?? "-")}
+                      />
+                      {index < arr.length - 1 && (
+                        <hr className="custom-divider my-2" />
+                      )}
+                    </React.Fragment>
+                  ))}
+                </div>
+
+
+                {/* <div className="grid grid-cols-1 md:grid-cols-1 gap-3">
                   {Object.entries(line).map(([key, value]) => (
                     <div
                       key={key}
@@ -82,7 +105,7 @@ const DetailOrderHistory = () => {
                       {String(value)}
                     </div>
                   ))}
-                </div>
+                </div> */}
               </div>
             ))}
           </div>

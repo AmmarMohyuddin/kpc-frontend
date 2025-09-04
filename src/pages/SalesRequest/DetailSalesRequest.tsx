@@ -3,6 +3,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import apiService from '../../services/ApiService';
 import Loader from '../../common/Loader';
+import TitleValueRow from "../../components/TitleValueRow.js";
+import React from "react";
+
 
 interface OrderLine {
   ORDER_LINE_ID: number;
@@ -170,32 +173,41 @@ const DetailSalesRequest = () => {
     }));
 
   return (
-    <div className="flex flex-col gap-6 animate-fadeIn">
+    <div className="flex flex-col py-1 px-5 gap-6 bg-white rounded-[20px]">
       {/* Page Header */}
       <div className="animate-slideDown">
-        <h1 className="text-2xl font-semibold text-black dark:text-white mb-2">
+        <h1 className="text-[#161616] mt-5 mb-2 text-[24px] font-semibold">
           Sales Request {salesRequest.ORDER_NUMBER} Details
         </h1>
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-md text-gray-600">
-          <span>Sales Request</span>
+        <div className="flex items-center gap-2 text-md mt-0">
+          <span className="text-[rgba(22,22,22,0.7)]">Sales Request</span>
           <ChevronRight className="w-4 h-4" />
-          <span>Detail</span>
+          <span className="text-[rgba(22,22,22,0.7)]">Detail</span>
           <ChevronRight className="w-4 h-4" />
-          <span className="text-[#C32033] font-medium">
+          <span className="text-[#161616]">
             {salesRequest.ORDER_NUMBER}
           </span>
         </div>
       </div>
 
       {/* Header Details */}
-      <div className="rounded border border-stroke bg-white px-5 pt-6 pb-6 shadow-default animate-slideUp">
-        <h2 className="text-xl text-[#C32033] font-semibold mb-4">
-          Header Information
+      <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
+        <h2 className="text-xl text-[#C32033] font-semibold mb-4 text-center">
+          Order Information
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-2">
           {headerFields.map((field) => (
+            <React.Fragment key={field.label}>
+              <TitleValueRow title={field.label
+                .toLowerCase()
+                .replace(/\b\w/g, (char) => char.toUpperCase())} value={String(field.value)} />
+              <hr className="custom-divider my-2" />
+            </React.Fragment>
+          ))}
+        </div>
+        {/* {headerFields.map((field) => (
             <div
               key={field.label}
               className="flex items-center justify-between py-1 border-b border-gray"
@@ -207,12 +219,12 @@ const DetailSalesRequest = () => {
                 {String(field.value)}
               </span>
             </div>
-          ))}
-        </div>
+          ))} */}
       </div>
+      {/* </div> */}
 
       {/* Line Items */}
-      <div className="rounded border border-stroke bg-white px-5 pt-6 pb-6 shadow-default animate-slideUp">
+      <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
         <h2 className="text-xl text-[#C32033] font-semibold mb-4">
           Order Lines
         </h2>
@@ -221,26 +233,34 @@ const DetailSalesRequest = () => {
             {salesRequest.ORDER_LINES.map((line, index) => (
               <div
                 key={line.ORDER_LINE_ID}
-                className="p-4 border rounded-lg shadow-sm bg-gray-50"
+                className="p-4 border rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-white px-5 pt-6 pb-6 shadow-default sm:px-7.5"
               >
-                <h3 className="font-semibold mb-2">
+                
+<h3 className="font-semibold mb-2 text-center">
                   Line {index + 1} - {line.ITEM_NUMBER}
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-1 gap-3">
+                                        <hr className="custom-divider my-2" />
+
+                <div className="grid grid-cols-1 md:grid-cols-1 gap-1">
                   {Object.entries(line)
                     .filter(([key]) => !excludeLineFields.includes(key))
                     .map(([key, value]) => (
-                      <div
-                        key={key}
-                        className="flex items-center justify-between py-1 border-b border-gray"
-                      >
-                        <span className="font-bold text-md text-black dark:text-white">
-                          {key.replace(/_/g, ' ')}:
-                        </span>
-                        <span className="text-black dark:text-gray-300">
-                          {String(value ?? '-')}
-                        </span>
-                      </div>
+                      <React.Fragment key={key}>
+                       <TitleValueRow
+  key={key}
+  title={key
+    .replace(/_/g, " ")               // replace underscores with spaces
+    .toLowerCase()                    // convert whole string to lowercase
+    .replace(/\b\w/g, (c) => c.toUpperCase())} // capitalize each word
+  value={String(value ?? "-")}
+/>
+
+                        <hr className="custom-divider my-2" />
+
+                      </React.Fragment>
+
+
+
                     ))}
                 </div>
               </div>
