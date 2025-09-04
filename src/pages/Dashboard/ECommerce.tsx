@@ -8,6 +8,7 @@ import ChartFour from '../../components/ChartFour';
 import ChartThree from '../../components/ChartThree.tsx';
 import apiService from '../../services/ApiService.ts';
 
+
 const ECommerce = () => {
   const [counts, setCounts] = useState({
     importUsers: 0,
@@ -54,13 +55,23 @@ const ECommerce = () => {
   }, []);
 
   return (
-    <>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
+    <div className='bg-white p-5 rounded-[20px]'>
+      <p className="text-[24px] mb-5 font-semibold text-[#161616]">
+        Dashboard
+      </p>
+<div className="flex flex-wrap gap-2 md:gap-3 xl:gap-4">
+  <CardOne title="Imported Users" count={counts.importUsers}  />
+  <CardTwo title="Customers" count={counts.customers}  />
+  <CardThree title="Sales Persons" count={counts.salesPersons}  />
+  <CardFour title="Registered Users" count={counts.users}  />
+</div>
+
+      {/* <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
         <CardOne title="Imported Users" count={counts.importUsers} />
         <CardTwo title="Customers" count={counts.customers} />
         <CardThree title="Sales Persons" count={counts.salesPersons} />
         <CardFour title="Registered Users" count={counts.users} />
-      </div>
+      </div> */}
       <div className="grid grid-cols-2 mt-10 gap-5">
         <div>
           <ChartFour
@@ -108,7 +119,7 @@ const ECommerce = () => {
           />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

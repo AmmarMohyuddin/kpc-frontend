@@ -5,6 +5,7 @@ import apiService from '../../services/ApiService';
 import Loader from '../../common/Loader';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { customSelectStyles } from "../../styles/selectStyle.ts";
 
 interface OptionType {
   value: string;
@@ -49,46 +50,56 @@ const CreateLead = () => {
   console.log('Leads Form Data:', leadsFormData);
 
   // Memoize custom styles to prevent recreation on every render
-  const customSelectStyles = useMemo(
-    () => ({
-      control: (provided: any, state: any) => ({
-        ...provided,
-        minHeight: '50px',
-        height: '50px',
-        borderColor: state.isFocused ? '#C32033' : provided.borderColor,
-        boxShadow: state.isFocused ? '0 0 0 1px #C32033' : provided.boxShadow,
-        '&:hover': {
-          borderColor: state.isFocused ? '#C32033' : provided.borderColor,
-        },
-      }),
-      valueContainer: (provided: any) => ({
-        ...provided,
-        height: '50px',
-        padding: '0 8px',
-      }),
-      input: (provided: any) => ({
-        ...provided,
-        margin: '0px',
-      }),
-      option: (provided: any, state: any) => ({
-        ...provided,
-        backgroundColor: state.isSelected
-          ? '#FFD7D7'
-          : state.isFocused
-          ? '#FFD7D7'
-          : provided.backgroundColor,
-        color: '#000',
-        '&:active': {
-          backgroundColor: state.isSelected ? '#FFD7D7' : '#FFD7D7',
-        },
-      }),
-      singleValue: (provided: any) => ({
-        ...provided,
-        color: '#C32033',
-      }),
-    }),
-    [],
-  );
+  // const customSelectStyles = useMemo(
+  //   () => ({
+  //     control: (provided: any, state: any) => ({
+  //       ...provided,
+  //       minHeight: '50px',
+  //       height: '50px',
+
+  //       backgroundColor: "#F4F4F4", // same as bg-gray-100
+  //       border: state.isFocused ? "1px solid #C32033" : "none", // only red border on focus
+
+  //       // borderColor: state.isFocused ? '#C32033' : provided.borderColor,
+  //       boxShadow: state.isFocused ? '0 0 0 1px #C32033' : provided.boxShadow,
+  //       borderRadius: "0.50rem", // 🔥 bigger radius (rounded-xl)
+
+  //       '&:hover': {
+  //         borderColor: state.isFocused ? '#C32033' : provided.borderColor,
+  //       },
+  //     }),
+  //     valueContainer: (provided: any) => ({
+  //       ...provided,
+  //       height: '50px',
+  //       padding: '0 8px',
+  //     }),
+  //     input: (provided: any) => ({
+  //       ...provided,
+  //       margin: '0px',
+  //     }),
+  //     placeholder: (provided: any) => ({
+  //       ...provided,
+  //       color: "#999999", // 👈 custom placeholder color
+  //     }),
+  //     option: (provided: any, state: any) => ({
+  //       ...provided,
+  //       backgroundColor: state.isSelected
+  //         ? '#FFD7D7'
+  //         : state.isFocused
+  //           ? '#FFD7D7'
+  //           : provided.backgroundColor,
+  //       color: '#000',
+  //       '&:active': {
+  //         backgroundColor: state.isSelected ? '#FFD7D7' : '#FFD7D7',
+  //       },
+  //     }),
+  //     singleValue: (provided: any) => ({
+  //       ...provided,
+  //       color: '#C32033',
+  //     }),
+  //   }),
+  //   [],
+  // );
 
   // Memoize data transformation functions
   const mapCitiesToOptions = useCallback((data: any[]): OptionType[] => {
@@ -100,9 +111,9 @@ const CreateLead = () => {
   const mapSourcesToOptions = useCallback((data: any[]): OptionType[] => {
     return Array.isArray(data)
       ? data.map((item) => ({
-          value: item.lead_source,
-          label: item.lead_source,
-        }))
+        value: item.lead_source,
+        label: item.lead_source,
+      }))
       : [];
   }, []);
 
@@ -202,7 +213,7 @@ const CreateLead = () => {
       console.error('Error creating lead:', error);
       toast.error(
         error.response?.data?.message ||
-          'Error creating lead. Please try again.',
+        'Error creating lead. Please try again.',
       );
     }
   };
@@ -228,7 +239,7 @@ const CreateLead = () => {
 
   return (
     <div className="flex flex-col gap-10">
-      <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
+      <div className="rounded-3xl border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
         <h2 className="text-2xl font-semibold mb-3 text-black dark:text-white">
           Create Lead
         </h2>
@@ -256,9 +267,9 @@ const CreateLead = () => {
                   value={
                     leadsFormData.customer_type
                       ? {
-                          value: leadsFormData.customer_type,
-                          label: leadsFormData.customer_type,
-                        }
+                        value: leadsFormData.customer_type,
+                        label: leadsFormData.customer_type,
+                      }
                       : null
                   }
                   onChange={(selectedOption) =>
@@ -288,7 +299,7 @@ const CreateLead = () => {
                   value={leadsFormData.customer_email}
                   onChange={handleChange}
                   placeholder="Enter Email"
-                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                   required
                 />
               </div>
@@ -304,7 +315,7 @@ const CreateLead = () => {
                   value={leadsFormData.address}
                   onChange={handleChange}
                   placeholder="Enter Address"
-                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-[#999999]"
                   required
                 />
               </div>
@@ -320,7 +331,7 @@ const CreateLead = () => {
                   value={leadsFormData.contact_number}
                   onChange={handleChange}
                   placeholder="Enter Contact Number"
-                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-[#999999]"
                   required
                 />
               </div>
@@ -360,7 +371,7 @@ const CreateLead = () => {
                   value={leadsFormData.customer_name}
                   onChange={handleChange}
                   placeholder="Enter Name"
-                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-[#999999]"
                   required
                 />
               </div>
@@ -397,7 +408,7 @@ const CreateLead = () => {
                   value={leadsFormData.contact_position}
                   onChange={handleChange}
                   placeholder="Enter Contact Job Role"
-                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
                   required
                 />
               </div>
@@ -412,9 +423,9 @@ const CreateLead = () => {
                   value={
                     leadsFormData.status
                       ? {
-                          value: leadsFormData.status,
-                          label: leadsFormData.status,
-                        }
+                        value: leadsFormData.status,
+                        label: leadsFormData.status,
+                      }
                       : null
                   }
                   onChange={(selectedOption) =>
@@ -437,12 +448,12 @@ const CreateLead = () => {
                   value={
                     salesPersonOptions.length > 0
                       ? salesPersonOptions.find(
-                          (o) => o.value === leadsFormData.salesperson_id,
-                        ) || null
+                        (o) => o.value === leadsFormData.salesperson_id,
+                      ) || null
                       : {
-                          value: leadsFormData.salesperson_id,
-                          label: leadsFormData.salesperson_name,
-                        }
+                        value: leadsFormData.salesperson_id,
+                        label: leadsFormData.salesperson_name,
+                      }
                   }
                   onChange={handleSalesPersonChange}
                   options={salesPersonOptions}
@@ -467,11 +478,10 @@ const CreateLead = () => {
               onClick={handleSave}
               disabled={!isFormValid()}
               className={`px-15 py-3 rounded-lg font-medium transition-colors 
-    ${
-      isFormValid()
-        ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
-        : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
-    }
+    ${isFormValid()
+                  ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
+                  : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
+                }
   `}
             >
               Save

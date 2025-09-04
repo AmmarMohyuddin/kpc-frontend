@@ -161,7 +161,7 @@ const ManageOpportunity = () => {
       />
 
       <div className="flex flex-col gap-6">
-        <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
+        <div className="rounded-3xl border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
           <div>
             <h1 className="text-2xl font-semibold text-black dark:text-white mb-2">
               Manage Opportunities

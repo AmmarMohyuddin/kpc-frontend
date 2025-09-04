@@ -176,7 +176,7 @@ const ConfirmAddress = () => {
       />
 
       <div className="flex flex-col gap-10">
-        <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
+        <div className="rounded-3xl border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
           <h2 className="text-2xl font-semibold mb-6 text-black dark:text-white">
             New Order
           </h2>
