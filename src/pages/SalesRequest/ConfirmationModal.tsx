@@ -1,35 +1,20 @@
 import { X } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import confirmationImage from '../../images/confirmation.png';
+import Loader from '../common/Loader';
 
-interface ConfirmationModalProps {
+interface NotificationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title?: string;
-  message?: string;
-  onDismiss?: () => void;
+  notification: any | null;
+  loading: boolean; // 👈 new prop for loading state
 }
 
-const ConfirmationModal = ({
+const NotificationModal = ({
   isOpen,
   onClose,
-  title = 'Order Submitted Successfully!',
-  message,
-  onDismiss,
-}: ConfirmationModalProps) => {
-  const navigate = useNavigate();
-
+  notification,
+  loading,
+}: NotificationModalProps) => {
   if (!isOpen) return null;
-
-  const handleDismiss = () => {
-    if (onDismiss) {
-      onDismiss();
-    }
-    onClose();
-
-    // Navigate to sales-request/manage after dismiss
-    navigate('/sales-request/manage');
-  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -52,33 +37,93 @@ const ConfirmationModal = ({
         </div>
 
         {/* Content */}
-        <div className="px-6 py-8 text-center space-y-6">
-          {/* Success Icon */}
-          <div className="flex justify-center">
-            <div className="relative">
-              <img src={confirmationImage} alt="Confirmation" />
+        <div className="px-6 py-8 space-y-6 text-center">
+          {loading ? (
+            <div className="flex justify-center items-center h-40">
+              <Loader />
             </div>
-          </div>
+          ) : (
+            <>
+              {/* Title */}
+              <h2 className="text-xl font-semibold text-black">
+                Notification Details
+              </h2>
 
-          {/* Success Message */}
-          <div className="space-y-2">
-            <h2 className="text-xl font-semibold text-black">{title}</h2>
-            {message && <p className="text-gray-600 text-sm">{message}</p>}
-          </div>
+              {notification && (
+                <div className="space-y-4 text-left">
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500">Type</h3>
+                    <p className="text-lg font-semibold text-black">
+                      {notification.NOTIFICATION_TYPE}
+                    </p>
+                  </div>
 
-          {/* Dismiss Button */}
-          <div className="pt-4">
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500">
+                      Message
+                    </h3>
+                    <p className="text-md text-black">{notification.MESSAGE}</p>
+                  </div>
+
+                  {notification.DETAILS && (
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500">
+                        Details
+                      </h3>
+                      <p className="text-md text-black bg-gray-50 p-3 rounded-md">
+                        {notification.DETAILS}
+                      </p>
+                    </div>
+                  )}
+
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500">Date</h3>
+                    <p className="text-md text-black">
+                      {new Date(notification.CREATION_DATE).toLocaleString()}
+                    </p>
+                  </div>
+
+                  {notification.RELATED_ENTITY && (
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500">
+                        Related To
+                      </h3>
+                      <p className="text-md text-blue-600">
+                        {notification.RELATED_ENTITY}
+                        {notification.RELATED_ENTITY_ID &&
+                          ` #${notification.RELATED_ENTITY_ID}`}
+                      </p>
+                    </div>
+                  )}
+
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500">
+                      Status
+                    </h3>
+                    <p className="text-md text-black">
+                      {notification.READ_FLAG === 'Y' ? 'Read' : 'Unread'}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* Footer */}
+        {!loading && (
+          <div className="flex justify-end p-6 pt-4 border-t border-stroke">
             <button
-              onClick={handleDismiss}
-              className="px-8 py-3 rounded-lg bg-[#C32033] text-white font-medium hover:bg-[#A91B2E] transition-colors"
+              onClick={onClose}
+              className="px-4 py-2 bg-[#C32033] text-white rounded-md hover:bg-[#A91B2E] transition-colors"
             >
-              Dismiss
+              Close
             </button>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
 };
 
-export default ConfirmationModal;
+export default NotificationModal;

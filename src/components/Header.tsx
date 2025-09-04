@@ -1,4 +1,4 @@
-// import DropdownNotification from './DropdownNotification';
+import DropdownNotification from './DropdownNotification';
 import DropdownUser from './DropdownUser';
 
 const Header = (props: {
@@ -12,7 +12,7 @@ const Header = (props: {
         <div className="hidden sm:block"></div>
         <div className="flex items-center gap-3 2xsm:gap-7">
           <ul className="flex items-center gap-2 2xsm:gap-4">
-            {/* <DropdownNotification /> */}
+            <DropdownNotification />
           </ul>
           <DropdownUser />
         </div>

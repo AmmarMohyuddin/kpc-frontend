@@ -5,16 +5,16 @@ import { NavLink, useLocation } from 'react-router-dom';
 import Logo from '../images/Group.svg';
 import SidebarLinkGroup from './SidebarLinkGroup';
 import { AuthContext } from '../context/AuthContext';
-import LeadsRedIcon from "../images/sidebar/leads_red_icon.svg";
-import LeadsWhiteIcon from "../images/sidebar/leads_white_icon.svg";
-import OpportunityWhiteIcon from "../images/sidebar/white_opportunity_icon.svg";
-import OpportunityRedIcon from "../images/sidebar/red_opportunity_icon.svg";
-import DashboardWhiteIcon from "../images/sidebar/dashboard_white_icon.svg";
-import DashboardRedIcon from "../images/sidebar/dashboard_red_icon.svg";
-import SalesRequestWhiteIcon from "../images/sidebar/sales_request_white_icon.svg";
-import SalesRequestRedIcon from "../images/sidebar/sales_request_red_icon.svg";
-import SalesOrderWhiteIcon from "../images/sidebar/sales_order_white_icon.svg";
-import SalesOrdertRedIcon from "../images/sidebar/sales_order_red_icon.svg";
+import LeadsRedIcon from '../images/sidebar/leads_red_icon.svg';
+import LeadsWhiteIcon from '../images/sidebar/leads_white_icon.svg';
+import OpportunityWhiteIcon from '../images/sidebar/white_opportunity_icon.svg';
+import OpportunityRedIcon from '../images/sidebar/red_opportunity_icon.svg';
+import DashboardWhiteIcon from '../images/sidebar/dashboard_white_icon.svg';
+import DashboardRedIcon from '../images/sidebar/dashboard_red_icon.svg';
+import SalesRequestWhiteIcon from '../images/sidebar/sales_request_white_icon.svg';
+import SalesRequestRedIcon from '../images/sidebar/sales_request_red_icon.svg';
+import SalesOrderWhiteIcon from '../images/sidebar/sales_order_white_icon.svg';
+import SalesOrdertRedIcon from '../images/sidebar/sales_order_red_icon.svg';
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -79,13 +79,15 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   return (
     <aside
       ref={sidebar}
-      className={`z-9999 fixed top-0 left-0 flex flex-col h-screen  bg-white duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } ${isCollapsed ? 'w-24' : 'w-80'}`}
+      className={`z-9999 fixed top-0 left-0 flex flex-col h-screen  bg-white duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      } ${isCollapsed ? 'w-24' : 'w-80'}`}
     >
       {/* <!-- SIDEBAR HEADER --> */}
       <div
-        className={`flex items-center justify-between gap-2 pt-8 pb-7 bg-[#C32033] h-[80px] relative ${isCollapsed ? 'px-2 justify-center' : ''
-          }`}
+        className={`flex items-center justify-between gap-2 pt-8 pb-7 bg-[#C32033] h-[80px] relative ${
+          isCollapsed ? 'px-2 justify-center' : ''
+        }`}
       >
         <NavLink
           to="/"
@@ -171,19 +173,22 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               <li className="mb-1">
                 <NavLink
                   to="/"
-                  className={`group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
-                    } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${pathname === '/'
+                  className={`group relative flex items-center ${
+                    isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
+                  } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${
+                    pathname === '/'
                       ? 'bg-[rgb(255,215,215)] border-l-6 border-[#C32033] text-black'
                       : ''
-                    }`}
+                  }`}
                 >
                   <div
                     className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0
                       ${pathname === '/' ? 'bg-white' : 'bg-[#C32033]'}`}
                   >
-
                     <img
-                      src={pathname !== '/' ? DashboardWhiteIcon : DashboardRedIcon}
+                      src={
+                        pathname !== '/' ? DashboardWhiteIcon : DashboardRedIcon
+                      }
                       alt="Leads Icon"
                       className="w-6 h-6"
                     />
@@ -198,19 +203,23 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <li className="mb-1">
                   <NavLink
                     to="/users"
-                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
-                      } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${pathname.includes('users') && 'bg-[#FFD7D7] text-black'
-                      }`}
+                    className={`group relative flex items-center ${
+                      isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
+                    } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${
+                      pathname.includes('users') && 'bg-[#FFD7D7] text-black'
+                    }`}
                   >
                     <div
-                      className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${pathname.includes('users') ? 'bg-white' : 'bg-[#C32033]'
-                        }`}
+                      className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${
+                        pathname.includes('users') ? 'bg-white' : 'bg-[#C32033]'
+                      }`}
                     >
                       <svg
-                        className={`fill-current ${pathname.includes('users')
-                          ? 'text-[#C32033]'
-                          : 'text-white'
-                          }`}
+                        className={`fill-current ${
+                          pathname.includes('users')
+                            ? 'text-[#C32033]'
+                            : 'text-white'
+                        }`}
                         width="20"
                         height="16"
                         viewBox="0 0 22 18"
@@ -239,22 +248,26 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <li className="mb-1">
                   <NavLink
                     to="/deactivate"
-                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
-                      } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${pathname.includes('deactivate') &&
+                    className={`group relative flex items-center ${
+                      isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
+                    } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${
+                      pathname.includes('deactivate') &&
                       'bg-[#FFD7D7] text-black'
-                      }`}
+                    }`}
                   >
                     <div
-                      className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${pathname.includes('deactivate')
-                        ? 'bg-white'
-                        : 'bg-[#C32033]'
-                        }`}
+                      className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${
+                        pathname.includes('deactivate')
+                          ? 'bg-white'
+                          : 'bg-[#C32033]'
+                      }`}
                     >
                       <svg
-                        className={`fill-current ${pathname.includes('deactivate')
-                          ? 'text-[#C32033]'
-                          : 'text-white'
-                          }`}
+                        className={`fill-current ${
+                          pathname.includes('deactivate')
+                            ? 'text-[#C32033]'
+                            : 'text-white'
+                        }`}
                         width="20"
                         height="16"
                         viewBox="0 0 22 18"
@@ -285,21 +298,25 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <li className="mb-1">
                   <NavLink
                     to="/import"
-                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
-                      } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${pathname.includes('import') && 'bg-[#FFD7D7] text-black'
-                      }`}
+                    className={`group relative flex items-center ${
+                      isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
+                    } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${
+                      pathname.includes('import') && 'bg-[#FFD7D7] text-black'
+                    }`}
                   >
                     <div
-                      className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${pathname.includes('import')
-                        ? 'bg-white'
-                        : 'bg-[#C32033]'
-                        }`}
+                      className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${
+                        pathname.includes('import')
+                          ? 'bg-white'
+                          : 'bg-[#C32033]'
+                      }`}
                     >
                       <svg
-                        className={`fill-current ${pathname.includes('import')
-                          ? 'text-[#C32033]'
-                          : 'text-white'
-                          }`}
+                        className={`fill-current ${
+                          pathname.includes('import')
+                            ? 'text-[#C32033]'
+                            : 'text-white'
+                        }`}
                         width="20"
                         height="16"
                         viewBox="0 0 22 18"
@@ -328,19 +345,23 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <li className="mb-1">
                   <NavLink
                     to="/sales"
-                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
-                      } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${pathname.includes('sales') && 'bg-[#FFD7D7] text-black'
-                      }`}
+                    className={`group relative flex items-center ${
+                      isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
+                    } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${
+                      pathname.includes('sales') && 'bg-[#FFD7D7] text-black'
+                    }`}
                   >
                     <div
-                      className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${pathname.includes('sales') ? 'bg-white' : 'bg-[#C32033]'
-                        }`}
+                      className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${
+                        pathname.includes('sales') ? 'bg-white' : 'bg-[#C32033]'
+                      }`}
                     >
                       <svg
-                        className={`fill-current ${pathname.includes('sales')
-                          ? 'text-[#C32033]'
-                          : 'text-white'
-                          }`}
+                        className={`fill-current ${
+                          pathname.includes('sales')
+                            ? 'text-[#C32033]'
+                            : 'text-white'
+                        }`}
                         width="20"
                         height="16"
                         viewBox="0 0 22 18"
@@ -369,22 +390,26 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <li className="mb-1">
                   <NavLink
                     to="/customers"
-                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
-                      } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${pathname.includes('customers') &&
+                    className={`group relative flex items-center ${
+                      isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
+                    } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${
+                      pathname.includes('customers') &&
                       'bg-[#FFD7D7] text-black'
-                      }`}
+                    }`}
                   >
                     <div
-                      className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${pathname.includes('customers')
-                        ? 'bg-white'
-                        : 'bg-[#C32033]'
-                        }`}
+                      className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${
+                        pathname.includes('customers')
+                          ? 'bg-white'
+                          : 'bg-[#C32033]'
+                      }`}
                     >
                       <svg
-                        className={`fill-current ${pathname.includes('customers')
-                          ? 'text-[#C32033]'
-                          : 'text-white'
-                          }`}
+                        className={`fill-current ${
+                          pathname.includes('customers')
+                            ? 'text-[#C32033]'
+                            : 'text-white'
+                        }`}
                         width="20"
                         height="16"
                         viewBox="0 0 22 18"
@@ -412,33 +437,41 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Users --> */}
               {/* <!-- Menu Item Leads --> */}
               {user?.role === 'salesPerson' && (
-
                 <SidebarLinkGroup
-                  activeCondition={pathname === "/leads" || pathname.includes("leads")}
-                  open={openTab === "leads"}
-                  onToggle={() => setOpenTab(openTab === "leads" ? null : "leads")}
+                  activeCondition={
+                    pathname === '/leads' || pathname.includes('leads')
+                  }
+                  open={openTab === 'leads'}
+                  onToggle={() =>
+                    setOpenTab(openTab === 'leads' ? null : 'leads')
+                  }
                 >
                   {(handleClick, open) => {
                     const isSelected =
-                      pathname === "/leads" || pathname.includes("leads");
+                      pathname === '/leads' || pathname.includes('leads');
 
                     return (
                       <>
                         {/* Main Tab */}
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center ${isCollapsed ? "justify-center px-2" : "gap-6 px-4"
-                            } rounded-sm py-2 mb-1 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${open ? "bg-[#FFD7D7] text-black" : ""
-                            }`}
+                          className={`group relative flex items-center ${
+                            isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
+                          } rounded-sm py-2 mb-1 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${
+                            open ? 'bg-[#FFD7D7] text-black' : ''
+                          }`}
                           onClick={(e) => {
                             e.preventDefault();
-                            sidebarExpanded ? handleClick() : setSidebarExpanded(true);
+                            sidebarExpanded
+                              ? handleClick()
+                              : setSidebarExpanded(true);
                           }}
                         >
                           {/* Icon */}
                           <div
-                            className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${!open ? "bg-[#C32033]" : "bg-white"
-                              }`}
+                            className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${
+                              !open ? 'bg-[#C32033]' : 'bg-white'
+                            }`}
                           >
                             <img
                               src={open ? LeadsRedIcon : LeadsWhiteIcon}
@@ -455,8 +488,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           {/* Arrow */}
                           {!isCollapsed && (
                             <svg
-                              className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && "rotate-180"
-                                }`}
+                              className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                                open && 'rotate-180'
+                              }`}
                               width="20"
                               height="20"
                               viewBox="0 0 20 20"
@@ -475,15 +509,21 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         {/* Dropdown Items */}
                         {!isCollapsed && (
                           <div
-                            className={`overflow-hidden transition-all duration-500 ease-in-out ${open ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                              }`}
+                            className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                              open
+                                ? 'max-h-96 opacity-100'
+                                : 'max-h-0 opacity-0'
+                            }`}
                           >
                             <ul className="mt-4 mb-5.5 flex flex-col gap-4 pl-6">
                               <li>
                                 <NavLink
                                   to="/leads/create"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${pathname.includes("/leads/create") ? "text-[#C32033]" : "text-black"
-                                    }`}
+                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${
+                                    pathname.includes('/leads/create')
+                                      ? 'text-[#C32033]'
+                                      : 'text-black'
+                                  }`}
                                 >
                                   Create
                                 </NavLink>
@@ -491,10 +531,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/leads/manage"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base  ${pathname.includes("/leads/manage")
-                                      ? "text-[#C32033]"
-                                      : "text-black"
-                                    }`}
+                                  className={`flex items-center px-2 rounded-lg transition-colors text-base  ${
+                                    pathname.includes('/leads/manage')
+                                      ? 'text-[#C32033]'
+                                      : 'text-black'
+                                  }`}
                                 >
                                   Manage Leads
                                 </NavLink>
@@ -502,10 +543,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/leads/follow-up"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base  ${pathname==="/leads/follow-up"
-                                      ? "text-[#C32033]"
-                                      : "text-black"
-                                    }`}
+                                  className={`flex items-center px-2 rounded-lg transition-colors text-base  ${
+                                    pathname === '/leads/follow-up'
+                                      ? 'text-[#C32033]'
+                                      : 'text-black'
+                                  }`}
                                 >
                                   Follow-Up Entries
                                 </NavLink>
@@ -513,10 +555,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/leads/follow-up/manage"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base  ${pathname.includes("/leads/follow-up/manage")
-                                      ? "text-[#C32033]"
-                                      : "text-black"
-                                    }`}
+                                  className={`flex items-center px-2 rounded-lg transition-colors text-base  ${
+                                    pathname.includes('/leads/follow-up/manage')
+                                      ? 'text-[#C32033]'
+                                      : 'text-black'
+                                  }`}
                                 >
                                   Manage Follow-Up
                                 </NavLink>
@@ -528,8 +571,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     );
                   }}
                 </SidebarLinkGroup>
-
-
 
                 //                 <SidebarLinkGroup
                 //                   activeCondition={
@@ -555,9 +596,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 //                           }}
                 //                         >
 
-
                 // <div
-                //   className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 
+                //   className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0
                 //     ${!open ? "bg-[#C32033]" : "bg-white"}`}
                 // >
                 //   <img
@@ -681,36 +721,49 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Opportunities --> */}
               {user?.role === 'salesPerson' && (
                 <SidebarLinkGroup
-                  activeCondition={pathname === "/opportunities" || pathname.includes("opportunities")}
-                  open={openTab === "opportunities"}
+                  activeCondition={
+                    pathname === '/opportunities' ||
+                    pathname.includes('opportunities')
+                  }
+                  open={openTab === 'opportunities'}
                   onToggle={() =>
-                    setOpenTab(openTab === "opportunities" ? null : "opportunities")
+                    setOpenTab(
+                      openTab === 'opportunities' ? null : 'opportunities',
+                    )
                   }
                 >
                   {(handleClick, open) => {
                     const isSelected =
-                      pathname === "/opportunities" || pathname.includes("opportunities");
+                      pathname === '/opportunities' ||
+                      pathname.includes('opportunities');
 
                     return (
                       <>
                         {/* Main Tab */}
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center ${isCollapsed ? "justify-center px-2" : "gap-6 px-4"
-                            } rounded-sm py-2 mb-1 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${open ? "bg-[#FFD7D7] text-black" : ""
-                            }`}
+                          className={`group relative flex items-center ${
+                            isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
+                          } rounded-sm py-2 mb-1 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${
+                            open ? 'bg-[#FFD7D7] text-black' : ''
+                          }`}
                           onClick={(e) => {
                             e.preventDefault();
-                            sidebarExpanded ? handleClick() : setSidebarExpanded(true);
+                            sidebarExpanded
+                              ? handleClick()
+                              : setSidebarExpanded(true);
                           }}
                         >
                           {/* Icon */}
                           <div
-                            className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${open ? "bg-white" : "bg-[#C32033]"
-                              }`}
+                            className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${
+                              open ? 'bg-white' : 'bg-[#C32033]'
+                            }`}
                           >
                             <img
-                              src={open ? OpportunityRedIcon : OpportunityWhiteIcon}
+                              src={
+                                open ? OpportunityRedIcon : OpportunityWhiteIcon
+                              }
                               alt="Opportunities Icon"
                               className="w-6 h-6"
                             />
@@ -719,14 +772,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           {/* Label */}
 
                           {!isCollapsed && (
-                            <span className="text-base font-medium">Opportunities</span>
+                            <span className="text-base font-medium">
+                              Opportunities
+                            </span>
                           )}
 
                           {/* Arrow */}
                           {!isCollapsed && (
                             <svg
-                              className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && "rotate-180"
-                                }`}
+                              className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                                open && 'rotate-180'
+                              }`}
                               width="20"
                               height="20"
                               viewBox="0 0 20 20"
@@ -745,17 +801,21 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         {/* Dropdown Items */}
                         {!isCollapsed && (
                           <div
-                            className={`overflow-hidden transition-all duration-500 ease-in-out ${open ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                              }`}
+                            className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                              open
+                                ? 'max-h-96 opacity-100'
+                                : 'max-h-0 opacity-0'
+                            }`}
                           >
                             <ul className="mt-4 mb-5.5 flex flex-col gap-4 pl-6">
                               <li>
                                 <NavLink
                                   to="/opportunities/create"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${pathname.includes("/opportunities/create")
-                                      ? "text-[#C32033]"
-                                      : "text-black"
-                                    }`}
+                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${
+                                    pathname.includes('/opportunities/create')
+                                      ? 'text-[#C32033]'
+                                      : 'text-black'
+                                  }`}
                                 >
                                   Create
                                 </NavLink>
@@ -763,10 +823,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/opportunities/manage"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${pathname.includes("/opportunities/manage")
-                                      ? "text-[#C32033]"
-                                      : "text-black"
-                                    }`}
+                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${
+                                    pathname.includes('/opportunities/manage')
+                                      ? 'text-[#C32033]'
+                                      : 'text-black'
+                                  }`}
                                 >
                                   Manage Opportunities
                                 </NavLink>
@@ -774,10 +835,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/opportunities/follow-up"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${pathname==="/opportunities/follow-up"
-                                      ? "text-[#C32033]"
-                                      : "text-black"
-                                    }`}
+                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${
+                                    pathname === '/opportunities/follow-up'
+                                      ? 'text-[#C32033]'
+                                      : 'text-black'
+                                  }`}
                                 >
                                   Follow-Up Entries
                                 </NavLink>
@@ -785,10 +847,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/opportunities/follow-up/manage"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${pathname.includes("/opportunities/follow-up/manage")
-                                      ? "text-[#C32033]"
-                                      : "text-black"
-                                    }`}
+                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${
+                                    pathname.includes(
+                                      '/opportunities/follow-up/manage',
+                                    )
+                                      ? 'text-[#C32033]'
+                                      : 'text-black'
+                                  }`}
                                 >
                                   Manage Follow-Up
                                 </NavLink>
@@ -999,10 +1064,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Sales Orders --> */}
               {user?.role === 'salesPerson' && (
                 <SidebarLinkGroup
-                  activeCondition={pathname === '/forms' || pathname.includes('forms')}
+                  activeCondition={
+                    pathname === '/forms' || pathname.includes('forms')
+                  }
                   open={openTab === 'sales-orders'}
                   onToggle={() =>
-                    setOpenTab(openTab === 'sales-orders' ? null : 'sales-orders')
+                    setOpenTab(
+                      openTab === 'sales-orders' ? null : 'sales-orders',
+                    )
                   }
                 >
                   {(onToggle, open) => {
@@ -1010,33 +1079,43 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       <>
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
-                            } rounded-sm py-2 mb-1 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${open ? "bg-[#FFD7D7] text-black" : ""
-                            } `}
+                          className={`group relative flex items-center ${
+                            isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
+                          } rounded-sm py-2 mb-1 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${
+                            open ? 'bg-[#FFD7D7] text-black' : ''
+                          } `}
                           onClick={(e) => {
                             e.preventDefault();
-                            sidebarExpanded ? onToggle() : setSidebarExpanded(true);
+                            sidebarExpanded
+                              ? onToggle()
+                              : setSidebarExpanded(true);
                           }}
                         >
                           <div
-                            className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${open ? 'bg-white' : 'bg-[#C32033]'
-                              }`}
+                            className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${
+                              open ? 'bg-white' : 'bg-[#C32033]'
+                            }`}
                           >
                             <img
-                              src={open ? SalesOrdertRedIcon : SalesOrderWhiteIcon}
+                              src={
+                                open ? SalesOrdertRedIcon : SalesOrderWhiteIcon
+                              }
                               alt="Sales Orders Icon"
                               className="w-6 h-6"
                             />
                           </div>
 
                           {!isCollapsed && (
-                            <span className="text-base font-medium">Sales Orders</span>
+                            <span className="text-base font-medium">
+                              Sales Orders
+                            </span>
                           )}
 
                           {!isCollapsed && (
                             <svg
-                              className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
-                                }`}
+                              className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                                open && 'rotate-180'
+                              }`}
                               width="20"
                               height="20"
                               viewBox="0 0 20 20"
@@ -1056,17 +1135,22 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         {/* Dropdown Menu Start */}
                         {!isCollapsed && (
                           <div
-                            className={`overflow-hidden transition-all duration-500 ease-in-out ${open ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                              }`}
+                            className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                              open
+                                ? 'max-h-96 opacity-100'
+                                : 'max-h-0 opacity-0'
+                            }`}
                           >
                             <ul className="mt-4 mb-5.5 flex flex-col gap-4 pl-6">
                               <li>
                                 <NavLink
                                   to="/sales-orders/history"
-                                  className={({ isActive }) =>
-                                    'group relative flex items-center px-2 rounded-lg transition-colors text-base duration-300 ease-in-out hover:text-black ' +
-                                    (isActive && 'text-[#C32033]')
-                                  }
+                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${
+                                    pathname === '/sales-orders/history' ||
+                                    pathname.includes('/sales-orders/history')
+                                      ? 'text-[#C32033]'
+                                      : 'text-black'
+                                  }`}
                                 >
                                   Track Delivery Status
                                 </NavLink>
@@ -1074,10 +1158,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/sales-orders/open"
-                                  className={({ isActive }) =>
-                                    'group relative flex items-center px-2 rounded-lg transition-colors text-base duration-300 ease-in-out hover:text-black ' +
-                                    (isActive && 'text-[#C32033]')
-                                  }
+                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${
+                                    pathname === '/sales-orders/open' ||
+                                    pathname.includes('/sales-orders/open')
+                                      ? 'text-[#C32033]'
+                                      : 'text-black'
+                                  }`}
                                 >
                                   Closed Orders
                                 </NavLink>
@@ -1085,11 +1171,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/sales-orders/uninvoiced"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${pathname === '/sales-orders/uninvoiced' ||
-                                      pathname.includes('/sales-orders/uninvoiced')
+                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${
+                                    pathname === '/sales-orders/uninvoiced' ||
+                                    pathname.includes(
+                                      '/sales-orders/uninvoiced',
+                                    )
                                       ? 'text-[#C32033]'
                                       : 'text-black'
-                                    }`}
+                                  }`}
                                 >
                                   Uninvoiced Orders
                                 </NavLink>
@@ -1327,11 +1416,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {user?.role === 'salesPerson' && (
                 <SidebarLinkGroup
                   activeCondition={
-                    pathname === '/sales-request' || pathname.includes('sales-request')
+                    pathname === '/sales-request' ||
+                    pathname.includes('sales-request')
                   }
                   open={openTab === 'sales-request'}
                   onToggle={() =>
-                    setOpenTab(openTab === 'sales-request' ? null : 'sales-request')
+                    setOpenTab(
+                      openTab === 'sales-request' ? null : 'sales-request',
+                    )
                   }
                 >
                   {(handleClick, open) => {
@@ -1339,37 +1431,47 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       <>
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center ${isCollapsed ? 'justify-center px-2 py-2' : 'gap-6 px-4 py-2'
-                            } rounded-sm py-2 mb-1 font-medium text-black text-lg whitespace-nowrap duration-600 ease-in-out hover:bg-[#FFD7D7] ${open
-                              ? 'bg-[#FFD7D7]'
-                              : 'bg-transparent'
-
-                            }`}
+                          className={`group relative flex items-center ${
+                            isCollapsed
+                              ? 'justify-center px-2 py-2'
+                              : 'gap-6 px-4 py-2'
+                          } rounded-sm py-2 mb-1 font-medium text-black text-lg whitespace-nowrap duration-600 ease-in-out hover:bg-[#FFD7D7] ${
+                            open ? 'bg-[#FFD7D7]' : 'bg-transparent'
+                          }`}
                           onClick={(e) => {
                             e.preventDefault();
-                            sidebarExpanded ? handleClick() : setSidebarExpanded(true);
+                            sidebarExpanded
+                              ? handleClick()
+                              : setSidebarExpanded(true);
                           }}
                         >
                           <div
-                            className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${open ? 'bg-white' : 'bg-[#C32033]'
-                              }`}
+                            className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${
+                              open ? 'bg-white' : 'bg-[#C32033]'
+                            }`}
                           >
                             <img
-                              src={open ? SalesRequestRedIcon : SalesRequestWhiteIcon}
+                              src={
+                                open
+                                  ? SalesRequestRedIcon
+                                  : SalesRequestWhiteIcon
+                              }
                               alt="Sales Request Icon"
                               className="w-6 h-6"
                             />
                           </div>
 
-
                           {!isCollapsed && (
-                            <span className="text-base font-medium">Sales Requests</span>
+                            <span className="text-base font-medium">
+                              Sales Requests
+                            </span>
                           )}
 
                           {!isCollapsed && (
                             <svg
-                              className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
-                                }`}
+                              className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                                open && 'rotate-180'
+                              }`}
                               width="20"
                               height="20"
                               viewBox="0 0 20 20"
@@ -1389,18 +1491,22 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         {/* Dropdown Menu Start */}
                         {!isCollapsed && (
                           <div
-                            className={`overflow-hidden transition-all duration-500 ease-in-out ${open ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                              }`}
+                            className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                              open
+                                ? 'max-h-96 opacity-100'
+                                : 'max-h-0 opacity-0'
+                            }`}
                           >
                             <ul className="mt-4 mb-5.5 flex flex-col gap-4 pl-6">
                               <li>
                                 <NavLink
                                   to="/sales-request/create"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${pathname === '/sales-request/create' ||
-                                      pathname.includes('/sales-request/create')
+                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${
+                                    pathname === '/sales-request/create' ||
+                                    pathname.includes('/sales-request/create')
                                       ? 'text-[#C32033]'
                                       : 'text-black'
-                                    }`}
+                                  }`}
                                 >
                                   Create
                                 </NavLink>
@@ -1408,11 +1514,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/sales-request/manage"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${pathname === '/sales-request/manage' ||
-                                      pathname.includes('/sales-request/manage')
+                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${
+                                    pathname === '/sales-request/manage' ||
+                                    pathname.includes('/sales-request/manage')
                                       ? 'text-[#C32033]'
                                       : 'text-black'
-                                    }`}
+                                  }`}
                                 >
                                   Manage Requests
                                 </NavLink>
@@ -1420,11 +1527,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/sales-request/draft"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${pathname === '/sales-request/draft' ||
-                                      pathname.includes('/sales-request/draft')
+                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${
+                                    pathname === '/sales-request/draft' ||
+                                    pathname.includes('/sales-request/draft')
                                       ? 'text-[#C32033]'
                                       : 'text-black'
-                                    }`}
+                                  }`}
                                 >
                                   Manage Drafts
                                 </NavLink>

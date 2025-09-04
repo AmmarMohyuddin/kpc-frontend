@@ -59,7 +59,7 @@ const ChartFour: React.FC<ChartFourProps> = ({
           options={options}
           series={series}
           type="bar"
-          height={340}
+          height={294}
         />
       </div>
     </div>
