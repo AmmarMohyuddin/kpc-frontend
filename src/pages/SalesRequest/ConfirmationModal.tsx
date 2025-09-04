@@ -1,5 +1,5 @@
 import { X } from 'lucide-react';
-import Loader from '../common/Loader';
+import Loader from '../../common/Loader';
 
 interface NotificationModalProps {
   isOpen: boolean;
