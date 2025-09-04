@@ -1,5 +1,6 @@
 import { ChevronRight, ArrowRight } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import TitleValueRow from "../../components/TitleValueRow.js";
 
 const DetailLead = () => {
   const location = useLocation();
@@ -9,107 +10,77 @@ const DetailLead = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col py-1 px-5 gap-6 bg-white rounded-[20px]">
+        <span className="text-[#161616] mt-5 text-[24px] font-semibold">
+          {leadData.lead_id}
+        </span>
         {/* Page Header */}
         <div>
-          <h1 className="text-2xl font-semibold text-black dark:text-white mb-2">
-            {leadData.id}
-          </h1>
 
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-md text-gray-600 mt-5">
-            <span>Leads</span>
+          <div className="flex items-center gap-2 text-md mt-0">
+            <span className="text-[rgba(22,22,22,0.7)]">Leads</span>
             <ChevronRight className="w-4 h-4" />
-            <span>Detail Leads</span>
+            <span className="text-[rgba(22,22,22,0.7)]">Detail Leads</span>
             <ChevronRight className="w-4 h-4" />
-            <span className="text-[#C32033]">{leadData.lead_id}</span>
+            <span className="text-[#161616]">{leadData.lead_id}</span>
           </div>
         </div>
 
         {/* Detail Card */}
-        <div className="rounded border border-stroke bg-white px-5 pt-6 pb-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5">
-          <div className="space-y-6">
+        <div className="rounded-[10px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
+          <div className="space-y-3">
             {/* Company */}
-            <div className="flex items-center justify-between py-1 border-b border-gray">
-              <span className="font-bold text-lg text-black dark:text-white">
-                Company:
-              </span>
-              <span>{leadData.customer_type}</span>
-            </div>
+
+            <TitleValueRow title="Company" value={leadData.customer_type} />
+            <hr className="custom-divider my-2" />
 
             {/* Name */}
-            <div className="flex items-center justify-between py-1 border-b border-gray">
-              <span className="font-bold text-lg text-black dark:text-white">
-                Name:
-              </span>
-              <span>{leadData.customer_name}</span>
-            </div>
+            <TitleValueRow title="Name" value={leadData.customer_name} />
+            <hr className="custom-divider my-2" />
+
 
             {/* Email */}
-            <div className="flex items-center justify-between py-1 border-b border-gray">
-              <span className="font-bold text-lg text-black dark:text-white">
-                Email:
-              </span>
-              <span>{leadData.email_address}</span>
-            </div>
+            <TitleValueRow title="Email" value={leadData.email_address} />
+            <hr className="custom-divider my-2" />
+
 
             {/* Address */}
-            <div className="flex items-center justify-between py-1 border-b border-gray">
-              <span className="font-bold text-lg text-black dark:text-white">
-                Address:
-              </span>
-              <span>{leadData.contact_address}</span>
-            </div>
+            <TitleValueRow title="Address" value={leadData.contact_address} />
+            <hr className="custom-divider my-2" />
+            <TitleValueRow title="City" value={leadData.city} />
+            <hr className="custom-divider my-2" />
 
-            <div className="flex items-center justify-between py-1 border-b border-gray">
-              <span className="font-bold text-lg text-black dark:text-white">
-                City:
-              </span>
-              <span>{leadData.city}</span>
-            </div>
+
 
             {/* Contact Number */}
-            <div className="flex items-center justify-between py-1 border-b border-gray">
-              <span className="font-bold text-lg text-black dark:text-white">
-                Contact Number:
-              </span>
-              <span>{leadData.contact_number}</span>
-            </div>
+            <TitleValueRow title="Contact Number" value={leadData.contact_number} />
+            <hr className="custom-divider my-2" />
+
 
             {/* Contact Job Role */}
-            <div className="flex items-center justify-between py-1 border-b border-gray">
-              <span className="font-bold text-lg text-black dark:text-white">
-                Contact Job Role:
-              </span>
-              <span>{leadData.contact_position}</span>
-            </div>
+            <TitleValueRow title="Contact Job Role:" value={leadData.contact_position} />
+            <hr className="custom-divider my-2" />
 
-            <div className="flex items-center justify-between py-1 border-b border-gray">
-              <span className="font-bold text-lg text-black dark:text-white">
-                Source:
-              </span>
-              <span>{leadData.source}</span>
-            </div>
+
+            <TitleValueRow title="Source" value={leadData.source} />
+            <hr className="custom-divider my-2" />
+
 
             {/* Sales Person */}
-            <div className="flex items-center justify-between py-1 border-b border-gray">
-              <span className="font-bold text-lg text-black dark:text-white">
-                Sales Person:
-              </span>
-              <span>{leadData.salesperson_name}</span>
-            </div>
+            <TitleValueRow title="Sales Person" value={leadData.salesperson_name} />
+            <hr className="custom-divider my-2" />
+
 
             {/* Stage */}
-            <div className="flex items-center justify-between py-1 border-b border-gray">
-              <span className="text-lg font-bold text-black">Stage:</span>
-              <div>{leadData.stage}</div>
-            </div>
+            <TitleValueRow title="Stage" value={leadData.stage} />
+            <hr className="custom-divider my-2" />
+
 
             {/* Status */}
-            <div className="flex items-center justify-between py-1 border-b border-gray">
-              <span className="text-lg font-bold text-black">Status:</span>
-              <div>{leadData.status}</div>
-            </div>
+            <TitleValueRow title="Status" value={leadData.status} />
+            <hr className="custom-divider my-2" />
+
 
             {/* View Opportunity Button */}
             <div className="flex justify-center pt-4">

@@ -1,5 +1,7 @@
 import { ChevronRight } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import TitleValueRow from "../../components/TitleValueRow.js";
+
 
 const DetailFollowUp = () => {
   const location = useLocation();
@@ -18,101 +20,71 @@ const DetailFollowUp = () => {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col py-1 px-5 gap-6 bg-white rounded-[20px]">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-semibold text-black dark:text-white mb-2">
+        <h1 className="text-2xl mt-5 font-semibold text-black dark:text-white mb-2">
           Follow Up #{followupData.followup_id}
         </h1>
 
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-md text-gray-600 mt-5">
-          <span>Leads</span>
+          <span className="text-[rgba(22,22,22,0.7)]">Leads</span>
           <ChevronRight className="w-4 h-4" />
-          <span>Follow Up</span>
+          <span className="text-[rgba(22,22,22,0.7)]">Follow Up</span>
           <ChevronRight className="w-4 h-4" />
-          <span className="text-[#C32033]">{followupData.followup_id}</span>
+          <span className="text-[#161616]">Entry Details # {followupData.followup_id}</span>
         </div>
       </div>
 
       {/* Detail Card */}
-      <div className="rounded border border-stroke bg-white px-5 pt-6 pb-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5">
-        <div className="space-y-6">
+      <div className="rounded-[10px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
+        <div className="space-y-3">
           {/* Follow Up ID */}
-          <div className="flex items-center justify-between py-1 border-b border-gray">
-            <span className="font-bold text-lg text-black dark:text-white">
-              Follow Up ID:
-            </span>
-            <span>{followupData.followup_id}</span>
-          </div>
+          <TitleValueRow title="Follow Up ID" value={followupData.followup_id} />
+          <hr className="custom-divider my-2" />
+
 
           {/* Source */}
-          <div className="flex items-center justify-between py-1 border-b border-gray">
-            <span className="font-bold text-lg text-black dark:text-white">
-              Source:
-            </span>
-            <span>{followupData.source}</span>
-          </div>
+          <TitleValueRow title="Source" value={followupData.source} />
+          <hr className="custom-divider my-2" />
+
 
           {/* Opportunity ID */}
-          <div className="flex items-center justify-between py-1 border-b border-gray">
-            <span className="font-bold text-lg text-black dark:text-white">
-              Opportunity ID:
-            </span>
-            <span>{followupData.opportunity_id}</span>
-          </div>
+          <TitleValueRow title="Opportunity ID" value={followupData.opportunity_id} />
+          <hr className="custom-divider my-2" />
+
 
           {/* Follow Up Date */}
-          <div className="flex items-center justify-between py-1 border-b border-gray">
-            <span className="font-bold text-lg text-black dark:text-white">
-              Follow Up Date:
-            </span>
-            <span>
-              {followupData.followup_date
-                ? new Date(followupData.followup_date).toLocaleDateString(
-                    'en-GB',
-                  )
-                : 'N/A'}
-            </span>
-          </div>
+          <TitleValueRow title="Follow Up Date" value={followupData.followup_date
+            ? new Date(followupData.followup_date).toLocaleDateString(
+              'en-GB',
+            )
+            : 'N/A'} />
+          <hr className="custom-divider my-2" />
+
 
           {/* Next Follow Up Date */}
-          <div className="flex items-center justify-between py-1 border-b border-gray">
-            <span className="font-bold text-lg text-black dark:text-white">
-              Next Follow Up Date:
-            </span>
-            <span>
-              {followupData.next_followup_date
-                ? new Date(followupData.next_followup_date).toLocaleDateString(
-                    'en-GB',
-                  )
-                : 'N/A'}
-            </span>
-          </div>
+          <TitleValueRow title="Next Follow Up Date" value={followupData.next_followup_date
+            ? new Date(followupData.next_followup_date).toLocaleDateString(
+              'en-GB',
+            )
+            : 'N/A'} />
+          <hr className="custom-divider my-2" />
+
 
           {/* Status */}
-          <div className="flex items-center justify-between py-1 border-b border-gray">
-            <span className="font-bold text-lg text-black dark:text-white">
-              Status:
-            </span>
-            <span>{followupData.status}</span>
-          </div>
+          <TitleValueRow title="Status" value={followupData.status} />
+          <hr className="custom-divider my-2" />
+
 
           {/* Comments */}
-          <div className="flex items-center justify-between py-1 border-b border-gray">
-            <span className="font-bold text-lg text-black dark:text-white">
-              Comments:
-            </span>
-            <span>{followupData.comments}</span>
-          </div>
+          <TitleValueRow title="Comments" value={followupData.comments} />
+          <hr className="custom-divider my-2" />
+
 
           {/* Assigned To */}
-          <div className="flex items-center justify-between py-1">
-            <span className="font-bold text-lg text-black dark:text-white">
-              Assigned To:
-            </span>
-            <span>{followupData.assigned_to}</span>
-          </div>
+          <TitleValueRow title="Assigned To" value={followupData.assigned_to} />
         </div>
       </div>
 

@@ -21,6 +21,16 @@
   .tableValues {
   @apply  pl-10 py-4 text-[#161616] text-[14px] font-normal;
 }
+.detail-title {
+    @apply text-[16px] font-medium text-[#000000];
+  }
+.custom-divider {
+  border: 0;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.08); /* black with 8% opacity */
+  margin: 2px 0; /* reduce vertical space */
+}
+
   
   
 }
