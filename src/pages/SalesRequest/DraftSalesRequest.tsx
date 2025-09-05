@@ -1,14 +1,16 @@
 import {
   Search,
-  Filter,
+  SlidersHorizontal,
   ChevronLeft,
   ChevronRight,
   Edit,
   Trash2,
   ChevronRight as CrRight,
+  X,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import DeleteModal from './DeleteModal';
 import apiService from '../../services/ApiService';
 import Loader from '../../common/Loader';
@@ -24,6 +26,126 @@ interface SalesRequest {
   CUSTOMER_ID: string;
 }
 
+interface PaginationInfo {
+  limit: number;
+  offset: number;
+  hasMore: boolean;
+  count: number;
+}
+
+interface ApiResponse {
+  orders: SalesRequest[];
+  pagination: PaginationInfo;
+}
+
+// Filter Modal Props Interface
+interface FilterModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  selectedFilter: string;
+  onFilterChange: (value: string) => void;
+  onApply: () => void;
+}
+
+// Filter Modal Component
+const FilterModal = ({
+  isOpen,
+  onClose,
+  selectedFilter,
+  onFilterChange,
+  onApply,
+}: FilterModalProps) => {
+  if (!isOpen) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[10000] flex items-center justify-center">
+      {/* Overlay */}
+      <div
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      {/* Modal */}
+      <div className="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6">
+          <h2 className="text-lg font-semibold text-black">Filters</h2>
+          <button
+            onClick={onClose}
+            className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+          >
+            <X className="w-5 h-5 text-[#c32033]" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 space-y-4">
+          {/* Radio buttons */}
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="radio"
+              name="filterOption"
+              value="customerName"
+              checked={selectedFilter === 'customerName'}
+              onChange={(e) => onFilterChange(e.target.value)}
+              className="w-5 h-5 accent-[#c32033]"
+            />
+            <span
+              className={`${
+                selectedFilter === 'customerName'
+                  ? 'font-bold text-black'
+                  : 'font-medium text-gray-700'
+              }`}
+            >
+              Customer Name
+            </span>
+          </label>
+
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="radio"
+              name="filterOption"
+              value="orderNumber"
+              checked={selectedFilter === 'orderNumber'}
+              onChange={(e) => onFilterChange(e.target.value)}
+              className="w-5 h-5 accent-[#c32033]"
+            />
+            <span
+              className={`${
+                selectedFilter === 'orderNumber'
+                  ? 'font-bold text-black'
+                  : 'font-medium text-gray-700'
+              }`}
+            >
+              Order Number
+            </span>
+          </label>
+        </div>
+
+        {/* Footer */}
+        <div className="flex justify-center gap-4 p-6">
+          <button
+            onClick={onClose}
+            className="px-6 py-2 border border-[#c32033] text-[#c32033] font-semibold rounded-md hover:bg-gray-100 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              onApply();
+              onClose();
+            }}
+            className="px-6 py-2 bg-[#c32033] text-white font-semibold rounded-md hover:bg-[#a91b2e] transition-colors"
+          >
+            Apply Filters
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+};
+
 const ITEMS_PER_PAGE = 7;
 
 const DraftSalesRequest = () => {
@@ -36,54 +158,77 @@ const DraftSalesRequest = () => {
   const [salesRequests, setSalesRequests] = useState<SalesRequest[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const [pagination, setPagination] = useState<PaginationInfo | null>(null);
+  const [totalItems, setTotalItems] = useState<number>(0);
+
+  // Filter modal states
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState('orderNumber');
 
   useEffect(() => {
-    const fetchSalesRequest = async () => {
-      try {
-        setIsLoading(true);
-        const response = await apiService.get(
-          `/api/v1/salesRequests/draft-sales-request`,
-          {},
-        );
+    fetchDraftSalesRequest(currentPage);
+  }, [currentPage]);
 
-        if (response?.status === 200) {
-          // backend sends { message, total, orders }
-          setSalesRequests(response.data || []);
+  const fetchDraftSalesRequest = async (page: number) => {
+    try {
+      setIsLoading(true);
+      const offset = (page - 1) * ITEMS_PER_PAGE;
+
+      const response = await apiService.get(
+        `/api/v1/salesRequests/draft-sales-request`,
+        {
+          limit: ITEMS_PER_PAGE,
+          offset: offset,
+        },
+      );
+
+      if (response?.status === 200) {
+        const data: ApiResponse = response.data;
+        setSalesRequests(data.orders || []);
+        setPagination(data.pagination);
+
+        // Estimate total items based on current page and hasMore flag
+        if (data.pagination.hasMore) {
+          setTotalItems(page * ITEMS_PER_PAGE + 1);
+        } else {
+          setTotalItems(data.pagination.offset + data.orders.length);
         }
-      } catch (error) {
-        console.error('❌ Error fetching sales requests:', error);
-      } finally {
-        setIsLoading(false);
       }
-    };
-
-    fetchSalesRequest();
-  }, []);
+    } catch (error) {
+      console.error('❌ Error fetching draft sales requests:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleItemDeleted = (updatedItems: SalesRequest[]) => {
     setSalesRequests(updatedItems);
     setCurrentPage(1);
+    fetchDraftSalesRequest(1); // Refresh the data after deletion
   };
 
-  // Filter items
-  const filteredItems = salesRequests.filter(
-    (request) =>
-      request.ORDER_NUMBER?.toLowerCase().includes(
-        searchTerm.trim().toLowerCase(),
-      ),
-  );
-
-  // Pagination
-  const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedItems = filteredItems.slice(
-    startIndex,
-    startIndex + ITEMS_PER_PAGE,
-  );
+  // Filter items based on selected filter (client-side filtering for search)
+  const filteredItems = salesRequests.filter((request) => {
+    if (selectedFilter === 'customerName') {
+      return String(request.CUSTOMER_NAME || '')
+        .toLowerCase()
+        .includes(searchTerm.trim().toLowerCase());
+    } else if (selectedFilter === 'orderNumber') {
+      return String(request.ORDER_NUMBER || '')
+        .toLowerCase()
+        .includes(searchTerm.trim().toLowerCase());
+    }
+    return true;
+  });
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+    setCurrentPage(page);
   };
+
+  // Calculate total pages based on whether there are more items
+  const totalPages = pagination?.hasMore
+    ? currentPage + 1 // If there are more items, show at least one more page
+    : currentPage; // If no more items, current page is the last page
 
   const breadcrumbs = [
     { label: 'Draft Sales Requests', path: '/' },
@@ -130,29 +275,35 @@ const DraftSalesRequest = () => {
               ))}
             </div>
 
-            <div className="text-md text-gray-700">
+            {/* <div className="text-md text-gray-700">
               Total Sales Request:{' '}
               <span className="font-semibold text-[#C32033]">
-                {salesRequests.length}
+                {pagination?.hasMore ? `${totalItems}+` : totalItems}
               </span>
-            </div>
+            </div> */}
 
             <div className="flex items-center gap-3">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
                   type="text"
-                  placeholder="Search..."
+                  placeholder={`Search by ${
+                    selectedFilter === 'customerName'
+                      ? 'Customer Name'
+                      : 'Order Number'
+                  }...`}
                   className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:border-transparent w-72"
                   value={searchTerm}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
-                    setCurrentPage(1);
                   }}
                 />
               </div>
-              <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                <Filter className="w-4 h-4 text-gray-600" />
+              <button
+                onClick={() => setIsFilterModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <SlidersHorizontal />
               </button>
             </div>
           </div>
@@ -161,7 +312,7 @@ const DraftSalesRequest = () => {
           <div className="overflow-x-auto mt-5">
             <table className="w-full">
               <thead>
-                <tr className="bg-[#C32033] text-white">
+                <tr className="bg-[#C32033] shadow-lg text-white">
                   <th className="px-6 py-4 text-left">No.</th>
                   <th className="px-6 py-4 text-left">Order Number</th>
                   <th className="px-6 py-4 text-left">Customer Name</th>
@@ -172,15 +323,16 @@ const DraftSalesRequest = () => {
                 </tr>
               </thead>
               <tbody>
-                {paginatedItems.length > 0 ? (
-                  paginatedItems.map((request, index) => (
+                {filteredItems.length > 0 ? (
+                  filteredItems.map((request, index) => (
                     <tr
-                      key={request.ORDER_NUMBER}
-                      className={`border-b ${
-                        index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                      } hover:bg-gray-100 transition-colors`}
+                      key={`${request.ORDER_NUMBER}-${pagination?.offset}-${index}`}
+                      className={`hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors`}
                     >
-                      <td className="px-6 py-4">{startIndex + index + 1}</td>
+                      <td className="px-6 py-4">
+                        {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
+                        {index}
+                      </td>
                       <td className="px-6 py-4">
                         {request.ORDER_NUMBER || '-'}
                       </td>
@@ -255,7 +407,7 @@ const DraftSalesRequest = () => {
                                 },
                               )
                             }
-                            className="px-4 py-2 border border-[#C32033] text-[#C32033] rounded hover:bg-[#C32033] hover:text-white transition-colors"
+                            className="px-4 py-2 border-2 border-[#C32033] text-[#C32033] rounded-lg font-medium hover:bg-[#C32033] hover:text-white transition-colors"
                           >
                             View Details
                           </button>
@@ -266,7 +418,7 @@ const DraftSalesRequest = () => {
                 ) : (
                   <tr>
                     <td
-                      colSpan={6}
+                      colSpan={7}
                       className="px-6 py-4 text-center text-gray-500"
                     >
                       {searchTerm
@@ -280,7 +432,7 @@ const DraftSalesRequest = () => {
           </div>
 
           {/* Pagination */}
-          {totalPages > 1 && (
+          {(totalPages > 1 || pagination?.hasMore) && (
             <div className="flex items-center justify-end gap-2 p-4 border-t border-gray-200">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
@@ -290,25 +442,30 @@ const DraftSalesRequest = () => {
                 <ChevronLeft className="w-4 h-4 text-gray-600" />
               </button>
 
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <button
-                    key={page}
-                    onClick={() => handlePageChange(page)}
-                    className={`px-3 py-2 rounded font-medium transition-colors ${
-                      page === currentPage
-                        ? 'bg-[#C32033] text-white'
-                        : 'text-gray-600 hover:bg-gray-100'
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ),
+              {/* Show page numbers - we don't know exact total pages, so show current and next if hasMore */}
+              <button
+                onClick={() => handlePageChange(currentPage)}
+                className={`px-3 py-2 rounded font-medium transition-colors ${'bg-[#C32033] text-white'}`}
+              >
+                {currentPage}
+              </button>
+
+              {pagination?.hasMore && (
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  className="px-3 py-2 rounded font-medium transition-colors text-gray-600 hover:bg-gray-100"
+                >
+                  {currentPage + 1}
+                </button>
+              )}
+
+              {pagination?.hasMore && currentPage + 1 < totalPages && (
+                <span className="px-2 text-gray-600">...</span>
               )}
 
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
+                disabled={!pagination?.hasMore}
                 className="p-2 rounded hover:bg-gray-100 disabled:opacity-50 transition-colors"
               >
                 <ChevronRight className="w-4 h-4 text-gray-600" />
@@ -317,6 +474,18 @@ const DraftSalesRequest = () => {
           )}
         </div>
       </div>
+
+      {/* Filter Modal */}
+      <FilterModal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        selectedFilter={selectedFilter}
+        onFilterChange={setSelectedFilter}
+        onApply={() => {
+          setSearchTerm('');
+          setCurrentPage(1);
+        }}
+      />
     </>
   );
 };

@@ -47,6 +47,7 @@ const ItemDetail = lazy(() => import('../pages/Opportunities/DetailItem'));
 const EditOpportunityDetail = lazy(() => import('../pages/Opportunities/EditOpportunityDetail'));
 const FollowUpOpportunity = lazy(() => import('../pages/Opportunities/FollowUp'));
 const ManageFollowUp = lazy(() => import('../pages/Leads/manageFollowUp'));
+const OppManageFollowUp = lazy(() => import('../pages/Opportunities/ManageFollowUp'));
 const DetailFollowUp = lazy(() => import('../pages/Leads/DetailFollowUp'));
 const ConvertToSalesRequest = lazy(() => import('../pages/Opportunities/ConvertSalesRequest'));
 
@@ -159,7 +160,7 @@ const coreRoutes = [
     {
     path: '/opportunities/follow-up/manage',
     title: 'Manage Follow Up',
-    component: ManageFollowUp,
+    component: OppManageFollowUp,
   },
       {
     path: '/opportunities/follow-up/detail/:id',
