@@ -5,8 +5,7 @@ import apiService from '../../services/ApiService';
 import Loader from '../../common/Loader';
 import { toast } from 'react-hot-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { customSelectStyles } from "../../styles/selectStyle.ts";
-
+import { customSelectStyles } from '../../styles/selectStyle.ts';
 
 interface OptionType {
   value: string;
@@ -149,17 +148,26 @@ const CreateFollowUp = () => {
         `/api/v1/opportunities/createFollowup`,
         formData,
       );
+
       if (response?.status === 201) {
-        toast.success(response.message || 'Follow-up Created');
-        // navigate('/opportunities/manage');
+        toast.success(
+          response.message?.message ||
+            response.data?.message ||
+            'Follow-up Created',
+        );
+        navigate('/opportunities/follow-up/manage');
       } else {
-        toast.error(response?.data?.message || 'Failed to create follow-up.');
+        toast.error(
+          response.message?.message ||
+            response.data?.message ||
+            'Failed to create follow-up.',
+        );
       }
     } catch (error: any) {
       console.error('Error creating follow-up:', error);
       toast.error(
         error.response?.data?.message ||
-        'Error creating follow-up. Please try again.',
+          'Error creating follow-up. Please try again.',
       );
     } finally {
       setLoading(false);
@@ -210,9 +218,9 @@ const CreateFollowUp = () => {
                 value={
                   formData.reference_type
                     ? {
-                      value: formData.reference_type,
-                      label: formData.reference_type,
-                    }
+                        value: formData.reference_type,
+                        label: formData.reference_type,
+                      }
                     : null
                 }
                 onChange={(selected) =>
@@ -236,9 +244,8 @@ const CreateFollowUp = () => {
                 value={formData.reference_id}
                 onChange={handleChange}
                 placeholder="Enter Reference Id"
-                className='custom-input'
-
-                // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] 
+                className="custom-input"
+                // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033]
                 // focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                 required
               />
@@ -274,9 +281,8 @@ const CreateFollowUp = () => {
                 name="followup_date"
                 value={formData.followup_date}
                 onChange={handleChange}
-                className='custom-input'
-
-                // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] 
+                className="custom-input"
+                // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033]
                 // focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                 required
               />
@@ -292,10 +298,10 @@ const CreateFollowUp = () => {
                 name="next_followup_date"
                 value={formData.next_followup_date}
                 onChange={handleChange}
-                className='custom-input'
+                className="custom-input"
 
-              // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] 
-              // focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
+                // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033]
+                // focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
               />
             </div>
 
@@ -310,10 +316,10 @@ const CreateFollowUp = () => {
                 onChange={handleChange}
                 placeholder="Enter Notes"
                 rows={4}
-                className='custom-input'
+                className="custom-input"
 
-              // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] 
-              // focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
+                // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033]
+                // focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
               />
             </div>
           </div>
@@ -331,9 +337,10 @@ const CreateFollowUp = () => {
               onClick={handleSave}
               disabled={!isFormValid()}
               className={`px-15 py-3 rounded font-medium transition-colors 
-                ${isFormValid()
-                  ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
-                  : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
+                ${
+                  isFormValid()
+                    ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
+                    : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
                 }`}
             >
               Save

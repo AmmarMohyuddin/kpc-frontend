@@ -5,8 +5,7 @@ import apiService from '../../services/ApiService';
 import Loader from '../../common/Loader';
 import { toast } from 'react-hot-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { customSelectStyles } from "../../styles/selectStyle.ts";
-
+import { customSelectStyles } from '../../styles/selectStyle.ts';
 
 interface OptionType {
   value: string;
@@ -150,10 +149,13 @@ const CreateFollowUp = () => {
         formData,
       );
       if (response?.status === 201) {
-        toast.success(response.message || 'Follow-up Created');
-        // navigate('/followups/manage');
+        console.log('Follow-up created successfully:', response);
+        toast.success(response.message?.message || 'Follow-up Created');
+        navigate('/leads/follow-up/manage');
       } else {
-        toast.error(response?.data?.message || 'Failed to create follow-up.');
+        toast.error(
+          response?.message?.message || 'Failed to create follow-up.',
+        );
       }
     } catch (error: any) {
       console.error('Error creating follow-up:', error);
@@ -236,8 +238,8 @@ const CreateFollowUp = () => {
                 value={formData.reference_id}
                 onChange={handleChange}
                 placeholder="Enter Reference Id"
-                className='custom-input'
-                      // className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
+                className="custom-input"
+                // className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
 
                 required
               />
@@ -273,8 +275,8 @@ const CreateFollowUp = () => {
                 name="followup_date"
                 value={formData.followup_date}
                 onChange={handleChange}
-                className='custom-input'
-                // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] 
+                className="custom-input"
+                // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033]
                 // focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                 required
               />
@@ -290,8 +292,8 @@ const CreateFollowUp = () => {
                 name="next_followup_date"
                 value={formData.next_followup_date}
                 onChange={handleChange}
-                className='custom-input'
-                // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] 
+                className="custom-input"
+                // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033]
                 // focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
               />
             </div>

@@ -197,11 +197,11 @@ const ManageOpportunities = () => {
   };
 
   const handleViewDetails = (id: number) => {
-    navigate(`/opportunities/${id}`);
+    navigate(`/opportunities/${id}`, { state: { opportunity_id: id } });
   };
 
   const handleEdit = (id: number) => {
-    navigate(`/opportunities/edit/${id}`);
+    navigate(`/opportunities/edit/${id}`, { state: { opportunity_id: id } });
   };
 
   const filteredItems = opportunities.filter((opp) => {

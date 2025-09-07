@@ -336,7 +336,7 @@ const ManageFollowUp = () => {
                         <button
                           className="px-4 py-2 border-2 border-[#C32033] text-[#C32033] rounded-lg font-medium hover:bg-[#C32033] hover:text-white transition-colors"
                           onClick={() =>
-                            navigate(`/followup/${fu.followup_id}`, {
+                            navigate(`/follow-up/detail/${fu.followup_id}`, {
                               state: { followup: fu },
                             })
                           }

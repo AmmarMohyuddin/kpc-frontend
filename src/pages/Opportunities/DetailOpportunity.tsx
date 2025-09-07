@@ -3,8 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import apiService from '../../services/ApiService';
 import Loader from '../../common/Loader';
-import TitleValueRow from "../../components/TitleValueRow.js";
-
+import TitleValueRow from '../../components/TitleValueRow.js';
 
 interface Opportunity {
   OPPORTUNITY_ID: number;
@@ -134,22 +133,31 @@ const DetailOpportunity = () => {
           {/* Lead ID */}
           {opportunityData.LEAD_ID && (
             <TitleValueRow title="Lead ID" value={opportunityData.LEAD_ID} />
-
           )}
 
-
-          <TitleValueRow title="Opportunity ID" value={opportunityData.OPPORTUNITY_ID} />
+          <TitleValueRow
+            title="Opportunity ID"
+            value={opportunityData.OPPORTUNITY_ID}
+          />
           <hr className="custom-divider my-2" />
-          <TitleValueRow title="Generation Date" value={opportunityData.GENERATION_DATE} />
+          <TitleValueRow
+            title="Generation Date"
+            value={opportunityData.GENERATION_DATE}
+          />
           <hr className="custom-divider my-2" />
           <TitleValueRow title="Stage" value={opportunityData.STAGE} />
           <hr className="custom-divider my-2" />
           <TitleValueRow title="Status" value={opportunityData.STATUS} />
           <hr className="custom-divider my-2" />
-          <TitleValueRow title="Sales Person" value={opportunityData.SALESPERSON_NAME} />
+          <TitleValueRow
+            title="Sales Person"
+            value={opportunityData.SALESPERSON_NAME}
+          />
           <hr className="custom-divider my-2" />
-          <TitleValueRow title="Remarks" value={opportunityData.REMARKS || "N/A"} />
-
+          <TitleValueRow
+            title="Remarks"
+            value={opportunityData.REMARKS || 'N/A'}
+          />
         </div>
         <div className="flex flex-col items-center pt-4 gap-3">
           <button
@@ -199,16 +207,25 @@ const DetailOpportunity = () => {
                     Item #{index + 1}
                   </h3>
                   <div className="space-y-2">
-                    <TitleValueRow title="Item Number" value={line.ITEM_NUMBER} />
+                    <TitleValueRow
+                      title="Item Number"
+                      value={line.ITEM_NUMBER}
+                    />
                     <hr className="custom-divider my-2" />
 
-                    <TitleValueRow title="Item Detail" value={line.ITEM_DETAIL} />
+                    <TitleValueRow
+                      title="Item Detail"
+                      value={line.ITEM_DETAIL}
+                    />
                     <hr className="custom-divider my-2" />
 
                     <TitleValueRow title="Sub Category" value={line.SUB_CAT} />
                     <hr className="custom-divider my-2" />
 
-                    <TitleValueRow title="Description" value={line.DESCRIPTION} />
+                    <TitleValueRow
+                      title="Description"
+                      value={line.DESCRIPTION}
+                    />
                     <hr className="custom-divider my-2" />
 
                     <TitleValueRow title="Quantity" value={line.QUANTITY} />
@@ -217,9 +234,11 @@ const DetailOpportunity = () => {
                     <TitleValueRow title="UOM" value={line.UOM} />
                     <hr className="custom-divider my-2" />
 
-
                     {line.INSTRUCTIONS && (
-                      <TitleValueRow title="Instructions" value={line.INSTRUCTIONS} />
+                      <TitleValueRow
+                        title="Instructions"
+                        value={line.INSTRUCTIONS}
+                      />
                     )}
                   </div>
                 </div>

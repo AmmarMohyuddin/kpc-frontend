@@ -163,7 +163,7 @@ const coreRoutes = [
     component: OppManageFollowUp,
   },
       {
-    path: '/opportunities/follow-up/detail/:id',
+    path: '/follow-up/detail/:id',
     title: 'Follow Up Detail',
     component: DetailFollowUp,
   },
