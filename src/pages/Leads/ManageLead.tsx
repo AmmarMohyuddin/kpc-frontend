@@ -84,19 +84,19 @@ const FilterModal = ({
             <input
               type="radio"
               name="filterOption"
-              value="leadName"
-              checked={selectedFilter === 'leadName'}
+              value="CUSTOMER_NAME"
+              checked={selectedFilter === 'CUSTOMER_NAME'}
               onChange={(e) => onFilterChange(e.target.value)}
               className="w-5 h-5 accent-[#c32033]"
             />
             <span
               className={`${
-                selectedFilter === 'leadName'
+                selectedFilter === 'CUSTOMER_NAME'
                   ? 'font-semibold text-black'
                   : 'font-medium text-gray-700'
               }`}
             >
-              Leads Name
+              Customer Name
             </span>
           </label>
 
@@ -104,19 +104,19 @@ const FilterModal = ({
             <input
               type="radio"
               name="filterOption"
-              value="customerNumber"
-              checked={selectedFilter === 'customerNumber'}
+              value="LEAD_NUMBER"
+              checked={selectedFilter === 'LEAD_NUMBER'}
               onChange={(e) => onFilterChange(e.target.value)}
               className="w-5 h-5 accent-[#c32033]"
             />
             <span
               className={`${
-                selectedFilter === 'customerNumber'
+                selectedFilter === 'LEAD_NUMBER'
                   ? 'font-semibold text-black'
                   : 'font-medium text-gray-700'
               }`}
             >
-              Customer Number
+              Lead Number
             </span>
           </label>
 
@@ -124,14 +124,14 @@ const FilterModal = ({
             <input
               type="radio"
               name="filterOption"
-              value="date"
-              checked={selectedFilter === 'date'}
+              value="DATE"
+              checked={selectedFilter === 'DATE'}
               onChange={(e) => onFilterChange(e.target.value)}
               className="w-5 h-5 accent-[#c32033]"
             />
             <span
               className={`${
-                selectedFilter === 'date'
+                selectedFilter === 'DATE'
                   ? 'font-semibold text-black'
                   : 'font-medium text-gray-700'
               }`}
@@ -140,7 +140,7 @@ const FilterModal = ({
             </span>
           </label>
 
-          {selectedFilter === 'date' && (
+          {selectedFilter === 'DATE' && (
             <div className="space-y-4">
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-black">From</label>
@@ -174,7 +174,7 @@ const FilterModal = ({
           </button>
           <button
             onClick={() => {
-              if (selectedFilter === 'date') {
+              if (selectedFilter === 'DATE') {
                 onApply({ from: fromDate, to: toDate });
               } else {
                 onApply();
@@ -203,24 +203,54 @@ const ManageLeads = () => {
   });
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState('leadName');
+  const [selectedFilter, setSelectedFilter] = useState('CUSTOMER_NAME');
+  const [dateFilter, setDateFilter] = useState<{ from: string; to: string }>();
+
+  // 🔄 Debounce effect for text search
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setCurrentPage(1);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
 
   const fetchLeads = async (page: number) => {
     try {
       setIsLoading(true);
-      const offset = (page - 1) * ITEMS_PER_PAGE;
+
+      const params: any = {};
+
+      if (selectedFilter === 'CUSTOMER_NAME' && debouncedSearch) {
+        params.CUSTOMER_NAME = debouncedSearch;
+      } else if (selectedFilter === 'LEAD_NUMBER' && debouncedSearch) {
+        params.LEAD_NUMBER = debouncedSearch;
+      } else if (selectedFilter === 'DATE' && dateFilter) {
+        params.from_date = dateFilter.from;
+        params.to_date = dateFilter.to;
+      } else {
+        params.limit = ITEMS_PER_PAGE;
+        params.offset = (page - 1) * ITEMS_PER_PAGE;
+      }
 
       const response = await apiService.get(`/api/v1/leads/listLead`, {
-        params: { limit: ITEMS_PER_PAGE, offset },
+        params,
       });
 
       if (response?.status === 200) {
         setLeadsData(response.data.leads || []);
-        const paginationData = response.data.pagination;
-        if (paginationData) {
-          setPagination(paginationData);
-          setTotalPages(paginationData.hasMore ? page + 1 : page);
+
+        if (!params.CUSTOMER_NAME && !params.LEAD_NUMBER && !params.from_date) {
+          const paginationData = response.data.pagination;
+          if (paginationData) {
+            setPagination(paginationData);
+            setTotalPages(paginationData.hasMore ? page + 1 : page);
+          }
+        } else {
+          setPagination({ hasMore: false });
+          setTotalPages(1);
         }
       }
     } catch (error) {
@@ -232,7 +262,7 @@ const ManageLeads = () => {
 
   useEffect(() => {
     fetchLeads(currentPage);
-  }, [currentPage]);
+  }, [currentPage, debouncedSearch, dateFilter]);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && (page <= totalPages || pagination?.hasMore)) {
@@ -257,10 +287,9 @@ const ManageLeads = () => {
     <div className="flex flex-col gap-6">
       <div className="rounded-3xl border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
         <div>
+          {/* Header */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-2 gap-4">
-            <h1 className="text-2xl font-semibold text-black dark:text-white">
-              Manage Leads
-            </h1>
+            <h1 className="text-2xl font-semibold text-black">Manage Leads</h1>
           </div>
 
           {/* Breadcrumb + Search */}
@@ -282,10 +311,10 @@ const ManageLeads = () => {
                 <input
                   type="text"
                   placeholder={`Search by ${
-                    selectedFilter === 'leadName'
-                      ? 'Lead Name'
-                      : selectedFilter === 'customerNumber'
-                      ? 'Customer Number'
+                    selectedFilter === 'CUSTOMER_NAME'
+                      ? 'Customer Name'
+                      : selectedFilter === 'LEAD_NUMBER'
+                      ? 'Lead Number'
                       : 'Lead ID'
                   }...`}
                   className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:border-transparent w-72"
@@ -294,6 +323,7 @@ const ManageLeads = () => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
+                  disabled={selectedFilter === 'DATE'}
                 />
               </div>
               <button
@@ -310,7 +340,7 @@ const ManageLeads = () => {
         <div className="overflow-x-auto mt-5">
           <table className="w-full">
             <thead>
-              <tr className="bg-[#C32033] shadow-lg text-white">
+              <tr className="bg-[#C32033] text-white">
                 <th className="text-left px-6 py-4">No.</th>
                 <th className="text-left px-6 py-4">Lead Number</th>
                 <th className="text-left px-6 py-4">Company</th>
@@ -326,13 +356,13 @@ const ManageLeads = () => {
                 leadsData.map((lead, index) => (
                   <tr
                     key={lead.lead_id}
-                    className={`hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors`}
+                    className="hover:bg-gray-100 border-b text-[#1e1e1e]"
                   >
                     <td className="px-6 py-4">
                       {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
                     </td>
                     <td className="px-6 py-4">{lead.lead_id}</td>
-                    <td className="px-6 py-4">{lead.customer_type}</td>
+                    <td className="px-6 py-4">{lead.customer_name}</td>
                     <td className="px-6 py-4">{lead.contact_position}</td>
                     <td className="px-6 py-4">{lead.salesperson_name}</td>
                     <td className="px-6 py-4">{lead.status}</td>
@@ -368,7 +398,7 @@ const ManageLeads = () => {
                     colSpan={7}
                     className="px-6 py-4 text-center text-gray-500"
                   >
-                    {searchTerm
+                    {debouncedSearch || dateFilter
                       ? 'No matching leads found'
                       : 'No leads available'}
                   </td>
@@ -391,7 +421,7 @@ const ManageLeads = () => {
 
             <button
               onClick={() => handlePageChange(currentPage)}
-              className={`px-3 py-2 rounded font-medium transition-colors ${'bg-[#C32033] text-white'}`}
+              className="px-3 py-2 rounded bg-[#C32033] text-white"
             >
               {currentPage}
             </button>
@@ -399,7 +429,7 @@ const ManageLeads = () => {
             {pagination?.hasMore && (
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
-                className="px-3 py-2 rounded font-medium transition-colors text-gray-600 hover:bg-gray-100"
+                className="px-3 py-2 rounded text-gray-600 hover:bg-gray-100"
               >
                 {currentPage + 1}
               </button>
@@ -423,9 +453,20 @@ const ManageLeads = () => {
         selectedFilter={selectedFilter}
         onFilterChange={setSelectedFilter}
         onApply={(dates) => {
-          if (selectedFilter === 'date' && dates) {
-            console.log('Filter by Date Range:', dates.from, 'to', dates.to);
+          setLeadsData([]); // clear old data so table is empty
+          setIsLoading(true); // show loader instantly
+          setCurrentPage(1); // reset page
+          setSearchTerm(''); // ✅ clear search field
+          setDebouncedSearch(''); // ✅ reset debounced search too
+
+          if (selectedFilter === 'DATE' && dates) {
+            setDateFilter({ from: dates.from, to: dates.to });
+          } else {
+            setDateFilter(undefined);
           }
+
+          // ✅ Explicitly call fetch with new filters
+          fetchLeads(1);
         }}
       />
     </div>

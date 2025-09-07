@@ -46,7 +46,7 @@ interface FilterModalProps {
   onClose: () => void;
   selectedFilter: string;
   onFilterChange: (value: string) => void;
-  onApply: () => void;
+  onApply: (dates?: { from: string; to: string }) => void;
 }
 
 const FilterModal = ({
@@ -56,6 +56,9 @@ const FilterModal = ({
   onFilterChange,
   onApply,
 }: FilterModalProps) => {
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+
   if (!isOpen) return null;
 
   return createPortal(
@@ -85,14 +88,14 @@ const FilterModal = ({
             <input
               type="radio"
               name="filterOption"
-              value="opportunityId"
-              checked={selectedFilter === 'opportunityId'}
+              value="OPPORTUNITY_ID"
+              checked={selectedFilter === 'OPPORTUNITY_ID'}
               onChange={(e) => onFilterChange(e.target.value)}
               className="w-5 h-5 accent-[#c32033]"
             />
             <span
               className={`${
-                selectedFilter === 'opportunityId'
+                selectedFilter === 'OPPORTUNITY_ID'
                   ? 'font-semibold text-black'
                   : 'font-medium text-gray-700'
               }`}
@@ -105,14 +108,14 @@ const FilterModal = ({
             <input
               type="radio"
               name="filterOption"
-              value="leadNumber"
-              checked={selectedFilter === 'leadNumber'}
+              value="LEAD_NUMBER"
+              checked={selectedFilter === 'LEAD_NUMBER'}
               onChange={(e) => onFilterChange(e.target.value)}
               className="w-5 h-5 accent-[#c32033]"
             />
             <span
               className={`${
-                selectedFilter === 'leadNumber'
+                selectedFilter === 'LEAD_NUMBER'
                   ? 'font-semibold text-black'
                   : 'font-medium text-gray-700'
               }`}
@@ -120,6 +123,49 @@ const FilterModal = ({
               Lead Number
             </span>
           </label>
+
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="radio"
+              name="filterOption"
+              value="DATE"
+              checked={selectedFilter === 'DATE'}
+              onChange={(e) => onFilterChange(e.target.value)}
+              className="w-5 h-5 accent-[#c32033]"
+            />
+            <span
+              className={`${
+                selectedFilter === 'DATE'
+                  ? 'font-semibold text-black'
+                  : 'font-medium text-gray-700'
+              }`}
+            >
+              Date
+            </span>
+          </label>
+
+          {selectedFilter === 'DATE' && (
+            <div className="space-y-4">
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-black">From</label>
+                <input
+                  type="date"
+                  value={fromDate}
+                  onChange={(e) => setFromDate(e.target.value)}
+                  className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#c32033] focus:outline-none"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="text-sm font-medium text-black">To</label>
+                <input
+                  type="date"
+                  value={toDate}
+                  onChange={(e) => setToDate(e.target.value)}
+                  className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#c32033] focus:outline-none"
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
@@ -132,7 +178,11 @@ const FilterModal = ({
           </button>
           <button
             onClick={() => {
-              onApply();
+              if (selectedFilter === 'DATE') {
+                onApply({ from: fromDate, to: toDate });
+              } else {
+                onApply();
+              }
               onClose();
             }}
             className="px-6 py-2 bg-[#c32033] text-white font-semibold rounded-md hover:bg-[#a91b2e] transition-colors"
@@ -154,38 +204,69 @@ const ManageOpportunities = () => {
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState('opportunityId');
-  const [error, setError] = useState<string | null>(null);
 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
+
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState('OPPORTUNITY_ID');
+  const [dateFilter, setDateFilter] = useState<{ from: string; to: string }>();
+
+  // 🔄 Debounce effect
   useEffect(() => {
-    fetchOpportunities(currentPage);
-  }, [currentPage]);
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setCurrentPage(1);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
 
   const fetchOpportunities = async (page: number) => {
     try {
       setIsLoading(true);
-      setError(null);
-      const offset = (page - 1) * ITEMS_PER_PAGE;
+
+      const params: any = {};
+
+      if (selectedFilter === 'OPPORTUNITY_ID' && debouncedSearch) {
+        params.OPPORTUNITY_ID = debouncedSearch;
+      } else if (selectedFilter === 'LEAD_NUMBER' && debouncedSearch) {
+        params.LEAD_NUMBER = debouncedSearch;
+      } else if (selectedFilter === 'DATE' && dateFilter) {
+        params.from_date = dateFilter.from;
+        params.to_date = dateFilter.to;
+      } else {
+        params.limit = ITEMS_PER_PAGE;
+        params.offset = (page - 1) * ITEMS_PER_PAGE;
+      }
 
       const response = await apiService.get(
         `/api/v1/opportunities/listOpportunities`,
-        { params: { limit: ITEMS_PER_PAGE, offset } },
+        { params },
       );
 
       if (response?.status === 200) {
-        const data: ApiResponse = response.data;
-        setOpportunities(data.opportunities || []);
-        setPagination(data.pagination);
+        setOpportunities(response.data.opportunities || []);
+
+        if (
+          !params.OPPORTUNITY_ID &&
+          !params.LEAD_NUMBER &&
+          !params.from_date
+        ) {
+          setPagination(response.data.pagination);
+        } else {
+          setPagination(null); // no pagination when filters are applied
+        }
       }
     } catch (error) {
       console.error('❌ Error fetching opportunities:', error);
-      setError('Failed to fetch opportunities. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchOpportunities(currentPage);
+  }, [currentPage, debouncedSearch, dateFilter]);
 
   const handlePageChange = (page: number) => {
     if (
@@ -196,34 +277,6 @@ const ManageOpportunities = () => {
     }
   };
 
-  const handleViewDetails = (id: number) => {
-    navigate(`/opportunities/${id}`, { state: { opportunity_id: id } });
-  };
-
-  const handleEdit = (id: number) => {
-    navigate(`/opportunities/edit/${id}`, { state: { opportunity_id: id } });
-  };
-
-  const filteredItems = opportunities.filter((opp) => {
-    if (selectedFilter === 'opportunityId') {
-      return String(opp.OPPORTUNITY_ID || '')
-        .toLowerCase()
-        .includes(searchTerm.trim().toLowerCase());
-    } else if (selectedFilter === 'leadNumber') {
-      return String(opp.LEAD_NUMBER || '')
-        .toLowerCase()
-        .includes(searchTerm.trim().toLowerCase());
-    }
-    return true;
-  });
-
-  const totalPages = pagination?.hasMore ? currentPage + 1 : currentPage;
-
-  const breadcrumbs = [
-    { label: 'Opportunities', path: '/' },
-    { label: 'Listing', path: '', isActive: true },
-  ];
-
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[calc(100vh-200px)]">
@@ -231,6 +284,13 @@ const ManageOpportunities = () => {
       </div>
     );
   }
+
+  const totalPages = pagination?.hasMore ? currentPage + 1 : currentPage;
+
+  const breadcrumbs = [
+    { label: 'Opportunities', path: '/' },
+    { label: 'Listing', path: '', isActive: true },
+  ];
 
   return (
     <div className="flex flex-col gap-6">
@@ -262,13 +322,19 @@ const ManageOpportunities = () => {
               <input
                 type="text"
                 placeholder={
-                  selectedFilter === 'opportunityId'
+                  selectedFilter === 'OPPORTUNITY_ID'
                     ? 'Search by Opportunity ID...'
-                    : 'Search by Lead Number...'
+                    : selectedFilter === 'LEAD_NUMBER'
+                    ? 'Search by Lead Number...'
+                    : 'Disabled for Date'
                 }
                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:border-transparent w-72"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                disabled={selectedFilter === 'DATE'}
               />
             </div>
             <button
@@ -282,67 +348,84 @@ const ManageOpportunities = () => {
 
         {/* Table */}
         <div className="overflow-x-auto mt-5">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-[#C32033] shadow-lg text-white">
-                <th className="text-left px-6 py-4">No.</th>
-                <th className="text-left px-6 py-4">Opportunity ID</th>
-                {/* <th className="text-left px-6 py-4">Lead Number</th> */}
-                <th className="text-left px-6 py-4">Generation Date</th>
-                <th className="text-left px-6 py-4">Stage</th>
-                <th className="text-left px-6 py-4">Status</th>
-                <th className="text-left px-6 py-4">Salesperson</th>
-                <th className="text-left px-6 py-4">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredItems.length > 0 ? (
-                filteredItems.map((opp, index) => (
-                  <tr
-                    key={`${opp.OPPORTUNITY_ID}-${pagination?.offset}-${index}`}
-                    className={`hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors`}
-                  >
-                    <td className="px-6 py-4">
-                      {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
-                    </td>
-                    <td className="px-6 py-4">{opp.OPPORTUNITY_ID}</td>
-                    {/* <td className="px-6 py-4">{opp.LEAD_NUMBER || '-'}</td> */}
-                    <td className="px-6 py-4">{opp.GENERATION_DATE || '-'}</td>
-                    <td className="px-6 py-4">{opp.STAGE}</td>
-                    <td className="px-6 py-4">{opp.STATUS}</td>
-                    <td className="px-6 py-4">{opp.SALESPERSON_NAME}</td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={() => handleEdit(opp.OPPORTUNITY_ID)}
-                          className="hover:scale-110 transition-transform"
-                        >
-                          <Edit className="text-blue-600 hover:text-blue-800 w-5 h-5" />
-                        </button>
-                        <button
-                          className="px-4 py-2 border-2 border-[#C32033] text-[#C32033] rounded-lg font-medium hover:bg-[#C32033] hover:text-white transition-colors"
-                          onClick={() => handleViewDetails(opp.OPPORTUNITY_ID)}
-                        >
-                          View Details
-                        </button>
-                      </div>
+          {isLoading ? (
+            <div className="flex justify-center items-center h-[300px]">
+              <Loader />
+            </div>
+          ) : (
+            <table className="w-full">
+              <thead>
+                <tr className="bg-[#C32033] shadow-lg text-white">
+                  <th className="text-left px-6 py-4">No.</th>
+                  <th className="text-left px-6 py-4">Opportunity ID</th>
+                  <th className="text-left px-6 py-4">Generation Date</th>
+                  <th className="text-left px-6 py-4">Stage</th>
+                  <th className="text-left px-6 py-4">Status</th>
+                  <th className="text-left px-6 py-4">Salesperson</th>
+                  <th className="text-left px-6 py-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {opportunities.length > 0 ? (
+                  opportunities.map((opp, index) => (
+                    <tr
+                      key={opp.OPPORTUNITY_ID}
+                      className="hover:bg-[#f1f1f1] border-b text-[#1e1e1e]"
+                    >
+                      <td className="px-6 py-4">
+                        {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
+                      </td>
+                      <td className="px-6 py-4">{opp.OPPORTUNITY_ID}</td>
+                      <td className="px-6 py-4">
+                        {opp.GENERATION_DATE || '-'}
+                      </td>
+                      <td className="px-6 py-4">{opp.STAGE}</td>
+                      <td className="px-6 py-4">{opp.STATUS}</td>
+                      <td className="px-6 py-4">{opp.SALESPERSON_NAME}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={() =>
+                              navigate(
+                                `/opportunities/edit/${opp.OPPORTUNITY_ID}`,
+                                {
+                                  state: { opportunity_id: opp.OPPORTUNITY_ID },
+                                },
+                              )
+                            }
+                            className="hover:scale-110 transition-transform"
+                          >
+                            <Edit className="text-blue-600 hover:text-blue-800 w-5 h-5" />
+                          </button>
+                          <button
+                            className="px-4 py-2 border-2 border-[#C32033] text-[#C32033] rounded-lg font-medium hover:bg-[#C32033] hover:text-white transition-colors"
+                            onClick={() =>
+                              navigate(`/opportunities/${opp.OPPORTUNITY_ID}`, {
+                                state: { opportunity_id: opp.OPPORTUNITY_ID },
+                              })
+                            }
+                          >
+                            View Details
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={7}
+                      className="px-6 py-4 text-center text-gray-500"
+                    >
+                      {debouncedSearch || dateFilter
+                        ? 'No matching opportunities found'
+                        : 'No opportunities available'}
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan={8}
-                    className="px-6 py-4 text-center text-gray-500"
-                  >
-                    {searchTerm
-                      ? 'No matching Opportunities found'
-                      : 'No Opportunities available'}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
 
         {/* Pagination */}
@@ -389,9 +472,20 @@ const ManageOpportunities = () => {
         onClose={() => setIsFilterModalOpen(false)}
         selectedFilter={selectedFilter}
         onFilterChange={setSelectedFilter}
-        onApply={() => {
-          setSearchTerm('');
+        onApply={(dates) => {
+          setOpportunities([]); // clear table instantly
+          setIsLoading(true);
           setCurrentPage(1);
+          setSearchTerm('');
+          setDebouncedSearch('');
+
+          if (selectedFilter === 'DATE' && dates) {
+            setDateFilter({ from: dates.from, to: dates.to });
+          } else {
+            setDateFilter(undefined);
+          }
+
+          fetchOpportunities(1);
         }}
       />
     </div>

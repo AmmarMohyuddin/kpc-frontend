@@ -36,7 +36,7 @@ interface PaginationInfo {
 
 interface ApiResponse {
   followups: FollowUp[];
-  pagination: PaginationInfo;
+  pagination: PaginationInfo | null;
 }
 
 // Filter Modal Props Interface
@@ -121,26 +121,6 @@ const FilterModal = ({
               Opportunity ID
             </span>
           </label>
-
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input
-              type="radio"
-              name="filterOption"
-              value="leadId"
-              checked={selectedFilter === 'leadId'}
-              onChange={(e) => onFilterChange(e.target.value)}
-              className="w-5 h-5 accent-[#c32033]"
-            />
-            <span
-              className={`${
-                selectedFilter === 'leadId'
-                  ? 'font-bold text-black'
-                  : 'font-medium text-gray-700'
-              }`}
-            >
-              Lead ID
-            </span>
-          </label>
         </div>
 
         {/* Footer */}
@@ -168,6 +148,7 @@ const FilterModal = ({
 };
 
 const ITEMS_PER_PAGE = 10;
+let debounceTimer: NodeJS.Timeout;
 
 const ManageFollowUp = () => {
   const navigate = useNavigate();
@@ -182,18 +163,32 @@ const ManageFollowUp = () => {
   const [selectedFilter, setSelectedFilter] = useState('followupId');
 
   useEffect(() => {
-    fetchFollowUps(currentPage);
+    fetchFollowUps(currentPage, searchTerm);
   }, [currentPage]);
 
-  const fetchFollowUps = async (page: number) => {
+  const fetchFollowUps = async (page: number, query: string = '') => {
     try {
       setIsLoading(true);
       const offset = (page - 1) * ITEMS_PER_PAGE;
 
-      const response = await apiService.get(`/api/v1/leads/listFollowup`, {
+      const params: Record<string, any> = {
         limit: ITEMS_PER_PAGE,
         offset,
-      });
+      };
+
+      // Apply search filters if present
+      if (query) {
+        if (selectedFilter === 'followupId') {
+          params.FOLLOWUP_ID = query;
+        } else if (selectedFilter === 'opportunityId') {
+          params.OPPORTUNITY_ID = query;
+        }
+      }
+
+      const response = await apiService.get(
+        `/api/v1/opportunities/listFollowup`,
+        params,
+      );
 
       if (response?.status === 200) {
         const data: ApiResponse = response.data;
@@ -207,23 +202,16 @@ const ManageFollowUp = () => {
     }
   };
 
-  // Filter followups based on selected filter
-  const filteredFollowUps = followUps.filter((fu) => {
-    if (selectedFilter === 'followupId') {
-      return String(fu.followup_id || '')
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-    } else if (selectedFilter === 'opportunityId') {
-      return String(fu.opportunity_id || '')
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-    } else if (selectedFilter === 'leadId') {
-      return String(fu.lead_id || '')
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-    }
-    return true;
-  });
+  // Debounced search handler
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
+
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      fetchFollowUps(1, value);
+    }, 600); // 600ms debounce
+  };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -275,16 +263,11 @@ const ManageFollowUp = () => {
                 placeholder={`Search by ${
                   selectedFilter === 'followupId'
                     ? 'FollowUp ID'
-                    : selectedFilter === 'opportunityId'
-                    ? 'Opportunity ID'
-                    : 'Lead ID'
+                    : 'Opportunity ID'
                 }...`}
                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:border-transparent w-72"
                 value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
+                onChange={(e) => handleSearchChange(e.target.value)}
               />
             </div>
             <button
@@ -304,16 +287,17 @@ const ManageFollowUp = () => {
                 <th className="px-6 py-4 text-left">No.</th>
                 <th className="px-6 py-4 text-left">FollowUp ID</th>
                 <th className="px-6 py-4 text-left">Source</th>
+                <th className="px-6 py-4 text-left">Opportunity ID</th>
                 <th className="px-6 py-4 text-left">Assigned To</th>
                 <th className="px-6 py-4 text-left">FollowUp Date</th>
                 <th className="px-6 py-4 text-left">Next FollowUp</th>
-                <th className="px-6 py-4 text-left">Status</th>
+                {/* <th className="px-6 py-4 text-left">Status</th> */}
                 <th className="px-6 py-4 text-left">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredFollowUps.length > 0 ? (
-                filteredFollowUps.map((fu, index) => (
+              {followUps.length > 0 ? (
+                followUps.map((fu, index) => (
                   <tr
                     key={fu.followup_id}
                     className={`hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors`}
@@ -323,6 +307,7 @@ const ManageFollowUp = () => {
                     </td>
                     <td className="px-6 py-4">{fu.followup_id}</td>
                     <td className="px-6 py-4">{fu.source}</td>
+                    <td className="px-6 py-4">{fu.opportunity_id}</td>
                     <td className="px-6 py-4">{fu.assigned_to}</td>
                     <td className="px-6 py-4">
                       {new Date(fu.followup_date).toLocaleDateString()}
@@ -330,7 +315,7 @@ const ManageFollowUp = () => {
                     <td className="px-6 py-4">
                       {new Date(fu.next_followup_date).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4">{fu.status}</td>
+                    {/* <td className="px-6 py-4">{fu.status}</td> */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <button

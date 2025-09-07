@@ -3,8 +3,8 @@ import {
   SlidersHorizontal,
   ChevronLeft,
   ChevronRight,
-  ChevronRight as CrRight,
   X,
+  ChevronRight as CrRight,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -56,15 +56,11 @@ const FilterModal = ({
 
   return createPortal(
     <div className="fixed inset-0 z-[10000] flex items-center justify-center">
-      {/* Overlay */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
-
-      {/* Modal */}
       <div className="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4">
-        {/* Header */}
         <div className="flex items-center justify-between p-6">
           <h2 className="text-lg font-semibold text-black">Filters</h2>
           <button
@@ -74,10 +70,7 @@ const FilterModal = ({
             <X className="w-5 h-5 text-[#c32033]" />
           </button>
         </div>
-
-        {/* Content */}
         <div className="p-6 space-y-4">
-          {/* Radio buttons */}
           <label className="flex items-center gap-3 cursor-pointer">
             <input
               type="radio"
@@ -97,7 +90,6 @@ const FilterModal = ({
               Customer Name
             </span>
           </label>
-
           <label className="flex items-center gap-3 cursor-pointer">
             <input
               type="radio"
@@ -118,8 +110,6 @@ const FilterModal = ({
             </span>
           </label>
         </div>
-
-        {/* Footer */}
         <div className="flex justify-center gap-4 p-6">
           <button
             onClick={onClose}
@@ -144,40 +134,53 @@ const FilterModal = ({
 };
 
 const ITEMS_PER_PAGE = 10;
+let debounceTimer: NodeJS.Timeout;
 
 const ManageSalesRequest = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<{
-    item_number: string;
-    customer_id: string;
-  } | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [salesRequests, setSalesRequests] = useState<SalesRequest[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
   const [totalItems, setTotalItems] = useState<number>(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<{
+    item_number: string;
+    customer_id: string;
+  } | null>(null);
 
   // Filter modal states
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('orderNumber');
 
   useEffect(() => {
-    fetchSalesRequest(currentPage);
+    fetchSalesRequests(currentPage, searchTerm);
   }, [currentPage]);
 
-  const fetchSalesRequest = async (page: number) => {
+  const fetchSalesRequests = async (
+    page: number,
+    query: string = '',
+    filter: string = selectedFilter,
+  ) => {
     try {
       setIsLoading(true);
       const offset = (page - 1) * ITEMS_PER_PAGE;
+      const params: Record<string, any> = {};
+
+      if (query) {
+        // Apply search filter if query exists
+        if (filter === 'customerName') params.CUSTOMER_NAME = query;
+        else if (filter === 'orderNumber') params.ORDER_NUMBER = query;
+      } else {
+        // Only apply pagination if no search/filter
+        params.limit = ITEMS_PER_PAGE;
+        params.offset = offset;
+      }
 
       const response = await apiService.get(
-        `/api/v1/salesRequests/list-sales-request`,
-        {
-          limit: ITEMS_PER_PAGE,
-          offset: offset,
-        },
+        '/api/v1/salesRequests/list-sales-request',
+        params,
       );
 
       if (response?.status === 200) {
@@ -185,13 +188,9 @@ const ManageSalesRequest = () => {
         setSalesRequests(data.orders || []);
         setPagination(data.pagination);
 
-        // Estimate total items based on current page and hasMore flag
-        if (data.pagination.hasMore) {
-          // If there are more items, we don't know the exact total
-          // So we'll show "100+" or similar
+        if (data.pagination?.hasMore) {
           setTotalItems(page * ITEMS_PER_PAGE + 1);
         } else {
-          // If no more items, we can calculate the exact total
           setTotalItems(data.pagination.offset + data.orders.length);
         }
       }
@@ -202,38 +201,18 @@ const ManageSalesRequest = () => {
     }
   };
 
-  const handleItemDeleted = (updatedItems: SalesRequest[]) => {
-    setSalesRequests(updatedItems);
+  // Debounced search
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
     setCurrentPage(1);
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      fetchSalesRequests(1, value);
+    }, 600);
   };
 
-  // Filter items based on selected filter (client-side filtering for search)
-  const filteredItems = salesRequests.filter((request) => {
-    if (selectedFilter === 'customerName') {
-      return String(request.CUSTOMER_NAME || '')
-        .toLowerCase()
-        .includes(searchTerm.trim().toLowerCase());
-    } else if (selectedFilter === 'orderNumber') {
-      return String(request.ORDER_NUMBER || '')
-        .toLowerCase()
-        .includes(searchTerm.trim().toLowerCase());
-    }
-    return true;
-  });
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  // Calculate total pages based on whether there are more items
-  const totalPages = pagination?.hasMore
-    ? currentPage + 1 // If there are more items, show at least one more page
-    : currentPage; // If no more items, current page is the last page
-
-  const breadcrumbs = [
-    { label: 'Sales Requests', path: '/' },
-    { label: 'Listing', path: '', isActive: true },
-  ];
+  const handlePageChange = (page: number) => setCurrentPage(page);
+  const totalPages = pagination?.hasMore ? currentPage + 1 : currentPage;
 
   if (isLoading) {
     return (
@@ -243,6 +222,11 @@ const ManageSalesRequest = () => {
     );
   }
 
+  const breadcrumbs = [
+    { label: 'Sales Requests', path: '/' },
+    { label: 'Listing', path: '', isActive: true },
+  ];
+
   return (
     <>
       <DeleteModal
@@ -251,12 +235,14 @@ const ManageSalesRequest = () => {
         itemName="item"
         itemNumber={selectedItem?.item_number}
         customerId={selectedItem?.customer_id}
-        onItemDeleted={handleItemDeleted}
+        onItemDeleted={(updatedItems) => {
+          setSalesRequests(updatedItems);
+          setCurrentPage(1);
+        }}
       />
 
       <div className="flex flex-col gap-6">
         <div className="rounded-3xl border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
-          {/* Header */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-2 gap-4">
             <h1 className="text-2xl font-semibold text-black dark:text-white">
               Sales Requests
@@ -276,13 +262,7 @@ const ManageSalesRequest = () => {
               ))}
             </div>
 
-            {/* <div className="text-md text-gray-700">
-              Total Sales Request:{' '}
-              <span className="font-semibold text-[#C32033]">
-                {pagination?.hasMore ? `${totalItems}+` : totalItems}
-              </span>
-            </div> */}
-
+            {/* Search + Filter */}
             <div className="flex items-center gap-3">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -295,9 +275,7 @@ const ManageSalesRequest = () => {
                   }...`}
                   className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:border-transparent w-72"
                   value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                  }}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                 />
               </div>
               <button
@@ -324,8 +302,8 @@ const ManageSalesRequest = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredItems.length > 0 ? (
-                  filteredItems.map((request, index) => (
+                {salesRequests.length > 0 ? (
+                  salesRequests.map((request, index) => (
                     <tr
                       key={`${request.ORDER_NUMBER}-${pagination?.offset}-${index}`}
                       className={`hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors`}
@@ -367,7 +345,6 @@ const ManageSalesRequest = () => {
                           '-'
                         )}
                       </td>
-
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <button
@@ -416,10 +393,9 @@ const ManageSalesRequest = () => {
                 <ChevronLeft className="w-4 h-4 text-gray-600" />
               </button>
 
-              {/* Show page numbers - we don't know exact total pages, so show current and next if hasMore */}
               <button
                 onClick={() => handlePageChange(currentPage)}
-                className={`px-3 py-2 rounded font-medium transition-colors ${'bg-[#C32033] text-white'}`}
+                className="px-3 py-2 rounded font-medium transition-colors bg-[#C32033] text-white"
               >
                 {currentPage}
               </button>
@@ -431,10 +407,6 @@ const ManageSalesRequest = () => {
                 >
                   {currentPage + 1}
                 </button>
-              )}
-
-              {pagination?.hasMore && currentPage + 1 < totalPages && (
-                <span className="px-2 text-gray-600">...</span>
               )}
 
               <button
@@ -456,8 +428,9 @@ const ManageSalesRequest = () => {
         selectedFilter={selectedFilter}
         onFilterChange={setSelectedFilter}
         onApply={() => {
-          setSearchTerm('');
-          setCurrentPage(1);
+          setCurrentPage(1); // reset page
+          setSearchTerm(''); // optional: clear search if needed
+          fetchSalesRequests(1, '', selectedFilter); // <-- fetch API with new filter
         }}
       />
     </>

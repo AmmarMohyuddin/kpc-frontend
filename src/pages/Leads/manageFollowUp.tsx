@@ -36,7 +36,7 @@ interface PaginationInfo {
 
 interface ApiResponse {
   followups: FollowUp[];
-  pagination: PaginationInfo;
+  pagination: PaginationInfo | null;
 }
 
 // Filter Modal Props Interface
@@ -60,13 +60,11 @@ const FilterModal = ({
 
   return createPortal(
     <div className="fixed inset-0 z-[10000] flex items-center justify-center">
-      {/* Overlay */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
 
-      {/* Modal */}
       <div className="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4">
         {/* Header */}
         <div className="flex items-center justify-between p-6">
@@ -81,7 +79,7 @@ const FilterModal = ({
 
         {/* Content */}
         <div className="p-6 space-y-4">
-          {/* Radio buttons */}
+          {/* FOLLOWUP_ID */}
           <label className="flex items-center gap-3 cursor-pointer">
             <input
               type="radio"
@@ -102,26 +100,7 @@ const FilterModal = ({
             </span>
           </label>
 
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input
-              type="radio"
-              name="filterOption"
-              value="opportunityId"
-              checked={selectedFilter === 'opportunityId'}
-              onChange={(e) => onFilterChange(e.target.value)}
-              className="w-5 h-5 accent-[#c32033]"
-            />
-            <span
-              className={`${
-                selectedFilter === 'opportunityId'
-                  ? 'font-bold text-black'
-                  : 'font-medium text-gray-700'
-              }`}
-            >
-              Opportunity ID
-            </span>
-          </label>
-
+          {/* LEAD_ID */}
           <label className="flex items-center gap-3 cursor-pointer">
             <input
               type="radio"
@@ -168,6 +147,7 @@ const FilterModal = ({
 };
 
 const ITEMS_PER_PAGE = 10;
+let debounceTimer: NodeJS.Timeout;
 
 const ManageFollowUp = () => {
   const navigate = useNavigate();
@@ -182,18 +162,25 @@ const ManageFollowUp = () => {
   const [selectedFilter, setSelectedFilter] = useState('followupId');
 
   useEffect(() => {
-    fetchFollowUps(currentPage);
+    fetchFollowUps(currentPage, searchTerm);
   }, [currentPage]);
 
-  const fetchFollowUps = async (page: number) => {
+  const fetchFollowUps = async (page: number, query: string = '') => {
     try {
       setIsLoading(true);
       const offset = (page - 1) * ITEMS_PER_PAGE;
 
-      const response = await apiService.get(`/api/v1/leads/listFollowup`, {
-        limit: ITEMS_PER_PAGE,
-        offset,
-      });
+      const params: Record<string, any> = { limit: ITEMS_PER_PAGE, offset };
+
+      if (query) {
+        if (selectedFilter === 'followupId') params.FOLLOWUP_ID = query;
+        else if (selectedFilter === 'leadId') params.LEAD_ID = query;
+      }
+
+      const response = await apiService.get(
+        `/api/v1/leads/listFollowup`,
+        params,
+      );
 
       if (response?.status === 200) {
         const data: ApiResponse = response.data;
@@ -207,29 +194,20 @@ const ManageFollowUp = () => {
     }
   };
 
-  // Filter followups based on selected filter
-  const filteredFollowUps = followUps.filter((fu) => {
-    if (selectedFilter === 'followupId') {
-      return String(fu.followup_id || '')
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-    } else if (selectedFilter === 'opportunityId') {
-      return String(fu.opportunity_id || '')
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-    } else if (selectedFilter === 'leadId') {
-      return String(fu.lead_id || '')
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-    }
-    return true;
-  });
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
+
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      fetchFollowUps(1, value);
+    }, 600);
+  };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  // Calculate total pages
   const totalPages = pagination?.hasMore ? currentPage + 1 : currentPage;
 
   if (isLoading) {
@@ -248,7 +226,6 @@ const ManageFollowUp = () => {
   return (
     <div className="flex flex-col gap-6">
       <div className="rounded-3xl border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
-        {/* Header */}
         <h1 className="text-2xl font-semibold text-black mb-2">
           Manage Follow Ups
         </h1>
@@ -273,18 +250,11 @@ const ManageFollowUp = () => {
               <input
                 type="text"
                 placeholder={`Search by ${
-                  selectedFilter === 'followupId'
-                    ? 'FollowUp ID'
-                    : selectedFilter === 'opportunityId'
-                    ? 'Opportunity ID'
-                    : 'Lead ID'
+                  selectedFilter === 'followupId' ? 'FollowUp ID' : 'Lead ID'
                 }...`}
                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:border-transparent w-72"
                 value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
+                onChange={(e) => handleSearchChange(e.target.value)}
               />
             </div>
             <button
@@ -304,25 +274,26 @@ const ManageFollowUp = () => {
                 <th className="px-6 py-4 text-left">No.</th>
                 <th className="px-6 py-4 text-left">FollowUp ID</th>
                 <th className="px-6 py-4 text-left">Source</th>
+                <th className="px-6 py-4 text-left">Lead ID</th>
                 <th className="px-6 py-4 text-left">Assigned To</th>
                 <th className="px-6 py-4 text-left">FollowUp Date</th>
                 <th className="px-6 py-4 text-left">Next FollowUp</th>
-                <th className="px-6 py-4 text-left">Status</th>
                 <th className="px-6 py-4 text-left">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredFollowUps.length > 0 ? (
-                filteredFollowUps.map((fu, index) => (
+              {followUps.length > 0 ? (
+                followUps.map((fu, index) => (
                   <tr
                     key={fu.followup_id}
-                    className={`hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors`}
+                    className="hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors"
                   >
                     <td className="px-6 py-4">
                       {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
                     </td>
                     <td className="px-6 py-4">{fu.followup_id}</td>
                     <td className="px-6 py-4">{fu.source}</td>
+                    <td className="px-6 py-4">{fu.lead_id}</td>
                     <td className="px-6 py-4">{fu.assigned_to}</td>
                     <td className="px-6 py-4">
                       {new Date(fu.followup_date).toLocaleDateString()}
@@ -330,20 +301,17 @@ const ManageFollowUp = () => {
                     <td className="px-6 py-4">
                       {new Date(fu.next_followup_date).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4">{fu.status}</td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <button
-                          className="px-4 py-2 border-2 border-[#C32033] text-[#C32033] rounded-lg font-medium hover:bg-[#C32033] hover:text-white transition-colors"
-                          onClick={() =>
-                            navigate(`/follow-up/detail/${fu.followup_id}`, {
-                              state: { followup: fu },
-                            })
-                          }
-                        >
-                          View Details
-                        </button>
-                      </div>
+                      <button
+                        className="px-4 py-2 border-2 border-[#C32033] text-[#C32033] rounded-lg font-medium hover:bg-[#C32033] hover:text-white transition-colors"
+                        onClick={() =>
+                          navigate(`/follow-up/detail/${fu.followup_id}`, {
+                            state: { followup: fu },
+                          })
+                        }
+                      >
+                        View Details
+                      </button>
                     </td>
                   </tr>
                 ))

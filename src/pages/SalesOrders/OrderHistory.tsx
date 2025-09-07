@@ -46,7 +46,6 @@ interface FilterModalProps {
   onApply: () => void;
 }
 
-// Filter Modal Component
 const FilterModal = ({
   isOpen,
   onClose,
@@ -143,6 +142,7 @@ const OrderHistory = () => {
   const [originalOrders, setOriginalOrders] = useState<OriginalOrder[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
   const [totalItems, setTotalItems] = useState(0);
 
@@ -150,42 +150,72 @@ const OrderHistory = () => {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('customerName');
 
+  // ⏳ Debounce search term
   useEffect(() => {
-    fetchOrderHistory(currentPage);
-  }, [currentPage]);
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setCurrentPage(1); // reset to page 1 when searching
+    }, 500);
 
-  const fetchOrderHistory = async (page: number) => {
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    fetchOrderHistory(currentPage, debouncedSearch);
+  }, [currentPage, debouncedSearch]);
+
+  const fetchOrderHistory = async (page: number, search: string) => {
     try {
       setIsLoading(true);
-      const offset = (page - 1) * ITEMS_PER_PAGE;
+
+      const params: any = {};
+
+      if (search) {
+        // 🔹 Filter applied → no pagination
+        if (selectedFilter === 'customerName') {
+          params.CUSTOMER_NAME = search;
+        } else if (selectedFilter === 'orderNumber') {
+          params.ORDER_NUMBER = search;
+        } else if (selectedFilter === 'accountNumber') {
+          params.ACCOUNT_NUMBER = search;
+        }
+      } else {
+        // 🔹 No filter → use pagination
+        const offset = (page - 1) * ITEMS_PER_PAGE;
+        params.limit = ITEMS_PER_PAGE;
+        params.offset = offset;
+      }
 
       const response = await apiService.get(
         `/api/v1/salesOrders/order-history`,
-        {
-          limit: ITEMS_PER_PAGE,
-          offset,
-        },
+        { params },
       );
 
       if (response?.status === 200) {
         const data: ApiResponse = response.data;
         setOriginalOrders(data.orders || []);
 
-        const formatted: SalesOrder[] = data.orders.map((order: any) => ({
-          order_no: String(order.order_no || '-'),
-          customer_name: String(order.lines?.[0]?.CUSTOMER_NAME || '-'),
-          salesperson: String(order.lines?.[0]?.SALESPERSON_NAME || '-'),
-          account_number: String(order.lines?.[0]?.ACCOUNT_NUMBER || '-'),
-          price: order.lines?.[0]?.UNIT_LIST_PRICE || 0,
-        }));
+        const formatted: SalesOrder[] = (data.orders || []).map(
+          (order: any) => ({
+            order_no: String(order.order_no || '-'),
+            customer_name: String(order.lines?.[0]?.CUSTOMER_NAME || '-'),
+            salesperson: String(order.lines?.[0]?.SALESPERSON_NAME || '-'),
+            account_number: String(order.lines?.[0]?.ACCOUNT_NUMBER || '-'),
+            price: order.lines?.[0]?.UNIT_LIST_PRICE || 0,
+          }),
+        );
 
         setSalesOrders(formatted);
-        setPagination(data.pagination);
 
-        if (data.pagination.hasMore) {
+        // 🔹 Only keep pagination when no filter applied
+        setPagination(search ? null : data.pagination);
+
+        if (!search && data.pagination?.hasMore) {
           setTotalItems(page * ITEMS_PER_PAGE + 1);
-        } else {
+        } else if (!search && data.pagination) {
           setTotalItems(data.pagination.offset + data.orders.length);
+        } else {
+          setTotalItems(data.orders.length);
         }
       }
     } catch (error) {
@@ -203,24 +233,6 @@ const OrderHistory = () => {
       state: { order: originalOrder || null },
     });
   };
-
-  const filteredItems = salesOrders.filter((order) => {
-    const term = searchTerm.trim().toLowerCase();
-    if (selectedFilter === 'customerName') {
-      return String(order.customer_name || '')
-        .toLowerCase()
-        .includes(term);
-    } else if (selectedFilter === 'orderNumber') {
-      return String(order.order_no || '')
-        .toLowerCase()
-        .includes(term);
-    } else if (selectedFilter === 'accountNumber') {
-      return String(order.account_number || '')
-        .toLowerCase()
-        .includes(term);
-    }
-    return true;
-  });
 
   const handlePageChange = (page: number) => setCurrentPage(page);
 
@@ -303,8 +315,8 @@ const OrderHistory = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredItems.length > 0 ? (
-                  filteredItems.map((order, index) => (
+                {salesOrders.length > 0 ? (
+                  salesOrders.map((order, index) => (
                     <tr
                       key={`${order.order_no}-${pagination?.offset}-${index}`}
                       className="hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors"
@@ -407,8 +419,11 @@ const OrderHistory = () => {
         selectedFilter={selectedFilter}
         onFilterChange={setSelectedFilter}
         onApply={() => {
-          setSearchTerm('');
+          setSearchTerm(''); // reset search box
+          setDebouncedSearch(''); // reset debounced term
           setCurrentPage(1);
+          setIsLoading(true); // ✅ show loader immediately
+          fetchOrderHistory(1, ''); // ✅ explicitly trigger API on Apply
         }}
       />
     </>

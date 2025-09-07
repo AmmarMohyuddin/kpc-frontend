@@ -129,6 +129,7 @@ const FilterModal = ({
 };
 
 const ITEMS_PER_PAGE = 10;
+const DEBOUNCE_DELAY = 500; // ms
 
 const OpenOrders = () => {
   const navigate = useNavigate();
@@ -137,6 +138,7 @@ const OpenOrders = () => {
   const [originalOrders, setOriginalOrders] = useState<OriginalOrder[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
   const [totalItems, setTotalItems] = useState(0);
@@ -144,20 +146,46 @@ const OpenOrders = () => {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('customerName');
 
+  // 🔹 Debounce search term
   useEffect(() => {
-    fetchOpenOrders(currentPage);
-  }, [currentPage]);
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchTerm.trim());
+      setCurrentPage(1);
+    }, DEBOUNCE_DELAY);
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
 
-  const fetchOpenOrders = async (page: number) => {
+  // 🔹 Fetch data when page or search/filter changes
+  useEffect(() => {
+    fetchOpenOrders(currentPage, debouncedSearch);
+  }, [currentPage, debouncedSearch]);
+
+  const fetchOpenOrders = async (page: number, term: string) => {
     try {
       setIsLoading(true);
       setError(null);
+
       const offset = (page - 1) * ITEMS_PER_PAGE;
 
-      const response = await apiService.get(`/api/v1/salesOrders/open-orders`, {
-        limit: ITEMS_PER_PAGE,
-        offset,
-      });
+      // Build params
+      const params: any = {};
+
+      if (term) {
+        // 🔹 Filter applied → no pagination
+        if (selectedFilter === 'customerName') params.CUSTOMER_NAME = term;
+        else if (selectedFilter === 'orderNumber') params.ORDER_NUMBER = term;
+        else if (selectedFilter === 'accountNumber')
+          params.ACCOUNT_NUMBER = term;
+      } else {
+        // 🔹 No filter → apply pagination
+        params.limit = ITEMS_PER_PAGE;
+        params.offset = offset;
+      }
+
+      const response = await apiService.get(
+        `/api/v1/salesOrders/open-orders`,
+        params,
+      );
 
       if (response?.status === 200) {
         const data: ApiResponse = response.data;
@@ -174,17 +202,19 @@ const OpenOrders = () => {
         setSalesOrders(formatted);
         setPagination(data.pagination);
 
-        if (data.pagination.hasMore) {
+        if (data.pagination?.hasMore) {
           setTotalItems(page * ITEMS_PER_PAGE + 1);
-        } else {
+        } else if (data.pagination) {
           setTotalItems(data.pagination.offset + data.orders.length);
+        } else {
+          setTotalItems(data.orders.length);
         }
       }
     } catch (error) {
       console.error('❌ Error fetching orders:', error);
       setError('Failed to fetch orders. Please try again.');
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // hide loader
     }
   };
 
@@ -196,24 +226,6 @@ const OpenOrders = () => {
       state: { order: originalOrder || null },
     });
   };
-
-  const filteredItems = salesOrders.filter((order) => {
-    const term = searchTerm.trim().toLowerCase();
-    if (selectedFilter === 'customerName') {
-      return String(order.customer_name || '')
-        .toLowerCase()
-        .includes(term);
-    } else if (selectedFilter === 'orderNumber') {
-      return String(order.order_no || '')
-        .toLowerCase()
-        .includes(term);
-    } else if (selectedFilter === 'accountNumber') {
-      return String(order.account_number || '')
-        .toLowerCase()
-        .includes(term);
-    }
-    return true;
-  });
 
   const handlePageChange = (page: number) => setCurrentPage(page);
 
@@ -310,8 +322,8 @@ const OpenOrders = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredItems.length > 0 ? (
-                  filteredItems.map((order, index) => (
+                {salesOrders.length > 0 ? (
+                  salesOrders.map((order, index) => (
                     <tr
                       key={`${order.order_no}-${pagination?.offset}-${index}`}
                       className="hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors"
@@ -352,7 +364,7 @@ const OpenOrders = () => {
                       colSpan={7}
                       className="px-6 py-4 text-center text-gray-500"
                     >
-                      {searchTerm
+                      {debouncedSearch
                         ? 'No matching Orders found'
                         : 'No Orders found'}
                     </td>
@@ -413,8 +425,11 @@ const OpenOrders = () => {
         selectedFilter={selectedFilter}
         onFilterChange={setSelectedFilter}
         onApply={() => {
-          setSearchTerm('');
+          setSearchTerm(''); // reset search box
+          setDebouncedSearch(''); // reset debounced term
           setCurrentPage(1);
+          setIsLoading(true); // ✅ show loader immediately
+          fetchOpenOrders(1, ''); // ✅ explicitly trigger API on Apply
         }}
       />
     </>

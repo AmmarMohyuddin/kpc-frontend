@@ -80,14 +80,14 @@ const FilterModal = ({
             <input
               type="radio"
               name="filterOption"
-              value="orderNumber"
-              checked={selectedFilter === 'orderNumber'}
+              value="ORDER_NUMBER"
+              checked={selectedFilter === 'ORDER_NUMBER'}
               onChange={(e) => onFilterChange(e.target.value)}
               className="w-5 h-5 accent-[#c32033]"
             />
             <span
               className={`${
-                selectedFilter === 'orderNumber'
+                selectedFilter === 'ORDER_NUMBER'
                   ? 'font-semibold text-black'
                   : 'font-medium text-gray-700'
               }`}
@@ -130,29 +130,44 @@ const UninvoicedOrders = () => {
   const [originalOrders, setOriginalOrders] = useState<OriginalOrder[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
-  const [totalItems, setTotalItems] = useState(0);
 
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState('orderNumber');
+  const [selectedFilter, setSelectedFilter] = useState('ORDER_NUMBER');
 
+  // 🔄 Debounce Effect
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setCurrentPage(1);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
+
+  // Fetch Orders
   useEffect(() => {
     fetchUninvoicedOrders(currentPage);
-  }, [currentPage]);
+  }, [currentPage, debouncedSearch]);
 
   const fetchUninvoicedOrders = async (page: number) => {
     try {
       setIsLoading(true);
       setError(null);
-      const offset = (page - 1) * ITEMS_PER_PAGE;
+
+      const params: any = {};
+
+      if (selectedFilter === 'ORDER_NUMBER' && debouncedSearch) {
+        params.ORDER_NUMBER = debouncedSearch;
+      } else {
+        params.limit = ITEMS_PER_PAGE;
+        params.offset = (page - 1) * ITEMS_PER_PAGE;
+      }
 
       const response = await apiService.get(
         `/api/v1/salesOrders/uninvoiced-orders`,
-        {
-          limit: ITEMS_PER_PAGE,
-          offset,
-        },
+        { params },
       );
 
       if (response?.status === 200) {
@@ -177,12 +192,11 @@ const UninvoicedOrders = () => {
         });
 
         setSalesOrders(formatted);
-        setPagination(data.pagination);
 
-        if (data.pagination.hasMore) {
-          setTotalItems(page * ITEMS_PER_PAGE + 1);
+        if (!params.ORDER_NUMBER) {
+          setPagination(data.pagination);
         } else {
-          setTotalItems(data.pagination.offset + data.orders.length);
+          setPagination(null); // no pagination if filter is applied
         }
       }
     } catch (err) {
@@ -198,34 +212,13 @@ const UninvoicedOrders = () => {
       (order) => order.order_no === orderNo,
     );
 
-    if (originalOrder) {
-      navigate(`/sales-orders/uninvoiced/${orderNo}`, {
-        state: { order: originalOrder },
-      });
-    } else {
-      navigate(`/sales-orders/uninvoiced/${orderNo}`);
-    }
+    navigate(`/sales-orders/uninvoiced/${orderNo}`, {
+      state: { order: originalOrder || null },
+    });
   };
 
-  const filteredItems = salesOrders.filter((order) => {
-    if (selectedFilter === 'orderNumber') {
-      return String(order.order_no || '')
-        .toLowerCase()
-        .includes(searchTerm.trim().toLowerCase());
-    }
-    return true;
-  });
-
-  const handlePageChange = (page: number) => {
-    if (
-      page >= 1 &&
-      (page <= (pagination?.offset || 1) || pagination?.hasMore)
-    ) {
-      setCurrentPage(page);
-    }
-  };
-
-  const totalPages = pagination?.hasMore ? currentPage + 1 : currentPage;
+  const totalPages =
+    pagination?.hasMore && !searchTerm ? currentPage + 1 : currentPage;
 
   const breadcrumbs = [
     { label: 'Sales Orders', path: '/' },
@@ -259,7 +252,7 @@ const UninvoicedOrders = () => {
       <div className="rounded-3xl border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-2 gap-4">
-          <h1 className="text-2xl font-semibold text-black dark:text-white">
+          <h1 className="text-2xl font-semibold text-black">
             Uninvoiced Orders
           </h1>
         </div>
@@ -283,7 +276,7 @@ const UninvoicedOrders = () => {
               <input
                 type="text"
                 placeholder="Search by Order Number..."
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C32033] w-72"
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:border-transparent w-72"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -301,7 +294,7 @@ const UninvoicedOrders = () => {
         <div className="overflow-x-auto mt-5">
           <table className="w-full">
             <thead>
-              <tr className="bg-[#C32033] shadow-lg text-white">
+              <tr className="bg-[#C32033] text-white">
                 <th className="text-left px-6 py-4">No.</th>
                 <th className="text-left px-6 py-4">Order Number</th>
                 <th className="text-left px-6 py-4">Customer Name</th>
@@ -311,11 +304,11 @@ const UninvoicedOrders = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredItems.length > 0 ? (
-                filteredItems.map((order, index) => (
+              {salesOrders.length > 0 ? (
+                salesOrders.map((order, index) => (
                   <tr
-                    key={`${order.order_no}-${pagination?.offset}-${index}`}
-                    className="hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors"
+                    key={`${order.order_no}-${index}`}
+                    className="hover:bg-gray-100 border-b text-[#1e1e1e]"
                   >
                     <td className="px-6 py-4">
                       {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
@@ -342,7 +335,7 @@ const UninvoicedOrders = () => {
                     colSpan={6}
                     className="px-6 py-4 text-center text-gray-500"
                   >
-                    {searchTerm
+                    {debouncedSearch
                       ? 'No matching Orders found'
                       : 'No Orders available'}
                   </td>
@@ -353,10 +346,10 @@ const UninvoicedOrders = () => {
         </div>
 
         {/* Pagination */}
-        {(totalPages > 1 || pagination?.hasMore) && (
+        {pagination && (totalPages > 1 || pagination?.hasMore) && (
           <div className="flex items-center justify-end gap-2 p-4 border-t border-gray-200">
             <button
-              onClick={() => handlePageChange(currentPage - 1)}
+              onClick={() => setCurrentPage(currentPage - 1)}
               disabled={currentPage === 1}
               className="p-2 rounded hover:bg-gray-100 disabled:opacity-50 transition-colors"
             >
@@ -364,23 +357,23 @@ const UninvoicedOrders = () => {
             </button>
 
             <button
-              onClick={() => handlePageChange(currentPage)}
-              className="px-3 py-2 rounded font-medium bg-[#C32033] text-white"
+              onClick={() => setCurrentPage(currentPage)}
+              className="px-3 py-2 rounded bg-[#C32033] text-white"
             >
               {currentPage}
             </button>
 
             {pagination?.hasMore && (
               <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                className="px-3 py-2 rounded font-medium text-gray-600 hover:bg-gray-100"
+                onClick={() => setCurrentPage(currentPage + 1)}
+                className="px-3 py-2 rounded text-gray-600 hover:bg-gray-100"
               >
                 {currentPage + 1}
               </button>
             )}
 
             <button
-              onClick={() => handlePageChange(currentPage + 1)}
+              onClick={() => setCurrentPage(currentPage + 1)}
               disabled={!pagination?.hasMore}
               className="p-2 rounded hover:bg-gray-100 disabled:opacity-50 transition-colors"
             >
@@ -397,8 +390,11 @@ const UninvoicedOrders = () => {
         selectedFilter={selectedFilter}
         onFilterChange={setSelectedFilter}
         onApply={() => {
-          setSearchTerm('');
-          setCurrentPage(1);
+          setSearchTerm(''); // reset search box
+          setDebouncedSearch(''); // reset debounced term
+          setCurrentPage(1); // reset pagination
+          setIsLoading(true); // ✅ show loader immediately
+          fetchUninvoicedOrders(1); // ✅ just call with page only
         }}
       />
     </div>

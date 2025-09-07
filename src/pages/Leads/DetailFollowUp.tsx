@@ -1,7 +1,6 @@
 import { ChevronRight } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import TitleValueRow from "../../components/TitleValueRow.js";
-
+import TitleValueRow from '../../components/TitleValueRow.js';
 
 const DetailFollowUp = () => {
   const location = useLocation();
@@ -33,7 +32,9 @@ const DetailFollowUp = () => {
           <ChevronRight className="w-4 h-4" />
           <span className="text-[rgba(22,22,22,0.7)]">Follow Up</span>
           <ChevronRight className="w-4 h-4" />
-          <span className="text-[#161616]">Entry Details # {followupData.followup_id}</span>
+          <span className="text-[#161616]">
+            Entry Details # {followupData.followup_id}
+          </span>
         </div>
       </div>
 
@@ -41,47 +42,53 @@ const DetailFollowUp = () => {
       <div className="rounded-[10px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
         <div className="space-y-3">
           {/* Follow Up ID */}
-          <TitleValueRow title="Follow Up ID" value={followupData.followup_id} />
+          <TitleValueRow
+            title="Follow Up ID"
+            value={followupData.followup_id}
+          />
           <hr className="custom-divider my-2" />
-
 
           {/* Source */}
           <TitleValueRow title="Source" value={followupData.source} />
           <hr className="custom-divider my-2" />
 
-
-          {/* Opportunity ID */}
-          <TitleValueRow title="Opportunity ID" value={followupData.opportunity_id} />
+          {/* Lead ID */}
+          <TitleValueRow title="Lead ID" value={followupData.lead_id} />
           <hr className="custom-divider my-2" />
-
 
           {/* Follow Up Date */}
-          <TitleValueRow title="Follow Up Date" value={followupData.followup_date
-            ? new Date(followupData.followup_date).toLocaleDateString(
-              'en-GB',
-            )
-            : 'N/A'} />
+          <TitleValueRow
+            title="Follow Up Date"
+            value={
+              followupData.followup_date
+                ? new Date(followupData.followup_date).toLocaleDateString(
+                    'en-GB',
+                  )
+                : 'N/A'
+            }
+          />
           <hr className="custom-divider my-2" />
-
 
           {/* Next Follow Up Date */}
-          <TitleValueRow title="Next Follow Up Date" value={followupData.next_followup_date
-            ? new Date(followupData.next_followup_date).toLocaleDateString(
-              'en-GB',
-            )
-            : 'N/A'} />
+          <TitleValueRow
+            title="Next Follow Up Date"
+            value={
+              followupData.next_followup_date
+                ? new Date(followupData.next_followup_date).toLocaleDateString(
+                    'en-GB',
+                  )
+                : 'N/A'
+            }
+          />
           <hr className="custom-divider my-2" />
-
 
           {/* Status */}
           <TitleValueRow title="Status" value={followupData.status} />
           <hr className="custom-divider my-2" />
 
-
           {/* Comments */}
           <TitleValueRow title="Comments" value={followupData.comments} />
           <hr className="custom-divider my-2" />
-
 
           {/* Assigned To */}
           <TitleValueRow title="Assigned To" value={followupData.assigned_to} />
