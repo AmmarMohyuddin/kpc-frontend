@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import apiService from '../../services/ApiService';
 import Loader from '../../common/Loader';
 import TitleValueRow from "../../components/TitleValueRow.js";
-import React from "react";
+import ShowMoreList from "../../components/HeaderInfo.js"; // adjust path based on your folder structure
+
 
 
 interface OrderLine {
@@ -78,6 +79,15 @@ const DetailSalesRequest = () => {
   const [salesRequest, setSalesRequest] = useState<SalesRequest | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [expandedIndexes, setExpandedIndexes] = useState<number[]>([]);
+
+  const toggleExpand = (index: number) => {
+    setExpandedIndexes((prev) =>
+      prev.includes(index)
+        ? prev.filter((i) => i !== index)
+        : [...prev, index]
+    );
+  };
 
   useEffect(() => {
     const fetchSalesRequestDetails = async () => {
@@ -156,6 +166,23 @@ const DetailSalesRequest = () => {
     'SITE_USE_ID',
     'SITE_ID',
   ];
+  // Define the exact order you want
+const columnOrder = [
+  "ITEM_NUMBER",
+  "SUBCATEGORY",
+  "DESCRIPTION",
+  "INSTRUCTIONS",
+  "ORDER_QUANTITY",
+  "PRICE",
+  "AMOUNT",
+  "UOM",
+  "LINE_STATUS",
+  "CREATION_DATE",
+  "LAST_UPDATE_DATE",
+  "PAYMENT_TERM",
+  "REQUESTED_SHIP_DATE",
+];
+
 
   const excludeLineFields = [
     'ORDER_HEADER_ID',
@@ -193,21 +220,28 @@ const DetailSalesRequest = () => {
       </div>
 
       {/* Header Details */}
-      <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
-        <h2 className="text-xl text-[#C32033] font-semibold mb-4 text-center">
+      <div className="rounded-[10px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
+        <h2 className="text-xl text-[#C32033] font-semibold mb-4">
           Order Information
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-1 gap-2">
-          {headerFields.map((field) => (
-            <React.Fragment key={field.label}>
-              <TitleValueRow title={field.label
-                .toLowerCase()
-                .replace(/\b\w/g, (char) => char.toUpperCase())} value={String(field.value)} />
-              <hr className="custom-divider my-2" />
-            </React.Fragment>
-          ))}
-        </div>
-        {/* {headerFields.map((field) => (
+
+        <ShowMoreList fields={headerFields} initialCount={5} />
+        {/* <div className="grid grid-cols-1 md:grid-cols-1 gap-2">
+    {headerFields.slice(0, 5).map((field) => (
+      <React.Fragment key={field.label}>
+        <TitleValueRow
+          title={field.label
+            .toLowerCase()
+            .replace(/\b\w/g, (char) => char.toUpperCase())}
+          value={String(field.value)}
+        />
+        <hr className="custom-divider my-2" />
+      </React.Fragment>
+    ))}
+  </div> */}
+      </div>
+
+      {/* {headerFields.map((field) => (
             <div
               key={field.label}
               className="flex items-center justify-between py-1 border-b border-gray"
@@ -220,47 +254,40 @@ const DetailSalesRequest = () => {
               </span>
             </div>
           ))} */}
-      </div>
+
       {/* </div> */}
 
       {/* Line Items */}
-      <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
+
+      {/* <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
         <h2 className="text-xl text-[#C32033] font-semibold mb-4">
           Order Lines
         </h2>
+
         {salesRequest.ORDER_LINES.length > 0 ? (
-          <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {salesRequest.ORDER_LINES.map((line, index) => (
               <div
                 key={line.ORDER_LINE_ID}
                 className="p-4 border rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-white px-5 pt-6 pb-6 shadow-default sm:px-7.5"
               >
-                
-<h3 className="font-semibold mb-2 text-center">
+                <h3 className="font-semibold mb-4 text-center">
                   Line {index + 1} - {line.ITEM_NUMBER}
                 </h3>
-                                        <hr className="custom-divider my-2" />
+                <hr className="custom-divider my-2" />
 
-                <div className="grid grid-cols-1 md:grid-cols-1 gap-1">
+                <div className="grid grid-cols-1 gap-2">
                   {Object.entries(line)
                     .filter(([key]) => !excludeLineFields.includes(key))
                     .map(([key, value]) => (
-                      <React.Fragment key={key}>
-                       <TitleValueRow
-  key={key}
-  title={key
-    .replace(/_/g, " ")               // replace underscores with spaces
-    .toLowerCase()                    // convert whole string to lowercase
-    .replace(/\b\w/g, (c) => c.toUpperCase())} // capitalize each word
-  value={String(value ?? "-")}
-/>
-
-                        <hr className="custom-divider my-2" />
-
-                      </React.Fragment>
-
-
-
+                      <TitleValueRow
+                        key={key}
+                        title={key
+                          .replace(/_/g, " ")
+                          .toLowerCase()
+                          .replace(/\b\w/g, (c) => c.toUpperCase())}
+                        value={String(value ?? "-")}
+                      />
                     ))}
                 </div>
               </div>
@@ -269,7 +296,95 @@ const DetailSalesRequest = () => {
         ) : (
           <p>No order lines available</p>
         )}
-      </div>
+      </div> */}
+
+      <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
+  <h2 className="text-xl text-[#C32033] font-semibold mb-4">
+    Order Lines
+  </h2>
+
+
+ {salesRequest.ORDER_LINES.length > 0 ? (
+  <div className="overflow-x-auto mt-5">
+    <table className="w-full">
+      <thead>
+        <tr className="bg-[#C32033] shadow-lg text-white">
+          <th className="px-6 py-4 text-left">No.</th>
+          {columnOrder.map((key) => (
+            <th key={key} className="px-6 py-4 text-left">
+              {key
+                .replace(/_/g, " ")
+                .toLowerCase()
+                .replace(/\b\w/g, (c) => c.toUpperCase())}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {salesRequest.ORDER_LINES.map((line, index) => (
+          <tr
+            key={line.ORDER_LINE_ID}
+            className="hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors"
+          >
+            <td className="px-6 py-4">{index + 1}</td>
+
+            {columnOrder.map((key) => (
+              <td key={key} className="px-6 py-4">
+                {String(line[key] ?? "-")}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+) : (
+  <p>No order lines available</p>
+)}
+
+
+  {/* {salesRequest.ORDER_LINES.length > 0 ? (
+    <div className="overflow-x-auto">
+      <table className="min-w-full border border-[rgba(0,0,0,0.16)] rounded-[20px] overflow-hidden">
+        <thead className="bg-[#F1F1F1]">
+          <tr>
+            <th className="px-4 py-2 border text-left">#</th>
+            <th className="px-4 py-2 border text-left">Item Number</th>
+            {Object.keys(salesRequest.ORDER_LINES[0])
+              .filter((key) => !excludeLineFields.includes(key))
+              .map((key) => (
+                <th key={key} className="px-4 py-2 border text-left">
+                  {key
+                    .replace(/_/g, " ")
+                    .toLowerCase()
+                    .replace(/\b\w/g, (c) => c.toUpperCase())}
+                </th>
+              ))}
+          </tr>
+        </thead>
+        <tbody>
+          {salesRequest.ORDER_LINES.map((line, index) => (
+            <tr key={line.ORDER_LINE_ID} className="hover:bg-gray-50">
+              <td className="px-4 py-2 border">{index + 1}</td>
+              <td className="px-4 py-2 border">{line.ITEM_NUMBER}</td>
+              {Object.entries(line)
+                .filter(([key]) => !excludeLineFields.includes(key))
+                .map(([key, value]) => (
+                  <td key={key} className="px-4 py-2 border">
+                    {String(value ?? "-")}
+                  </td>
+                ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  ) : (
+    <p>No order lines available</p>
+  )} */}
+</div>
+
+
       {/* Back Button */}
       <div className="flex gap-4 pt-8">
         <button
