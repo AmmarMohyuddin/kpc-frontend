@@ -27,7 +27,20 @@ const DetailOrderHistory = () => {
       </div>
     );
   }
-
+  const columnOrder = [
+    "CUSTOMER_NAME",
+    "ACCOUNT_NUMBER",
+    "ORDER_DATE",
+    "ITEM",
+    "ITEM_DESCRIPTION",
+    "SALESPERSON_NAME",
+    "ORDERED_UOM",
+    "ERP_DELIVERY_DATE",
+    "UNIT_LIST_PRICE",
+    "ORDERED_QTY",
+    "DELIVERED_QTY",
+    "BALANCE_QTY",
+  ];
   return (
     <div className="flex flex-col py-1 px-5 gap-6 bg-white rounded-[20px]">
       {/* Page Header */}
@@ -66,6 +79,53 @@ const DetailOrderHistory = () => {
           Order Lines
         </h2>
         {order.lines && order.lines.length > 0 ? (
+          <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
+            <h2 className="text-xl font-semibold mb-4 text-[#C32033] dark:text-white">
+              Order Lines
+            </h2>
+
+            <div className="overflow-x-auto mt-5">
+              <table className="w-full min-w-[1200px]">
+                <thead>
+                  <tr className="bg-[#C32033] shadow-lg text-white">
+                    <th className="px-6 py-4 text-left">No.</th>
+                    {columnOrder.map((key) => (
+                      <th key={key} className="px-6 py-4 text-left">
+                        {key
+                          .replace(/_/g, " ")
+                          .toLowerCase()
+                          .replace(/\b\w/g, (c) => c.toUpperCase())}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {order.lines.map((line: any, index: number) => (
+                    <tr
+                      key={line.order_line_id || index}
+                      className="hover:bg-[#f1f1f1] shadow-lg bg-white border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors"
+                    >
+                      <td className="px-6 py-4">{index + 1}</td>
+                      {columnOrder.map((key) => (
+                        <td key={key} className="px-6 py-4">
+                          {/* Format dates */}
+                          {key.includes("DATE") && line[key]
+                            ? new Date(line[key]).toLocaleDateString("en-GB")
+                            : key.includes("PRICE") || key.includes("QTY")
+                              ? Number(line[key] ?? 0).toFixed(2)
+                              : String(line[key] ?? "-")}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ) : (
+          <p>No order lines available</p>
+        )}
+        {/* {order.lines && order.lines.length > 0 ? (
           <div className="space-y-2">
             {order.lines.map((line: any, index: number) => (
               <div
@@ -106,12 +166,12 @@ const DetailOrderHistory = () => {
                     </div>
                   ))}
                 </div> */}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>No order lines available</p>
-        )}
+        {/* </div> */}
+        {/* ))} */}
+        {/* </div> */}
+        {/* ) : ( */}
+        {/* <p>No order lines available</p> */}
+        {/* )}  */}
       </div>
 
       {/* Back Button */}

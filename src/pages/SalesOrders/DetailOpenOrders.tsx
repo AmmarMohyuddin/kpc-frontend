@@ -26,6 +26,21 @@ const DetailOrderOrders = () => {
       </div>
     );
   }
+  const columnOrder = [
+    "CUSTOMER_NAME",
+    "ACCOUNT_NUMBER",
+    "ORDER_DATE",
+    "ITEM",
+    "ITEM_DESCRIPTION",
+    "SALESPERSON_NAME",
+    "ORDERED_UOM",
+    "ERP_DELIVERY_DATE",
+    "UNIT_LIST_PRICE",
+    "ORDERED_QTY",
+    "DELIVERED_QTY",
+    "BALANCE_QTY",
+  ];
+
 
   return (
     <div className="flex flex-col py-1 px-5 gap-6 bg-white rounded-[20px]">
@@ -64,6 +79,48 @@ const DetailOrderOrders = () => {
           Order Lines
         </h2>
         {order.lines && order.lines.length > 0 ? (
+          <div className="overflow-x-auto mt-5">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-[#C32033] shadow-lg text-white">
+                  <th className="px-4 py-2 text-left">No.</th>
+                  {columnOrder.map((key) => (
+                    <th key={key} className="px-4 py-2 text-left">
+                      {key
+                        .replace(/_/g, " ")
+                        .toLowerCase()
+                        .replace(/\b\w/g, (c) => c.toUpperCase())}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {order.lines.map((line: any, index: number) => (
+                  <tr
+                    key={line.ORDER_LINE_ID || index}
+                    className="hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b text-[#1e1e1e] border-b-[#eeeaea] transition-colors"
+                  >
+                    <td className="px-4 py-2">{index + 1}</td>
+
+                    {columnOrder.map((key) => (
+                      <td key={key} className="px-4 py-2">
+                        {/* Format specific fields */}
+                        {key.includes("DATE") && line[key]
+                          ? new Date(line[key]).toLocaleDateString("en-GB")
+                          : key.includes("PRICE") || key.includes("AMOUNT")
+                            ? Number(line[key] || 0).toFixed(2)
+                            : String(line[key] ?? "-")}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p>No order lines available</p>
+        )}
+        {/* {order.lines && order.lines.length > 0 ? (
           <div className="space-y-2">            {
             order.lines.map((line: any, index: number) => (
               <div
@@ -98,13 +155,13 @@ const DetailOrderOrders = () => {
                       {String(value)}
                     </div>
                   ))} */}
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>No order lines available</p>
-        )}
+        {/* </div> */}
+        {/* </div> */}
+        {/* ))} */}
+        {/* </div> */}
+        {/* ) : ( */}
+        {/* <p>No order lines available</p> */}
+        {/* )} */}
       </div>
 
       {/* Back Button */}

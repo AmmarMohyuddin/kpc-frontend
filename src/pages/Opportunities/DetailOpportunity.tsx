@@ -107,6 +107,20 @@ const DetailOpportunity = () => {
     );
   }
 
+  const columnOrder = [
+  "DESCRIPTION",
+  "UOM",
+  "INSTRUCTIONS",
+  "QUANTITY",
+  "PRICE",
+  "AMOUNT",
+  "CREATION_DATE",
+  "CREATED_BY",
+  "LAST_UPDATE_DATE",
+  "LAST_UPDATED_BY",
+];
+
+
   return (
     <div className="flex flex-col py-1 px-5 gap-6 bg-white rounded-[20px]">
       {/* Page Header */}
@@ -191,7 +205,51 @@ const DetailOpportunity = () => {
       </div>
 
       {/* Order Lines Section */}
-      {opportunityData.ORDER_LINES &&
+      {opportunityData.ORDER_LINES && opportunityData.ORDER_LINES.length > 0 ? (
+  <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
+    <h2 className="text-xl font-semibold mb-4 text-[#C32033] dark:text-white">
+      Order Items
+    </h2>
+
+    <div className="overflow-x-auto mt-5">
+      <table className="w-full">
+        <thead>
+          <tr className="bg-[#C32033] shadow-lg text-white">
+            <th className="px-6 py-4 text-left">No.</th>
+            {columnOrder.map((key) => (
+              <th key={key} className="px-6 py-4 text-left">
+                {key
+                  .replace(/_/g, " ")
+                  .toLowerCase()
+                  .replace(/\b\w/g, (c) => c.toUpperCase())}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {opportunityData.ORDER_LINES.map((line, index) => (
+            <tr
+              key={line.OPPORTUNITY_DETAIL_ID || index}
+              className="hover:bg-[#f1f1f1] shadow-lg bg-white border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors"
+            >
+              <td className="px-6 py-4">{index + 1}</td>
+
+              {columnOrder.map((key) => (
+                <td key={key} className="px-6 py-4">
+                  {String(line[key] ?? "-")}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+) : (
+  <p>No order lines available</p>
+)}
+
+      {/* {opportunityData.ORDER_LINES &&
         opportunityData.ORDER_LINES.length > 0 && (
           <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
             <h2 className="text-xl font-semibold mb-4 text-[#C32033] dark:text-white">
@@ -245,7 +303,7 @@ const DetailOpportunity = () => {
               ))}
             </div>
           </div>
-        )}
+        )} */}
 
       {/* Back Button */}
       <div className="flex gap-4 pt-8">
