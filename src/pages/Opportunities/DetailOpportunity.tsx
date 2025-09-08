@@ -143,13 +143,13 @@ const DetailOpportunity = () => {
 
       {/* Detail Card */}
       <div className="rounded-[10px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
-        <div className="space-y-3">
+        {/* <div className="space-y-3">
           {/* Lead ID */}
-          {opportunityData.LEAD_ID && (
+          {/* {opportunityData.LEAD_ID && (
             <TitleValueRow title="Lead ID" value={opportunityData.LEAD_ID} />
-          )}
+          )} */}
 
-          <TitleValueRow
+          {/* <TitleValueRow
             title="Opportunity ID"
             value={opportunityData.OPPORTUNITY_ID}
           />
@@ -171,8 +171,51 @@ const DetailOpportunity = () => {
           <TitleValueRow
             title="Remarks"
             value={opportunityData.REMARKS || 'N/A'}
-          />
+          /> */}
+        {/* </div> */} 
+            <div className="rounded-[10px] bg-white p-3 md:p-5 shadow-sm border border-[#00000019]">
+  <div className="space-y-2">
+    {/* Create array of all fields */}
+    {(() => {
+      const fields = [
+        opportunityData.LEAD_ID ? { label: "Lead ID", value: opportunityData.LEAD_ID } : null,
+        { label: "Opportunity ID", value: opportunityData.OPPORTUNITY_ID },
+        { label: "Generation Date", value: opportunityData.GENERATION_DATE },
+        { label: "Stage", value: opportunityData.STAGE },
+        { label: "Status", value: opportunityData.STATUS },
+        { label: "Sales Person", value: opportunityData.SALESPERSON_NAME },
+        { label: "Remarks", value: opportunityData.REMARKS || 'N/A' }
+      ].filter((field): field is { label: string; value: string } => field !== null);
+
+      return Array.from({ length: Math.ceil(fields.length / 2) }).map((_, rowIndex) => (
+        <div key={rowIndex}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+            {fields.slice(rowIndex * 2, rowIndex * 2 + 2).map((field) => (
+              <div key={field.label} className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-2 md:py-3 space-y-1 sm:space-y-0">
+                <span className="detail-title text-sm md:text-base font-medium">
+                  {field.label}:
+                </span>
+                {field.label.toLowerCase().includes("status") ? (
+                  <span className="text-[#000000B2] text-sm md:text-base font-normal inline-flex items-center px-2 md:px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 self-start sm:self-auto">
+                    {field.value ?? "-"}
+                  </span>
+                ) : (
+                  <span className="text-[#000000B2] text-sm md:text-base font-normal break-words">
+                    {field.value ?? "-"}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+          {rowIndex < Math.ceil(fields.length / 2) - 1 && (
+            <hr className="border-[#00000019] mt-2" />
+          )}
         </div>
+      ));
+    })()}
+  </div>
+</div>
+    
         <div className="flex flex-col items-center pt-4 gap-3">
           <button
             onClick={() =>
