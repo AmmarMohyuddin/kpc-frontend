@@ -370,7 +370,7 @@ const ManageOpportunities = () => {
                   opportunities.map((opp, index) => (
                     <tr
                       key={opp.OPPORTUNITY_ID}
-                      className="hover:bg-[#f1f1f1] border-b text-[#1e1e1e]"
+                      className="hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors"
                     >
                       <td className="px-6 py-4">
                         {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}

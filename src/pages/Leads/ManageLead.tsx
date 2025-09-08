@@ -356,7 +356,7 @@ const ManageLeads = () => {
                 leadsData.map((lead, index) => (
                   <tr
                     key={lead.lead_id}
-                    className="hover:bg-gray-100 border-b text-[#1e1e1e]"
+                    className="hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors"
                   >
                     <td className="px-6 py-4">
                       {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
