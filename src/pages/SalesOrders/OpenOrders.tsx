@@ -89,17 +89,16 @@ const FilterModal = ({
                 className="w-5 h-5 accent-[#c32033]"
               />
               <span
-                className={`${
-                  selectedFilter === filter
+                className={`${selectedFilter === filter
                     ? 'font-bold text-black'
                     : 'font-medium text-gray-700'
-                }`}
+                  }`}
               >
                 {filter === 'customerName'
                   ? 'Customer Name'
                   : filter === 'orderNumber'
-                  ? 'Order Number'
-                  : 'Account Number'}
+                    ? 'Order Number'
+                    : 'Account Number'}
               </span>
             </label>
           ))}
@@ -285,13 +284,12 @@ const OpenOrders = () => {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
                   type="text"
-                  placeholder={`Search by ${
-                    selectedFilter === 'customerName'
+                  placeholder={`Search by ${selectedFilter === 'customerName'
                       ? 'Customer Name'
                       : selectedFilter === 'orderNumber'
-                      ? 'Order Number'
-                      : 'Account Number'
-                  }...`}
+                        ? 'Order Number'
+                        : 'Account Number'
+                    }...`}
                   className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:border-transparent w-72"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -309,7 +307,7 @@ const OpenOrders = () => {
 
           {/* Table */}
           <div className="overflow-x-auto mt-5">
-            <table className="w-full">
+            <table className="lead-table">
               <thead>
                 <tr className="bg-[#C32033] text-white">
                   <th className="px-6 py-4 text-left">No.</th>
@@ -326,7 +324,7 @@ const OpenOrders = () => {
                   salesOrders.map((order, index) => (
                     <tr
                       key={`${order.order_no}-${pagination?.offset}-${index}`}
-                      className="hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors"
+                      className={`lead-row ${index % 2 === 0 ? "lead-row-even" : "lead-row-odd"}`}
                     >
                       <td className="px-6 py-4">
                         {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
@@ -351,7 +349,7 @@ const OpenOrders = () => {
                           onClick={() =>
                             handleViewDetails(String(order.order_no))
                           }
-                          className="px-4 py-2 border-2 border-[#C32033] text-[#C32033] rounded-lg font-medium hover:bg-[#C32033] hover:text-white transition-colors"
+                          className="btn-view-details"
                         >
                           View Details
                         </button>

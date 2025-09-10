@@ -193,7 +193,7 @@ const ItemListing = () => {
       />
 
       <div className="flex flex-col gap-6">
-        <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
+      <div className="rounded-3xl border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
           {/* Header */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-2 gap-4">
             <h1 className="text-2xl font-semibold text-black dark:text-white">
@@ -274,7 +274,7 @@ const ItemListing = () => {
 
           {/* Table */}
           <div className="overflow-x-auto mt-5">
-            <table className="w-full">
+          <table className="lead-table">
               <thead>
                 <tr className="bg-[#C32033] text-white">
                   <th className="px-6 py-4 text-left">No.</th>
@@ -291,9 +291,8 @@ const ItemListing = () => {
                   paginatedItems.map((item, index) => (
                     <tr
                       key={item.item_number || index}
-                      className={`border-b ${
-                        index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                      } hover:bg-gray-100 transition-colors`}
+          className={`lead-row ${index % 2 === 0 ? "lead-row-even" : "lead-row-odd"}`}
+                  
                     >
                       <td className="px-6 py-4">{startIndex + index + 1}</td>
                       <td className="px-6 py-4">{item.item_number || '-'}</td>

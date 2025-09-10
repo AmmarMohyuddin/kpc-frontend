@@ -94,11 +94,10 @@ const FilterModal = ({
               className="w-5 h-5 accent-[#c32033]"
             />
             <span
-              className={`${
-                selectedFilter === 'OPPORTUNITY_ID'
+              className={`${selectedFilter === 'OPPORTUNITY_ID'
                   ? 'font-semibold text-black'
                   : 'font-medium text-gray-700'
-              }`}
+                }`}
             >
               Opportunity ID
             </span>
@@ -114,11 +113,10 @@ const FilterModal = ({
               className="w-5 h-5 accent-[#c32033]"
             />
             <span
-              className={`${
-                selectedFilter === 'LEAD_NUMBER'
+              className={`${selectedFilter === 'LEAD_NUMBER'
                   ? 'font-semibold text-black'
                   : 'font-medium text-gray-700'
-              }`}
+                }`}
             >
               Lead Number
             </span>
@@ -134,11 +132,10 @@ const FilterModal = ({
               className="w-5 h-5 accent-[#c32033]"
             />
             <span
-              className={`${
-                selectedFilter === 'DATE'
+              className={`${selectedFilter === 'DATE'
                   ? 'font-semibold text-black'
                   : 'font-medium text-gray-700'
-              }`}
+                }`}
             >
               Date
             </span>
@@ -325,8 +322,8 @@ const ManageOpportunities = () => {
                   selectedFilter === 'OPPORTUNITY_ID'
                     ? 'Search by Opportunity ID...'
                     : selectedFilter === 'LEAD_NUMBER'
-                    ? 'Search by Lead Number...'
-                    : 'Disabled for Date'
+                      ? 'Search by Lead Number...'
+                      : 'Disabled for Date'
                 }
                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:border-transparent w-72"
                 value={searchTerm}
@@ -353,7 +350,8 @@ const ManageOpportunities = () => {
               <Loader />
             </div>
           ) : (
-            <table className="w-full">
+            <table className="lead-table">
+
               <thead>
                 <tr className="bg-[#C32033] shadow-lg text-white">
                   <th className="text-left px-6 py-4">No.</th>
@@ -370,7 +368,7 @@ const ManageOpportunities = () => {
                   opportunities.map((opp, index) => (
                     <tr
                       key={opp.OPPORTUNITY_ID}
-                      className="hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors"
+                      className={`lead-row ${index % 2 === 0 ? "lead-row-even" : "lead-row-odd"}`}
                     >
                       <td className="px-6 py-4">
                         {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
@@ -398,8 +396,7 @@ const ManageOpportunities = () => {
                             <Edit className="text-blue-600 hover:text-blue-800 w-5 h-5" />
                           </button>
                           <button
-                            className="px-4 py-2 border-2 border-[#C32033] text-[#C32033] rounded-lg font-medium hover:bg-[#C32033] hover:text-white transition-colors"
-                            onClick={() =>
+                            className="btn-view-details" onClick={() =>
                               navigate(`/opportunities/${opp.OPPORTUNITY_ID}`, {
                                 state: { opportunity_id: opp.OPPORTUNITY_ID },
                               })

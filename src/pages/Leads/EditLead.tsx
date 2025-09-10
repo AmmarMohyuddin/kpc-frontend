@@ -5,6 +5,8 @@ import apiService from '../../services/ApiService';
 import Loader from '../../common/Loader';
 import { toast } from 'react-hot-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { customSelectStyles } from "../../styles/selectStyle.ts";
+
 
 interface OptionType {
   value: string;
@@ -115,39 +117,7 @@ const EditLead = () => {
     [status, getNextStatusOptions],
   );
 
-  const customSelectStyles = useMemo(
-    () => ({
-      control: (provided: any, state: any) => ({
-        ...provided,
-        minHeight: '50px',
-        height: '50px',
-        borderColor: state.isFocused ? '#C32033' : provided.borderColor,
-        boxShadow: state.isFocused ? '0 0 0 1px #C32033' : provided.boxShadow,
-        '&:hover': {
-          borderColor: state.isFocused ? '#C32033' : provided.borderColor,
-        },
-      }),
-      valueContainer: (provided: any) => ({
-        ...provided,
-        height: '50px',
-        padding: '0 8px',
-      }),
-      option: (provided: any, state: any) => ({
-        ...provided,
-        backgroundColor: state.isSelected
-          ? '#FFD7D7'
-          : state.isFocused
-          ? '#FFD7D7'
-          : provided.backgroundColor,
-        color: '#000',
-      }),
-      singleValue: (provided: any) => ({
-        ...provided,
-        color: '#C32033',
-      }),
-    }),
-    [],
-  );
+ 
 
   const mapCitiesToOptions = useCallback(
     (data: any[]): OptionType[] =>
@@ -362,7 +332,7 @@ const EditLead = () => {
                   value={leadsFormData.customer_email}
                   onChange={handleChange}
                   placeholder="Enter Email"
-                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:ring-2 focus:ring-[#C32033]"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                   required
                 />
               </div>
@@ -377,7 +347,7 @@ const EditLead = () => {
                   value={leadsFormData.address}
                   onChange={handleChange}
                   placeholder="Enter Address"
-                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:ring-2 focus:ring-[#C32033]"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                 />
               </div>
 
@@ -391,7 +361,7 @@ const EditLead = () => {
                   value={leadsFormData.contact_number}
                   onChange={handleChange}
                   placeholder="Enter Contact Number"
-                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:ring-2 focus:ring-[#C32033]"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                 />
               </div>
 
@@ -425,7 +395,7 @@ const EditLead = () => {
                   value={leadsFormData.customer_name}
                   onChange={handleChange}
                   placeholder="Enter Name"
-                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:ring-2 focus:ring-[#C32033]"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                 />
               </div>
 
@@ -455,7 +425,7 @@ const EditLead = () => {
                   value={leadsFormData.contact_position}
                   onChange={handleChange}
                   placeholder="Enter Contact Job Role"
-                  className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:ring-2 focus:ring-[#C32033]"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                 />
               </div>
 

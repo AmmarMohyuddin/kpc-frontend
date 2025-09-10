@@ -26,23 +26,25 @@ const DetailUninvoiced = () => {
       </div>
     );
   }
-  
-const columnOrder = [
-  "order_date",
-  "order_type",
-  "customer_name",
-  "account_no",
-  "salesperson",
-  "item_code",
-  "description",
-  "uom",
-  "quantity",
-  "unit_price",
-  "list_price",
-  "line_total",
-  "created_by",
-  "creation_date",
-];
+
+  const columnOrder = [
+    "order_date",
+    "order_type",
+    "customer_name",
+    "account_no",
+    "salesperson",
+    "item_code",
+    "description",
+    "uom",
+    "quantity",
+    "unit_price",
+    "list_price",
+    "line_total",
+    "created_by",
+    "creation_date",
+  ];
+  // Define wide columns
+  const wideColumns = ["customer_name", "salesperson", "description", "created_by"];
 
   return (
     <div className="flex flex-col py-1 px-5 gap-6 bg-white rounded-[20px]">
@@ -77,47 +79,56 @@ const columnOrder = [
       </div>
 
       {/* Order Lines */}
-      <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
+      <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-2 pt-6 pb-6 shadow-default ">
         <h2 className="text-xl text-[#C32033] font-semibold mb-4 text-center">
           Order Lines
         </h2>
         {order.lines && order.lines.length > 0 ? (
-  <div className="overflow-x-auto mt-5">
-    <table className="w-full">
-      <thead>
-        <tr className="bg-[#C32033] shadow-lg text-white">
-          <th className="px-4 py-2 text-left">No.</th>
-          {columnOrder.map((key) => (
-            <th key={key} className="px-4 py-2 text-left">
-              {key
-                .replace(/_/g, " ")
-                .toLowerCase()
-                .replace(/\b\w/g, (c) => c.toUpperCase())}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {order.lines.map((line: any, index: number) => (
-          <tr
-            key={line.ORDER_LINE_ID || index}
-            className="hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b text-[#1e1e1e] border-b-[#eeeaea] transition-colors"
-          >
-            <td className="px-4 py-2">{index + 1}</td>
+          <div className="overflow-x-auto mt-5">
+            <table className="lead-table">
+              <thead>
+                <tr className="bg-[#C32033] shadow-lg text-white">
+                  <th className="px-6 py-4 text-left">No.</th>
+                  {columnOrder.map((key) => (
+                    <th
+                      key={key}
+                      className={`px-6 py-4 text-left ${wideColumns.includes(key) ? "min-w-[300px] max-w-[400px]" : ""
+                        }`}
+                    >
+                      {key
+                        .replace(/_/g, " ")
+                        .toLowerCase()
+                        .replace(/\b\w/g, (c) => c.toUpperCase())}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {order.lines.map((line: any, index: number) => (
+                  <tr
+                    key={line.ORDER_LINE_ID || index}
+                    className={`${index % 2 === 0 ? "bg-white" : "bg-[#F5F5F5]"
+                      } hover:bg-[#FFD7D7] shadow-lg border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors`}
+                  >
+                    <td className="px-6 py-4">{index + 1}</td>
 
-            {columnOrder.map((key) => (
-              <td key={key} className="px-4 py-2">
-                {String(line[key] ?? "-")}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-) : (
-  <p>No order lines available</p>
-)}
+                    {columnOrder.map((key) => (
+                      <td
+                        key={key}
+                        className={`px-6 py-4 ${wideColumns.includes(key) ? "whitespace-normal break-words"       : "whitespace-nowrap" // keep compact, but spaced
+                          }`}
+                      >
+                        {String(line[key] ?? "-")}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p>No order lines available</p>
+        )}
 
         {/* {order.lines && order.lines.length > 0 ? (
           <div className="space-y-2">
@@ -158,13 +169,13 @@ const columnOrder = [
                       {String(value)}
                     </div>
                   ))} */}
-                {/* </div> */}
-              {/* </div> */}
-            {/* // ))} */}
-          {/* // </div> */}
+        {/* </div> */}
+        {/* </div> */}
+        {/* // ))} */}
+        {/* // </div> */}
         {/* // ) : ( */}
-          {/* // <p>No order lines available</p> */}
-        {/* // )} */} 
+        {/* // <p>No order lines available</p> */}
+        {/* // )} */}
       </div>
 
       {/* Back Button */}

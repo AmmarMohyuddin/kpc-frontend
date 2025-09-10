@@ -134,7 +134,7 @@ const ItemListing = () => {
       />
 
       <div className="flex flex-col gap-6">
-        <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
+        <div className="rounded-3xl border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
           {/* Header */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-2 gap-4">
             <h2 className="text-2xl font-semibold mb-6 text-black">
@@ -187,7 +187,8 @@ const ItemListing = () => {
 
           {/* Table */}
           <div className="overflow-x-auto mt-6">
-            <table className="w-full">
+            <table className="lead-table">
+
               <thead>
                 <tr className="bg-[#C32033] text-white">
                   <th className="px-6 py-4 text-left">#</th>
@@ -202,10 +203,8 @@ const ItemListing = () => {
                   paginatedLines.map((line, index) => (
                     <tr
                       key={line.OPPORTUNITY_DETAIL_ID}
-                      className={`border-b border-gray-200 ${
-                        index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                      } hover:bg-gray-100 transition-colors`}
-                    >
+                      className={`lead-row ${index % 2 === 0 ? "lead-row-even" : "lead-row-odd"}`}
+                  >
                       <td className="px-6 py-4">{startIndex + index + 1}</td>
                       <td className="px-6 py-4">{line.DESCRIPTION}</td>
                       <td className="px-6 py-4">{line.QUANTITY}</td>
@@ -263,11 +262,10 @@ const ItemListing = () => {
                   <button
                     key={page}
                     onClick={() => handlePageChange(page)}
-                    className={`px-3 py-2 rounded font-medium transition-colors ${
-                      page === currentPage
+                    className={`px-3 py-2 rounded font-medium transition-colors ${page === currentPage
                         ? 'bg-[#C32033] text-white'
                         : 'text-gray-600 hover:bg-gray-100'
-                    }`}
+                      }`}
                   >
                     {page}
                   </button>
