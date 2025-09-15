@@ -552,7 +552,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                   Follow-Up Entries
                                 </NavLink>
                               </li>
-                              <li>
+                              {/* <li>
                                 <NavLink
                                   to="/leads/follow-up/manage"
                                   className={`flex items-center px-2 rounded-lg transition-colors text-base  ${
@@ -563,7 +563,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 >
                                   Manage Follow-Up
                                 </NavLink>
-                              </li>
+                              </li> */}
                             </ul>
                           </div>
                         )}
@@ -844,7 +844,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                   Follow-Up Entries
                                 </NavLink>
                               </li>
-                              <li>
+                              {/* <li>
                                 <NavLink
                                   to="/opportunities/follow-up/manage"
                                   className={`flex items-center px-2 rounded-lg transition-colors text-base ${
@@ -857,7 +857,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 >
                                   Manage Follow-Up
                                 </NavLink>
-                              </li>
+                              </li> */}
                             </ul>
                           </div>
                         )}
