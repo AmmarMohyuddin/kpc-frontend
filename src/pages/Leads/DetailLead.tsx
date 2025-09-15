@@ -1,12 +1,70 @@
-import { ChevronRight, ArrowRight } from 'lucide-react';
+import { ChevronRight, ArrowRight, ArrowDown, ArrowUp } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import TitleValueRow from "../../components/TitleValueRow.js";
+import TitleValueRow from '../../components/TitleValueRow.js';
+import { useState, useEffect } from 'react';
+import apiService from '../../services/ApiService';
+import Loader from '../../common/Loader';
 
 const DetailLead = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const leadData = location.state?.lead;
+  const [showFollowUps, setShowFollowUps] = useState(false);
+  const [followUps, setFollowUps] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [hasFollowUps, setHasFollowUps] = useState(false);
+
   console.log('Lead Data:', leadData);
+
+  useEffect(() => {
+    // Automatically fetch follow-ups when component mounts
+    fetchFollowUps();
+  }, [leadData?.lead_id]);
+
+  const fetchFollowUps = async () => {
+    if (!leadData?.lead_id) return;
+
+    try {
+      setIsLoading(true);
+      setError('');
+      const response = await apiService.get(
+        `/api/v1/leads/leadFollowups?LEAD_ID=${leadData.lead_id}`,
+        {},
+      );
+      console.log('RESPONSE', response);
+      if (response?.status === 200) {
+        console.log('Follow-ups data:', response.data.followups);
+        const followUpsData = response.data.followups || [];
+        setFollowUps(followUpsData);
+        setHasFollowUps(followUpsData.length > 0);
+      }
+    } catch (err) {
+      console.error('Error fetching follow-ups:', err);
+      setError('Failed to fetch follow-ups');
+      setHasFollowUps(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleViewFollowUps = () => {
+    setShowFollowUps(!showFollowUps);
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+    } catch (error) {
+      return dateString;
+    }
+  };
 
   return (
     <>
@@ -16,7 +74,6 @@ const DetailLead = () => {
         </span>
         {/* Page Header */}
         <div>
-
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-md mt-0">
             <span className="text-[rgba(22,22,22,0.7)]">Leads</span>
@@ -31,7 +88,6 @@ const DetailLead = () => {
         <div className="rounded-[10px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
           <div className="space-y-3">
             {/* Company */}
-
             <TitleValueRow title="Company" value={leadData.customer_type} />
             <hr className="custom-divider my-2" />
 
@@ -39,11 +95,9 @@ const DetailLead = () => {
             <TitleValueRow title="Name" value={leadData.customer_name} />
             <hr className="custom-divider my-2" />
 
-
             {/* Email */}
             <TitleValueRow title="Email" value={leadData.email_address} />
             <hr className="custom-divider my-2" />
-
 
             {/* Address */}
             <TitleValueRow title="Address" value={leadData.contact_address} />
@@ -51,36 +105,37 @@ const DetailLead = () => {
             <TitleValueRow title="City" value={leadData.city} />
             <hr className="custom-divider my-2" />
 
-
-
             {/* Contact Number */}
-            <TitleValueRow title="Contact Number" value={leadData.contact_number} />
+            <TitleValueRow
+              title="Contact Number"
+              value={leadData.contact_number}
+            />
             <hr className="custom-divider my-2" />
-
 
             {/* Contact Job Role */}
-            <TitleValueRow title="Contact Job Role:" value={leadData.contact_position} />
+            <TitleValueRow
+              title="Contact Job Role:"
+              value={leadData.contact_position}
+            />
             <hr className="custom-divider my-2" />
-
 
             <TitleValueRow title="Source" value={leadData.source} />
             <hr className="custom-divider my-2" />
 
-
             {/* Sales Person */}
-            <TitleValueRow title="Sales Person" value={leadData.salesperson_name} />
+            <TitleValueRow
+              title="Sales Person"
+              value={leadData.salesperson_name}
+            />
             <hr className="custom-divider my-2" />
-
 
             {/* Stage */}
             <TitleValueRow title="Stage" value={leadData.stage} />
             <hr className="custom-divider my-2" />
 
-
             {/* Status */}
             <TitleValueRow title="Status" value={leadData.status} />
             <hr className="custom-divider my-2" />
-
 
             {/* View Opportunity Button */}
             <div className="flex justify-center pt-4">
@@ -110,8 +165,95 @@ const DetailLead = () => {
                 </button>
               )}
             </div>
+
+            {/* View Follow Ups Button - Only show if there are follow-ups */}
+            {hasFollowUps && (
+              <div className="flex justify-center pt-2">
+                <button
+                  onClick={handleViewFollowUps}
+                  className="flex items-center gap-2 text-[#C32033] hover:text-[#A91B2E] font-medium transition-colors"
+                >
+                  {showFollowUps ? 'Hide Follow Ups' : 'View Follow Ups'}
+                  {showFollowUps ? (
+                    <ArrowUp className="w-4 h-4" />
+                  ) : (
+                    <ArrowDown className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+            )}
+
+            {/* Follow Ups Section */}
+            {showFollowUps && hasFollowUps && (
+              <div className="mt-6 p-4 border border-[rgba(0,0,0,0.16)] rounded-lg bg-white">
+                <h3 className="text-lg font-semibold text-[#161616] mb-4">
+                  Follow Ups ({followUps.length})
+                </h3>
+
+                {isLoading ? (
+                  <div className="flex justify-center py-8">
+                    <Loader />
+                  </div>
+                ) : error ? (
+                  <div className="text-red-500 text-center py-4">{error}</div>
+                ) : followUps.length === 0 ? (
+                  <div className="text-gray-500 text-center py-4">
+                    No follow-ups found for this lead
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {followUps.map((followUp) => (
+                      <div
+                        key={followUp.followup_id}
+                        className="border-b border-[rgba(0,0,0,0.16)] pb-4 last:border-b-0"
+                      >
+                        <div className="grid grid-cols-1 gap-4">
+                          <div>
+                            <span className="font-medium text-black">
+                              Follow-up Date:
+                            </span>
+                            <span className="ml-2">
+                              {formatDate(followUp.followup_date)}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="font-medium text-black">
+                              Next Follow-up:
+                            </span>
+                            <span className="ml-2">
+                              {formatDate(followUp.next_followup_date)}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="font-medium text-black">
+                              Status:
+                            </span>
+                            <span className="ml-2 capitalize">
+                              {followUp.status?.toLowerCase()}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="font-medium text-black">
+                              Assigned To:
+                            </span>
+                            <span className="ml-2">{followUp.assigned_to}</span>
+                          </div>
+                          <div>
+                            <span className="font-medium text-black">
+                              Comments:
+                            </span>
+                            <span className="ml-2">{followUp.comments}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
+
         <div className="flex gap-4 pt-8">
           <button
             type="button"
