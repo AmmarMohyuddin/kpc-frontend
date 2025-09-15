@@ -3,9 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import apiService from '../../services/ApiService';
 import Loader from '../../common/Loader';
-import TitleValueRow from "../../components/TitleValueRow.js";
-import ShowMoreList from "../../components/HeaderInfo.js"; // adjust path based on your folder structure
-
 
 
 interface OrderLine {
@@ -165,24 +162,19 @@ const DetailSalesRequest = () => {
     'FUSION_SALES_ORDER_NUM',
     'SITE_USE_ID',
     'SITE_ID',
+    "CREATION_DATE",
+    "LAST_UPDATE_DATE"
   ];
   // Define the exact order you want
-const columnOrder = [
-  "ITEM_NUMBER",
-  "SUBCATEGORY",
-  "DESCRIPTION",
-  "INSTRUCTIONS",
-  "ORDER_QUANTITY",
-  "PRICE",
-  "AMOUNT",
-  "UOM",
-  "LINE_STATUS",
-  "CREATION_DATE",
-  "LAST_UPDATE_DATE",
-  "PAYMENT_TERM",
-  "REQUESTED_SHIP_DATE",
-];
-
+  // const columnOrder = [
+  //   "ITEM_NUMBER",
+  //   "SUB_CATEGORY",
+  //   "DESCRIPTION",
+  //   "INSTRUCTION",
+  //   "QUANTITY",
+  //   "AMOUNT",
+  //   // ... add more fields in the order you want
+  // ];
 
   const excludeLineFields = [
     'ORDER_HEADER_ID',
@@ -191,6 +183,21 @@ const columnOrder = [
     'LAST_UPDATED_BY',
     'CREATED_BY',
   ];
+  const columnOrder = [
+    "ITEM_NUMBER",
+    "SUBCATEGORY",
+    "DESCRIPTION",     // 👉 placed right after CUSTOMER_NAME
+    "INSTRUCTIONS",
+    "UOM",
+    "ORDER_QUANTITY",
+    "PRICE",
+    "AMOUNT",
+    "LINE_STATUS",
+    "REQUESTED_SHIP_DATE",
+    "LAST_UPDATED_BY",
+  ];
+
+  const wideColumns = ["DESCRIPTION", "INSTRUCTION", "SUB_CATEGORY"];
 
   const headerFields = Object.entries(salesRequest)
     .filter(([key]) => !excludeHeaderFields.includes(key))
@@ -220,40 +227,50 @@ const columnOrder = [
       </div>
 
       {/* Header Details */}
-      <div className="rounded-[10px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
+      <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
         <h2 className="text-xl text-[#C32033] font-semibold mb-4">
           Order Information
         </h2>
+        <div className="rounded-[10px] bg-white p-3 md:p-5 shadow-sm border border-[#00000019]">
+          <div className="space-y-2">
+            {Array.from({ length: Math.ceil(headerFields.length / 2) }).map((_, rowIndex) => (
+              <div key={rowIndex}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                  {headerFields.slice(rowIndex * 2, rowIndex * 2 + 2).map((field) => (
+                    <div key={field.label} className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-2 md:py-3 space-y-1 sm:space-y-0">
+                      <span className="detail-title text-sm md:text-base font-medium">
+                        {field.label
+                          .split('_')
+                          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                          .join(' ')
+                        }:
+                      </span>
+                      {field.label.toLowerCase().includes("status") ? (
+                        <span className="text-[#000000B2] text-sm md:text-base font-normal inline-flex items-center px-2 md:px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 self-start sm:self-auto">
+                          {field.value ?? "-"}
+                        </span>
+                      ) : (
+                        <span className="text-[#000000B2] text-sm md:text-base font-normal break-words">
+                          {field.value ?? "-"}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                {rowIndex < Math.ceil(headerFields.length / 2) - 1 && (
+                  <hr className="border-[#00000019] mt-2" />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
 
-        <ShowMoreList fields={headerFields} initialCount={5} />
-        {/* <div className="grid grid-cols-1 md:grid-cols-1 gap-2">
-    {headerFields.slice(0, 5).map((field) => (
-      <React.Fragment key={field.label}>
-        <TitleValueRow
-          title={field.label
-            .toLowerCase()
-            .replace(/\b\w/g, (char) => char.toUpperCase())}
-          value={String(field.value)}
-        />
-        <hr className="custom-divider my-2" />
-      </React.Fragment>
-    ))}
-  </div> */}
+
+        {/* <ShowMoreList fields={headerFields} initialCount={5} /> */}
+
       </div>
 
-      {/* {headerFields.map((field) => (
-            <div
-              key={field.label}
-              className="flex items-center justify-between py-1 border-b border-gray"
-            >
-              <span className="font-bold text-md text-black dark:text-white">
-                {field.label}:
-              </span>
-              <span className="text-black dark:text-gray-300">
-                {String(field.value)}
-              </span>
-            </div>
-          ))} */}
+
 
       {/* </div> */}
 
@@ -298,52 +315,77 @@ const columnOrder = [
         )}
       </div> */}
 
-      <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
-  <h2 className="text-xl text-[#C32033] font-semibold mb-4">
-    Order Lines
-  </h2>
+      <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-2 pt-6 pb-6 shadow-default">
+        <h2 className="text-xl text-center text-[#C32033] font-semibold mb-4">
+          Order Lines
+        </h2>
 
 
- {salesRequest.ORDER_LINES.length > 0 ? (
-  <div className="overflow-x-auto mt-5">
-    <table className="w-full">
-      <thead>
-        <tr className="bg-[#C32033] shadow-lg text-white">
-          <th className="px-6 py-4 text-left">No.</th>
-          {columnOrder.map((key) => (
-            <th key={key} className="px-6 py-4 text-left">
-              {key
-                .replace(/_/g, " ")
-                .toLowerCase()
-                .replace(/\b\w/g, (c) => c.toUpperCase())}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {salesRequest.ORDER_LINES.map((line, index) => (
-          <tr
-            key={line.ORDER_LINE_ID}
-            className="hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors"
+        {salesRequest.ORDER_LINES.length > 0 ? (
+          <div className="overflow-x-auto mt-5">
+            <table className="lead-table">
+  <thead>
+    <tr className="bg-[#C32033] shadow-lg text-white">
+      <th className="px-6 py-4 text-left">No.</th>
+      {columnOrder
+        .filter((key) => !excludeLineFields.includes(key))
+        .map((key) => (
+          <th
+            key={key}
+            className={`px-6 py-4 text-left ${
+              wideColumns.includes(key) ? "min-w-[300px] max-w-[400px]" : ""
+            }`}
           >
-            <td className="px-6 py-4">{index + 1}</td>
-
-            {columnOrder.map((key) => (
-              <td key={key} className="px-6 py-4">
-                {String(line[key] ?? "-")}
-              </td>
-            ))}
-          </tr>
+            {key
+              .replace(/_/g, " ")
+              .toLowerCase()
+              .replace(/\b\w/g, (c) => c.toUpperCase())}
+          </th>
         ))}
-      </tbody>
-    </table>
-  </div>
-) : (
-  <p>No order lines available</p>
-)}
+    </tr>
+  </thead>
+  <tbody>
+    {salesRequest.ORDER_LINES.map((line, index) => (
+      <tr
+        key={line.ORDER_LINE_ID || index}
+        className={`${
+          index % 2 === 0 ? "bg-white" : "bg-[#F5F5F5]"
+        } hover:bg-[#FFD7D7] shadow-lg border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors`}
+      >
+        <td className="px-6 py-4">{index + 1}</td>
+
+        {columnOrder
+          .filter((key) => !excludeLineFields.includes(key))
+          .map((key) => (
+            <td
+              key={key}
+              className={`px-6 py-4 ${
+                wideColumns.includes(key)
+                  ? "whitespace-normal break-words"
+                  : "whitespace-nowrap"
+              }`}
+            >
+              {/* Format specific fields */}
+              {key.includes("DATE") && line[key]
+                ? new Date(line[key]).toLocaleDateString("en-GB")
+                : key.includes("PRICE") ||
+                  key.includes("AMOUNT") ||
+                  key.includes("QTY")
+                ? Number(line[key] || 0).toFixed(2)
+                : String(line[key] ?? "-")}
+            </td>
+          ))}
+      </tr>
+    ))}
+  </tbody>
+</table>
+          </div>
+        ) : (
+          <p>No order lines available</p>
+        )}
 
 
-  {/* {salesRequest.ORDER_LINES.length > 0 ? (
+        {/* {salesRequest.ORDER_LINES.length > 0 ? (
     <div className="overflow-x-auto">
       <table className="min-w-full border border-[rgba(0,0,0,0.16)] rounded-[20px] overflow-hidden">
         <thead className="bg-[#F1F1F1]">
@@ -382,7 +424,7 @@ const columnOrder = [
   ) : (
     <p>No order lines available</p>
   )} */}
-</div>
+      </div>
 
 
       {/* Back Button */}

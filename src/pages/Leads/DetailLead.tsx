@@ -85,60 +85,52 @@ const DetailLead = () => {
         </div>
 
         {/* Detail Card */}
-        <div className="rounded-[10px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
+        {/* <div className="rounded-[10px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
           <div className="space-y-3">
             {/* Company */}
-            <TitleValueRow title="Company" value={leadData.customer_type} />
-            <hr className="custom-divider my-2" />
 
-            {/* Name */}
-            <TitleValueRow title="Name" value={leadData.customer_name} />
-            <hr className="custom-divider my-2" />
+        {/* <TitleValueRow title="Company" value={leadData.customer_type} />
+            <hr className="custom-divider my-2" /> */}
 
-            {/* Email */}
-            <TitleValueRow title="Email" value={leadData.email_address} />
-            <hr className="custom-divider my-2" />
+        {/* Name */}
+        {/* <TitleValueRow title="Name" value={leadData.customer_name} /> */}
+        {/* <hr className="custom-divider my-2" /> */}
 
-            {/* Address */}
-            <TitleValueRow title="Address" value={leadData.contact_address} />
+        {/* Email */}
+        {/* <TitleValueRow title="Email" value={leadData.email_address} />
+            <hr className="custom-divider my-2" /> */}
+
+        {/* Address */}
+        {/* <TitleValueRow title="Address" value={leadData.contact_address} />
             <hr className="custom-divider my-2" />
             <TitleValueRow title="City" value={leadData.city} />
-            <hr className="custom-divider my-2" />
+            <hr className="custom-divider my-2" /> */}
 
-            {/* Contact Number */}
-            <TitleValueRow
-              title="Contact Number"
-              value={leadData.contact_number}
-            />
-            <hr className="custom-divider my-2" />
+        {/* Contact Number */}
+        {/* <TitleValueRow title="Contact Number" value={leadData.contact_number} />
+            <hr className="custom-divider my-2" /> */}
 
-            {/* Contact Job Role */}
-            <TitleValueRow
-              title="Contact Job Role:"
-              value={leadData.contact_position}
-            />
-            <hr className="custom-divider my-2" />
+        {/* Contact Job Role */}
+        {/* <TitleValueRow title="Contact Job Role:" value={leadData.contact_position} />
+            <hr className="custom-divider my-2" /> */}
 
-            <TitleValueRow title="Source" value={leadData.source} />
-            <hr className="custom-divider my-2" />
+        {/* <TitleValueRow title="Source" value={leadData.source} />
+            <hr className="custom-divider my-2" /> */}
 
-            {/* Sales Person */}
-            <TitleValueRow
-              title="Sales Person"
-              value={leadData.salesperson_name}
-            />
-            <hr className="custom-divider my-2" />
+        {/* Sales Person */}
+        {/* <TitleValueRow title="Sales Person" value={leadData.salesperson_name} />
+            <hr className="custom-divider my-2" /> */}
 
-            {/* Stage */}
-            <TitleValueRow title="Stage" value={leadData.stage} />
-            <hr className="custom-divider my-2" />
+        {/* Stage */}
+        {/* <TitleValueRow title="Stage" value={leadData.stage} />
+            <hr className="custom-divider my-2" /> */}
 
-            {/* Status */}
-            <TitleValueRow title="Status" value={leadData.status} />
-            <hr className="custom-divider my-2" />
+        {/* Status */}
+        {/* <TitleValueRow title="Status" value={leadData.status} />
+            <hr className="custom-divider my-2" /> */}
 
-            {/* View Opportunity Button */}
-            <div className="flex justify-center pt-4">
+        {/* View Opportunity Button */}
+        {/* <div className="flex justify-center pt-4">
               {leadData.opportunity_id ? (
                 <button
                   onClick={() =>
@@ -164,106 +156,112 @@ const DetailLead = () => {
                   <ArrowRight className="w-4 h-4" />
                 </button>
               )}
-            </div>
+            </div> */}
+        <div className="rounded-[20px] p-10 m-2 border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9]">
+          <div className="rounded-[20px] bg-white p-3 md:p-5 shadow-sm border border-[#00000019]">
+            <div className="space-y-2">
+              {(() => {
+                const fields = [
+                  { label: 'COMPANY', value: leadData.customer_type },
+                  { label: 'NAME', value: leadData.customer_name },
+                  { label: 'EMAIL', value: leadData.email_address },
+                  { label: 'ADDRESS', value: leadData.contact_address },
+                  { label: 'CITY', value: leadData.city },
+                  { label: 'CONTACT_NUMBER', value: leadData.contact_number },
+                  {
+                    label: 'CONTACT_JOB_ROLE',
+                    value: leadData.contact_position,
+                  },
+                  { label: 'SOURCE', value: leadData.source },
+                  { label: 'SALES_PERSON', value: leadData.salesperson_name },
+                  { label: 'STAGE', value: leadData.stage },
+                  { label: 'STATUS', value: leadData.status },
+                ];
 
-            {/* View Follow Ups Button - Only show if there are follow-ups */}
-            {hasFollowUps && (
-              <div className="flex justify-center pt-2">
-                <button
-                  onClick={handleViewFollowUps}
-                  className="flex items-center gap-2 text-[#C32033] hover:text-[#A91B2E] font-medium transition-colors"
-                >
-                  {showFollowUps ? 'Hide Follow Ups' : 'View Follow Ups'}
-                  {showFollowUps ? (
-                    <ArrowUp className="w-4 h-4" />
-                  ) : (
-                    <ArrowDown className="w-4 h-4" />
-                  )}
-                </button>
-              </div>
-            )}
-
-            {/* Follow Ups Section */}
-            {showFollowUps && hasFollowUps && (
-              <div className="mt-6 p-4 border border-[rgba(0,0,0,0.16)] rounded-lg bg-white">
-                <h3 className="text-lg font-semibold text-[#161616] mb-4">
-                  Follow Ups ({followUps.length})
-                </h3>
-
-                {isLoading ? (
-                  <div className="flex justify-center py-8">
-                    <Loader />
-                  </div>
-                ) : error ? (
-                  <div className="text-red-500 text-center py-4">{error}</div>
-                ) : followUps.length === 0 ? (
-                  <div className="text-gray-500 text-center py-4">
-                    No follow-ups found for this lead
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {followUps.map((followUp) => (
-                      <div
-                        key={followUp.followup_id}
-                        className="border-b border-[rgba(0,0,0,0.16)] pb-4 last:border-b-0"
-                      >
-                        <div className="grid grid-cols-1 gap-4">
-                          <div>
-                            <span className="font-medium text-black">
-                              Follow-up Date:
-                            </span>
-                            <span className="ml-2">
-                              {formatDate(followUp.followup_date)}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="font-medium text-black">
-                              Next Follow-up:
-                            </span>
-                            <span className="ml-2">
-                              {formatDate(followUp.next_followup_date)}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="font-medium text-black">
-                              Status:
-                            </span>
-                            <span className="ml-2 capitalize">
-                              {followUp.status?.toLowerCase()}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="font-medium text-black">
-                              Assigned To:
-                            </span>
-                            <span className="ml-2">{followUp.assigned_to}</span>
-                          </div>
-                          <div>
-                            <span className="font-medium text-black">
-                              Comments:
-                            </span>
-                            <span className="ml-2">{followUp.comments}</span>
-                          </div>
-                        </div>
+                return Array.from({ length: Math.ceil(fields.length / 2) }).map(
+                  (_, rowIndex) => (
+                    <div key={rowIndex}>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                        {fields
+                          .slice(rowIndex * 2, rowIndex * 2 + 2)
+                          .map((field) => (
+                            <div
+                              key={field.label}
+                              className="detail-title flex items-center justify-between py-3"
+                            >
+                              <span className="detail-title">
+                                {field.label
+                                  .split('_')
+                                  .map(
+                                    (word) =>
+                                      word.charAt(0).toUpperCase() +
+                                      word.slice(1).toLowerCase(),
+                                  )
+                                  .join(' ')}
+                                :
+                              </span>
+                              {field.label.toLowerCase().includes('status') ? (
+                                <span className="text-[#000000B2] text-[16px] font-light inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800">
+                                  {field.value ?? '-'}
+                                </span>
+                              ) : (
+                                <span className="text-[#000000B2] text-[16px] font-light">
+                                  {field.value ?? '-'}
+                                </span>
+                              )}
+                            </div>
+                          ))}
                       </div>
-                    ))}
-                  </div>
+                      {rowIndex < Math.ceil(fields.length / 2) - 1 && (
+                        <hr className="border-[#00000019] mt-2" />
+                      )}
+                    </div>
+                  ),
+                );
+              })()}
+
+              {/* View Opportunity Button */}
+              <div className="flex justify-center pt-4 mt-4 border-t border-[#00000019]">
+                {leadData.opportunity_id ? (
+                  <button
+                    onClick={() =>
+                      navigate(`/opportunities/${leadData.opportunity_id}`, {
+                        state: { opportunity_id: leadData.opportunity_id },
+                      })
+                    }
+                    className="flex items-center gap-2 text-[#C32033] hover:text-[#A91B2E] font-medium transition-colors"
+                  >
+                    View Opportunity Details
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() =>
+                      navigate(`/opportunities/create`, {
+                        state: { lead_id: leadData.lead_id },
+                      })
+                    }
+                    className="flex items-center gap-2 text-[#C32033] hover:text-[#A91B2E] font-medium transition-colors"
+                  >
+                    Create Opportunity
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
                 )}
               </div>
-            )}
+            </div>
+          </div>
+          <div className="flex gap-4 pt-8">
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="px-12 py-3 rounded-lg border border-[#C32033] text-[#C32033] font-medium hover:bg-[#C32033] hover:text-white transition-colors duration-300"
+            >
+              Back
+            </button>
           </div>
         </div>
-
-        <div className="flex gap-4 pt-8">
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="px-12 py-3 rounded-lg border border-[#C32033] text-[#C32033] font-medium hover:bg-[#C32033] hover:text-white transition-colors duration-300"
-          >
-            Back
-          </button>
-        </div>
       </div>
+      {/* </div> */}
     </>
   );
 };

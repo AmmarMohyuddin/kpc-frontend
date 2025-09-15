@@ -292,7 +292,7 @@ const UninvoicedOrders = () => {
 
         {/* Table */}
         <div className="overflow-x-auto mt-5">
-          <table className="w-full">
+          <table className="lead-table">
             <thead>
               <tr className="bg-[#C32033] text-white">
                 <th className="text-left px-6 py-4">No.</th>
@@ -308,7 +308,7 @@ const UninvoicedOrders = () => {
                 salesOrders.map((order, index) => (
                   <tr
                     key={`${order.order_no}-${index}`}
-                    className="hover:bg-gray-100 border-b text-[#1e1e1e]"
+                   className={`lead-row ${index % 2 === 0 ? "lead-row-even" : "lead-row-odd"}`}
                   >
                     <td className="px-6 py-4">
                       {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
@@ -322,7 +322,7 @@ const UninvoicedOrders = () => {
                     <td className="px-6 py-4">
                       <button
                         onClick={() => handleViewDetails(order.order_no)}
-                        className="px-4 py-2 border-2 border-[#C32033] text-[#C32033] rounded-lg font-medium hover:bg-[#C32033] hover:text-white transition-colors"
+                          className="btn-view-details"
                       >
                         View Details
                       </button>

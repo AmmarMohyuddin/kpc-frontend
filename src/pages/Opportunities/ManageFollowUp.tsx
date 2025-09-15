@@ -281,7 +281,7 @@ const ManageFollowUp = () => {
 
         {/* Table */}
         <div className="overflow-x-auto mt-5">
-          <table className="w-full">
+          <table className="lead-table">
             <thead>
               <tr className="bg-[#C32033] shadow-lg text-white">
                 <th className="px-6 py-4 text-left">No.</th>
@@ -298,9 +298,10 @@ const ManageFollowUp = () => {
             <tbody>
               {followUps.length > 0 ? (
                 followUps.map((fu, index) => (
-                  <tr
+                      //  key={fu.followup_id}
+                   <tr
                     key={fu.followup_id}
-                    className={`hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors`}
+                    className={`lead-row ${index % 2 === 0 ? "lead-row-even" : "lead-row-odd"}`}
                   >
                     <td className="px-6 py-4">
                       {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
@@ -319,7 +320,7 @@ const ManageFollowUp = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <button
-                          className="px-4 py-2 border-2 border-[#C32033] text-[#C32033] rounded-lg font-medium hover:bg-[#C32033] hover:text-white transition-colors"
+                        className="btn-view-details"
                           onClick={() =>
                             navigate(`/follow-up/detail/${fu.followup_id}`, {
                               state: { followup: fu },

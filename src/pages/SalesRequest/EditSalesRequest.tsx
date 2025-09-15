@@ -6,6 +6,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import apiService from '../../services/ApiService';
 import { toast } from 'react-hot-toast';
 import Loader from '../../common/Loader';
+import { customSelectStyles } from "../../styles/selectStyle.ts";
+
 
 // Type definitions
 type Address = string;
@@ -506,45 +508,6 @@ const EditSalesRequest = () => {
     label: item.description,
   }));
 
-  // Custom styles for Select components
-  const customSelectStyles = {
-    control: (provided: any, state: any) => ({
-      ...provided,
-      minHeight: '50px',
-      height: '50px',
-      borderColor: state.isFocused ? '#C32033' : provided.borderColor,
-      boxShadow: state.isFocused ? '0 0 0 1px #C32033' : provided.boxShadow,
-      '&:hover': {
-        borderColor: state.isFocused ? '#C32033' : provided.borderColor,
-      },
-    }),
-    valueContainer: (provided: any) => ({
-      ...provided,
-      height: '50px',
-      padding: '0 8px',
-    }),
-    input: (provided: any) => ({
-      ...provided,
-      margin: '0px',
-    }),
-    option: (provided: any, state: any) => ({
-      ...provided,
-      backgroundColor: state.isSelected
-        ? '#FFD7D7'
-        : state.isFocused
-        ? '#FFD7D7'
-        : provided.backgroundColor,
-      color: '#000',
-      '&:active': {
-        backgroundColor: state.isSelected ? '#FFD7D7' : '#FFD7D7',
-      },
-    }),
-    singleValue: (provided: any) => ({
-      ...provided,
-      color: '#C32033',
-    }),
-  };
-
   // Custom MenuList component for large lists
   const MenuList = (props: any) => {
     const height = 35;
@@ -577,7 +540,7 @@ const EditSalesRequest = () => {
 
   return (
     <div className="flex flex-col gap-10">
-      <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
+      <div className="rounded-3xl border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
         {/* Header Section */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-2 gap-4">
           <h2 className="text-2xl font-semibold text-black dark:text-white">
@@ -728,7 +691,7 @@ const EditSalesRequest = () => {
                       step="any"
                       onChange={handlePrice}
                       placeholder="Enter Price"
-                      className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                     />
                   </div>
 
@@ -744,7 +707,7 @@ const EditSalesRequest = () => {
                       onChange={handleItemChange}
                       placeholder="Select Line Amount"
                       readOnly
-                      className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                     />
                   </div>
                 </div>
@@ -781,7 +744,7 @@ const EditSalesRequest = () => {
                       value={itemFormData.instructions}
                       onChange={handleItemChange}
                       placeholder="Enter Instructions"
-                      className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                     />
                   </div>
 
@@ -796,7 +759,7 @@ const EditSalesRequest = () => {
                       onChange={handleItemChange}
                       min={0}
                       placeholder="Enter Order Quantity"
-                      className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                     />
                   </div>
 
@@ -832,7 +795,7 @@ const EditSalesRequest = () => {
                       readOnly
                       onChange={handleItemChange}
                       placeholder="Enter Order Status"
-                      className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                     />
                   </div>
                 </div>
@@ -960,7 +923,7 @@ const EditSalesRequest = () => {
                         value={customerFormData.customer_po_number}
                         onChange={handleChange}
                         placeholder="Enter Customer PO Number"
-                        className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                       />
                     </div>
                   </div>
@@ -983,7 +946,7 @@ const EditSalesRequest = () => {
                           handleInputChange('name', e.target.value)
                         }
                         placeholder="Enter Name"
-                        className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                       />
                     </div>
                     <div>
@@ -1018,7 +981,7 @@ const EditSalesRequest = () => {
                           handleInputChange('contactNumber', e.target.value)
                         }
                         placeholder="Enter Contact Number"
-                        className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                       />
                     </div>
                     <div>
@@ -1053,7 +1016,7 @@ const EditSalesRequest = () => {
                       handleInputChange('shippingAddress', e.target.value)
                     }
                     placeholder="Enter Shipping Address"
-                    className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                   />
                 </div>
               </section>

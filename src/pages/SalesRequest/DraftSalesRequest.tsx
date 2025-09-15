@@ -92,11 +92,10 @@ const FilterModal = ({
               className="w-5 h-5 accent-[#c32033]"
             />
             <span
-              className={`${
-                tempFilter === 'customerName'
+              className={`${tempFilter === 'customerName'
                   ? 'font-bold text-black'
                   : 'font-medium text-gray-700'
-              }`}
+                }`}
             >
               Customer Name
             </span>
@@ -112,11 +111,10 @@ const FilterModal = ({
               className="w-5 h-5 accent-[#c32033]"
             />
             <span
-              className={`${
-                tempFilter === 'orderNumber'
+              className={`${tempFilter === 'orderNumber'
                   ? 'font-bold text-black'
                   : 'font-medium text-gray-700'
-              }`}
+                }`}
             >
               Order Number
             </span>
@@ -282,11 +280,10 @@ const DraftSalesRequest = () => {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
                   type="text"
-                  placeholder={`Search by ${
-                    selectedFilter === 'customerName'
+                  placeholder={`Search by ${selectedFilter === 'customerName'
                       ? 'Customer Name'
                       : 'Order Number'
-                  }...`}
+                    }...`}
                   className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:border-transparent w-72"
                   value={searchTerm}
                   onChange={(e) => handleSearchChange(e.target.value)}
@@ -303,7 +300,7 @@ const DraftSalesRequest = () => {
 
           {/* Table */}
           <div className="overflow-x-auto mt-5">
-            <table className="w-full">
+            <table className="lead-table">
               <thead>
                 <tr className="bg-[#C32033] shadow-lg text-white">
                   <th className="px-6 py-4 text-left">No.</th>
@@ -320,7 +317,7 @@ const DraftSalesRequest = () => {
                   salesRequests.map((request, index) => (
                     <tr
                       key={`${request.ORDER_NUMBER}-${pagination?.offset}-${index}`}
-                      className="hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors"
+                      className={`lead-row ${index % 2 === 0 ? "lead-row-even" : "lead-row-odd"}`}
                     >
                       <td className="px-6 py-4">
                         {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
@@ -334,8 +331,8 @@ const DraftSalesRequest = () => {
                       <td className="px-6 py-4">
                         {request.ORDER_DATE
                           ? new Date(request.ORDER_DATE).toLocaleDateString(
-                              'en-GB',
-                            )
+                            'en-GB',
+                          )
                           : '-'}
                       </td>
                       <td className="px-6 py-4">
@@ -344,13 +341,12 @@ const DraftSalesRequest = () => {
                       <td className="px-6 py-4">
                         {request.APPROVAL_STATUS ? (
                           <span
-                            className={`inline-flex rounded-full py-1 px-3 text-sm font-medium ${
-                              request.APPROVAL_STATUS === 'Pending'
+                            className={`inline-flex rounded-full py-1 px-3 text-sm font-medium ${request.APPROVAL_STATUS === 'Pending'
                                 ? 'bg-warning bg-opacity-10 text-warning'
                                 : request.APPROVAL_STATUS === 'Active'
-                                ? 'bg-success bg-opacity-10 text-success'
-                                : 'bg-gray-200 text-gray-700'
-                            }`}
+                                  ? 'bg-success bg-opacity-10 text-success'
+                                  : 'bg-gray-200 text-gray-700'
+                              }`}
                           >
                             {request.APPROVAL_STATUS}
                           </span>
@@ -397,8 +393,7 @@ const DraftSalesRequest = () => {
                                 },
                               )
                             }
-                            className="px-4 py-2 border-2 border-[#C32033] text-[#C32033] rounded-lg font-medium hover:bg-[#C32033] hover:text-white transition-colors"
-                          >
+                            className="btn-view-details"                          >
                             View Details
                           </button>
                         </div>

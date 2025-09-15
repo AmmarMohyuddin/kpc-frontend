@@ -90,11 +90,10 @@ const FilterModal = ({
               className="w-5 h-5 accent-[#c32033]"
             />
             <span
-              className={`${
-                selectedFilter === 'CUSTOMER_NAME'
-                  ? 'font-semibold text-black'
-                  : 'font-medium text-gray-700'
-              }`}
+              className={`${selectedFilter === 'CUSTOMER_NAME'
+                ? 'font-semibold text-black'
+                : 'font-medium text-gray-700'
+                }`}
             >
               Customer Name
             </span>
@@ -110,11 +109,10 @@ const FilterModal = ({
               className="w-5 h-5 accent-[#c32033]"
             />
             <span
-              className={`${
-                selectedFilter === 'LEAD_NUMBER'
-                  ? 'font-semibold text-black'
-                  : 'font-medium text-gray-700'
-              }`}
+              className={`${selectedFilter === 'LEAD_NUMBER'
+                ? 'font-semibold text-black'
+                : 'font-medium text-gray-700'
+                }`}
             >
               Lead Number
             </span>
@@ -130,11 +128,10 @@ const FilterModal = ({
               className="w-5 h-5 accent-[#c32033]"
             />
             <span
-              className={`${
-                selectedFilter === 'DATE'
-                  ? 'font-semibold text-black'
-                  : 'font-medium text-gray-700'
-              }`}
+              className={`${selectedFilter === 'DATE'
+                ? 'font-semibold text-black'
+                : 'font-medium text-gray-700'
+                }`}
             >
               Date
             </span>
@@ -310,13 +307,12 @@ const ManageLeads = () => {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
                   type="text"
-                  placeholder={`Search by ${
-                    selectedFilter === 'CUSTOMER_NAME'
-                      ? 'Customer Name'
-                      : selectedFilter === 'LEAD_NUMBER'
+                  placeholder={`Search by ${selectedFilter === 'CUSTOMER_NAME'
+                    ? 'Customer Name'
+                    : selectedFilter === 'LEAD_NUMBER'
                       ? 'Lead Number'
                       : 'Lead ID'
-                  }...`}
+                    }...`}
                   className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:border-transparent w-72"
                   value={searchTerm}
                   onChange={(e) => {
@@ -338,7 +334,7 @@ const ManageLeads = () => {
 
         {/* Table */}
         <div className="overflow-x-auto mt-5">
-          <table className="w-full">
+          <table className="lead-table">
             <thead>
               <tr className="bg-[#C32033] text-white">
                 <th className="text-left px-6 py-4">No.</th>
@@ -356,7 +352,7 @@ const ManageLeads = () => {
                 leadsData.map((lead, index) => (
                   <tr
                     key={lead.lead_id}
-                    className="hover:bg-[#f1f1f1] shadow-lg bg-red-100 border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors"
+                    className={`lead-row ${index % 2 === 0 ? "lead-row-even" : "lead-row-odd"}`}
                   >
                     <td className="px-6 py-4">
                       {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
@@ -379,8 +375,8 @@ const ManageLeads = () => {
                           <Edit className="text-blue-600 hover:text-blue-800 w-5 h-5" />
                         </button>
                         <button
-                          className="px-4 py-2 border-2 border-[#C32033] text-[#C32033] rounded-lg font-medium hover:bg-[#C32033] hover:text-white transition-colors"
-                          onClick={() =>
+                          className="btn-view-details"
+                           onClick={() =>
                             navigate(`/leads/${lead.lead_id}`, {
                               state: { lead },
                             })

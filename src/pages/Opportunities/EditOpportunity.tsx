@@ -4,6 +4,8 @@ import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 import apiService from '../../services/ApiService';
 import Loader from '../../common/Loader';
+import { customSelectStyles } from "../../styles/selectStyle.ts";
+
 
 interface OptionType {
   value: string;
@@ -224,41 +226,6 @@ const EditOpportunity = () => {
     }
   };
 
-  // Custom select styles
-  const customSelectStyles = {
-    control: (provided: any, state: any) => ({
-      ...provided,
-      minHeight: '50px',
-      height: '50px',
-      borderColor: state.isFocused ? '#C32033' : provided.borderColor,
-      boxShadow: state.isFocused ? '0 0 0 1px #C32033' : provided.boxShadow,
-      '&:hover': {
-        borderColor: state.isFocused ? '#C32033' : provided.borderColor,
-      },
-    }),
-    valueContainer: (provided: any) => ({
-      ...provided,
-      height: '50px',
-      padding: '0 8px',
-    }),
-    input: (provided: any) => ({
-      ...provided,
-      margin: '0px',
-    }),
-    option: (provided: any, state: any) => ({
-      ...provided,
-      backgroundColor: state.isFocused
-        ? '#FFD7D7'
-        : state.isSelected
-        ? '#FFD7D7'
-        : provided.backgroundColor,
-      color: '#000',
-    }),
-    singleValue: (provided: any) => ({
-      ...provided,
-      color: '#C32033',
-    }),
-  };
 
   if (loading) {
     return (
@@ -270,9 +237,9 @@ const EditOpportunity = () => {
 
   return (
     <div className="flex flex-col gap-10">
-      <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
+      <div className="rounded-3xl border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-2 gap-4">
-          <h2 className="text-2xl font-semibold mb-6 text-black">
+        <h2 className="text-2xl font-semibold mb-3 text-black dark:text-white">
             Edit Opportunity
           </h2>
           <button
@@ -300,7 +267,7 @@ const EditOpportunity = () => {
                   name="generation_date"
                   value={opportunityHeader.generation_date}
                   onChange={handleHeaderInputChange}
-                  className="custom-input-date w-full text-[#C32033] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 outline-none focus:border-[#C32033]"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                 />
               </div>
 
@@ -369,7 +336,7 @@ const EditOpportunity = () => {
                   name="close_date"
                   value={opportunityHeader.close_date}
                   onChange={handleHeaderInputChange}
-                  className="custom-input-date w-full text-[#C32033] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 outline-none focus:border-[#C32033]"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
                 />
               </div>
             </div>
@@ -385,7 +352,7 @@ const EditOpportunity = () => {
               onChange={handleHeaderInputChange}
               placeholder="Write your remarks here..."
               rows={2}
-              className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#c32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] resize-none"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
             />
           </div>
 

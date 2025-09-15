@@ -469,23 +469,25 @@ const CreateLead = () => {
           <div className="flex gap-4 pt-4">
             <button
               type="button"
-              className="w-[160px] h-[50px] rounded border border-[#C32033] text-md font-medium text-[#C32033] hover:bg-gray-2 dark:border-strokedark dark:text-white dark:hover:bg-meta-4 transition-colors"
+              className="h-[40px] w-[150px] rounded-lg border border-[#C32033] text-md font-medium text-[#C32033] hover:bg-gray-2 dark:border-strokedark dark:text-white dark:hover:bg-meta-4 transition-colors"
             >
               Cancel
             </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={!isFormValid()}
-              className={`px-15 py-3 rounded-lg font-medium transition-colors 
-    ${isFormValid()
-                  ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
-                  : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
-                }
+          <button
+  type="button"
+  onClick={handleSave}
+  disabled={!isFormValid()}
+  className={`h-[40px] w-[150px] px-[15px] rounded-[6px] font-medium transition-colors flex items-center justify-center
+    ${
+      isFormValid()
+        ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
+        : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
+    }
   `}
-            >
-              Save
-            </button>
+>
+  Save
+</button>
+
           </div>
         </form>
       </div>

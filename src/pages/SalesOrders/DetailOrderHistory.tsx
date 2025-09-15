@@ -41,6 +41,8 @@ const DetailOrderHistory = () => {
     "DELIVERED_QTY",
     "BALANCE_QTY",
   ];
+  // Define wide columns (adjust as needed)
+  const wideColumns = ["CUSTOMER_NAME", "ITEM_DESCRIPTION", "SALESPERSON_NAME"];
   return (
     <div className="flex flex-col py-1 px-5 gap-6 bg-white rounded-[20px]">
       {/* Page Header */}
@@ -74,23 +76,25 @@ const DetailOrderHistory = () => {
 
 
       {/* Order Lines */}
-      <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
-        <h2 className="text-xl text-[#C32033] text-center font-semibold mb-4">
-          Order Lines
-        </h2>
+       
         {order.lines && order.lines.length > 0 ? (
-          <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
-            <h2 className="text-xl font-semibold mb-4 text-[#C32033] dark:text-white">
+          <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-2 pt-6 pb-6 shadow-default
+          ">
+            <h2 className="text-xl text-center font-semibold mb-4 text-[#C32033] dark:text-white">
               Order Lines
             </h2>
 
             <div className="overflow-x-auto mt-5">
-              <table className="w-full min-w-[1200px]">
+              <table className="lead-table">
                 <thead>
                   <tr className="bg-[#C32033] shadow-lg text-white">
                     <th className="px-6 py-4 text-left">No.</th>
                     {columnOrder.map((key) => (
-                      <th key={key} className="px-6 py-4 text-left">
+                      <th
+                        key={key}
+                        className={`px-6 py-4 text-left ${wideColumns.includes(key) ? "min-w-[300px] max-w-[500px]" : ""
+                          }`}
+                      >
                         {key
                           .replace(/_/g, " ")
                           .toLowerCase()
@@ -103,11 +107,17 @@ const DetailOrderHistory = () => {
                   {order.lines.map((line: any, index: number) => (
                     <tr
                       key={line.order_line_id || index}
-                      className="hover:bg-[#f1f1f1] shadow-lg bg-white border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors"
+                      className={`${index % 2 === 0 ? "bg-white" : "bg-[#F5F5F5]"
+                        } hover:bg-[#FFD7D7] shadow-lg border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors`}
                     >
                       <td className="px-6 py-4">{index + 1}</td>
+
                       {columnOrder.map((key) => (
-                        <td key={key} className="px-6 py-4">
+                        <td
+                          key={key}
+                          className={`px-6 py-4 ${wideColumns.includes(key) ? "whitespace-normal break-words" : ""
+                            }`}
+                        >
                           {/* Format dates */}
                           {key.includes("DATE") && line[key]
                             ? new Date(line[key]).toLocaleDateString("en-GB")
@@ -125,54 +135,8 @@ const DetailOrderHistory = () => {
         ) : (
           <p>No order lines available</p>
         )}
-        {/* {order.lines && order.lines.length > 0 ? (
-          <div className="space-y-2">
-            {order.lines.map((line: any, index: number) => (
-              <div
-                key={line.order_line_id || index}
-                className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-white px-5 pt-6 pb-6 shadow-default sm:px-7.5"
-              >
-                <h3 className="font-semibold mb-6">
-                  Line {index + 1} - {line.item_code}
-                </h3>
-                <div className="grid grid-cols-1 gap-2">
-                  {Object.entries(line).map(([key, value], index, arr) => (
-                    <React.Fragment key={key}>
-                      <TitleValueRow
-                        title={key
-                          .replace(/_/g, " ")                // replace underscores
-                          .toLowerCase()                     // lowercase first
-                          .replace(/\b\w/g, (c) => c.toUpperCase())} // Title Case
-                        value={String(value ?? "-")}
-                      />
-                      {index < arr.length - 1 && (
-                        <hr className="custom-divider my-2" />
-                      )}
-                    </React.Fragment>
-                  ))}
-                </div>
-
-
-                {/* <div className="grid grid-cols-1 md:grid-cols-1 gap-3">
-                  {Object.entries(line).map(([key, value]) => (
-                    <div
-                      key={key}
-                      className="flex items-center justify-between py-1 border-b border-gray"
-                    >
-                      <span className="font-bold text-lg !capitalize text-black dark:text-white">
-                        {key.replace(/_/g, ' ')}:
-                      </span>{' '}
-                      {String(value)}
-                    </div>
-                  ))}
-                </div> */}
-        {/* </div> */}
-        {/* ))} */}
-        {/* </div> */}
-        {/* ) : ( */}
-        {/* <p>No order lines available</p> */}
-        {/* )}  */}
-      </div>
+       
+ 
 
       {/* Back Button */}
       <div className="flex gap-4 pt-8">

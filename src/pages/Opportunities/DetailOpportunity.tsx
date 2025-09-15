@@ -224,13 +224,13 @@ const DetailOpportunity = () => {
 
       {/* Detail Card */}
       <div className="rounded-[10px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
-        <div className="space-y-3">
+        {/* <div className="space-y-3">
           {/* Lead ID */}
-          {opportunityData.LEAD_ID && (
+        {/* {opportunityData.LEAD_ID && (
             <TitleValueRow title="Lead ID" value={opportunityData.LEAD_ID} />
-          )}
+          )} */}
 
-          <TitleValueRow
+        {/* <TitleValueRow
             title="Opportunity ID"
             value={opportunityData.OPPORTUNITY_ID}
           />
@@ -252,130 +252,174 @@ const DetailOpportunity = () => {
           <TitleValueRow
             title="Remarks"
             value={opportunityData.REMARKS || 'N/A'}
-          />
+          /> */}
+        {/* </div> */}
+        <div className="rounded-[10px] bg-white p-3 md:p-5 shadow-sm border border-[#00000019]">
+          <div className="space-y-2">
+            {/* Create array of all fields */}
+            {(() => {
+              const fields = [
+                opportunityData.LEAD_ID
+                  ? { label: 'Lead ID', value: opportunityData.LEAD_ID }
+                  : null,
+                {
+                  label: 'Opportunity ID',
+                  value: opportunityData.OPPORTUNITY_ID,
+                },
+                {
+                  label: 'Generation Date',
+                  value: opportunityData.GENERATION_DATE,
+                },
+                { label: 'Stage', value: opportunityData.STAGE },
+                { label: 'Status', value: opportunityData.STATUS },
+                {
+                  label: 'Sales Person',
+                  value: opportunityData.SALESPERSON_NAME,
+                },
+                { label: 'Remarks', value: opportunityData.REMARKS || 'N/A' },
+              ].filter(
+                (field): field is { label: string; value: string } =>
+                  field !== null,
+              );
 
-          <div className="flex flex-col items-center pt-4 gap-3">
-            <button
-              onClick={() =>
-                navigate(`/opportunities/follow-up`, {
-                  state: { opportunity_id: opportunityData.OPPORTUNITY_ID },
-                })
-              }
-              className="flex items-center gap-2 text-[#C32033] hover:text-[#A91B2E] font-medium transition-colors"
-            >
-              Follow Up
-              <ArrowRight className="w-4 h-4" />
-            </button>
-
-            <button
-              onClick={() =>
-                navigate(`/opportunities/convert`, {
-                  state: {
-                    lead_id: opportunityData.LEAD_ID,
-                    opportunity_id: opportunityData.OPPORTUNITY_ID,
-                    opportunity_details: opportunityData.ORDER_LINES,
-                  },
-                })
-              }
-              className="flex items-center gap-2 text-[#C32033] hover:text-[#A91B2E] font-medium transition-colors"
-            >
-              Convert to Sales Request
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* View Follow Ups Button - Only show if there are follow-ups */}
-          {hasFollowUps && (
-            <div className="flex justify-center pt-4">
-              <button
-                onClick={handleViewFollowUps}
-                className="flex items-center gap-2 text-[#C32033] hover:text-[#A91B2E] font-medium transition-colors"
-              >
-                {showFollowUps ? 'Hide Follow Ups' : 'View Follow Ups'}
-                {showFollowUps ? (
-                  <ArrowUp className="w-4 h-4" />
-                ) : (
-                  <ArrowDown className="w-4 h-4" />
-                )}
-              </button>
-            </div>
-          )}
-
-          {/* Follow Ups Section */}
-          {showFollowUps && hasFollowUps && (
-            <div className="mt-6 p-4 border border-[rgba(0,0,0,0.16)] rounded-lg bg-white">
-              <h3 className="text-lg font-semibold text-[#161616] mb-4">
-                Follow Ups ({followUps.length})
-              </h3>
-
-              {followUpsLoading ? (
-                <div className="flex justify-center py-8">
-                  <Loader />
-                </div>
-              ) : followUpsError ? (
-                <div className="text-red-500 text-center py-4">
-                  {followUpsError}
-                </div>
-              ) : followUps.length === 0 ? (
-                <div className="text-gray-500 text-center py-4">
-                  No follow-ups found for this opportunity
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {followUps.map((followUp) => (
-                    <div
-                      key={followUp.followup_id}
-                      className="border-b border-[rgba(0,0,0,0.16)] pb-4 last:border-b-0"
-                    >
-                      <div className="grid grid-cols-1 gap-4">
-                        <div>
-                          <span className="font-medium text-black">
-                            Follow-up Date:
-                          </span>
-                          <span className="ml-2">
-                            {formatDate(followUp.followup_date)}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="font-medium text-black">
-                            Next Follow-up:
-                          </span>
-                          <span className="ml-2">
-                            {formatDate(followUp.next_followup_date)}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="font-medium text-black">
-                            Status:
-                          </span>
-                          <span className="ml-2 capitalize">
-                            {followUp.status?.toLowerCase()}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="font-medium text-black">
-                            Assigned To:
-                          </span>
-                          <span className="ml-2">{followUp.assigned_to}</span>
-                        </div>
-                        <div>
-                          <span className="font-medium text-black">
-                            Comments:
-                          </span>
-                          <span className="ml-2">{followUp.comments}</span>
-                        </div>
-                      </div>
+              return Array.from({ length: Math.ceil(fields.length / 2) }).map(
+                (_, rowIndex) => (
+                  <div key={rowIndex}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                      {fields
+                        .slice(rowIndex * 2, rowIndex * 2 + 2)
+                        .map((field) => (
+                          <div
+                            key={field.label}
+                            className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-2 md:py-3 space-y-1 sm:space-y-0"
+                          >
+                            <span className="detail-title text-sm md:text-base font-medium">
+                              {field.label}:
+                            </span>
+                            {field.label.toLowerCase().includes('status') ? (
+                              <span className="text-[#000000B2] text-sm md:text-base font-normal inline-flex items-center px-2 md:px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 self-start sm:self-auto">
+                                {field.value ?? '-'}
+                              </span>
+                            ) : (
+                              <span className="text-[#000000B2] text-sm md:text-base font-normal break-words">
+                                {field.value ?? '-'}
+                              </span>
+                            )}
+                          </div>
+                        ))}
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+                    {rowIndex < Math.ceil(fields.length / 2) - 1 && (
+                      <hr className="border-[#00000019] mt-2" />
+                    )}
+                  </div>
+                ),
+              );
+            })()}
+          </div>
+        </div>
+
+        <div className="flex flex-row items-center pt-7 gap-3">
+          <button
+            onClick={() =>
+              navigate(`/opportunities/follow-up`, {
+                state: { opportunity_id: opportunityData.OPPORTUNITY_ID },
+              })
+            }
+            className="h-[40px] w-[150px] px-[15px] rounded-[6px] font-medium transition-colors flex items-center justify-center bg-[#C32033] text-white hover:bg-white hover:text-[#C32033] border border-[#C32033]"
+          >
+            Follow Up
+          </button>
+
+          <button
+            onClick={() =>
+              navigate(`/opportunities/convert`, {
+                state: {
+                  lead_id: opportunityData.LEAD_ID,
+                  opportunity_id: opportunityData.OPPORTUNITY_ID,
+                  opportunity_details: opportunityData.ORDER_LINES,
+                },
+              })
+            }
+            className="flex items-center gap-2 px-4 py-2 border border-[#C32033] text-[#C32033] font-medium rounded-[6px] transition-colors hover:bg-[#C32033] hover:text-white"
+          >
+            Convert to Sales Request
+            {/* <ArrowRight className="w-4 h-4" /> */}
+          </button>
         </div>
       </div>
 
       {/* Order Lines Section */}
       {opportunityData.ORDER_LINES && opportunityData.ORDER_LINES.length > 0 ? (
+        <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-2 pt-6 pb-6 shadow-default">
+          <h2 className="text-xl  text-center font-semibold mb-4 text-[#C32033] dark:text-white">
+            Order Items
+          </h2>
+
+          <div className="overflow-x-auto mt-5">
+            <table className="lead-table">
+              <thead>
+                <tr className="bg-[#C32033] shadow-lg text-white">
+                  <th className="px-6 py-4 text-left">No.</th>
+                  {columnOrder
+                    .filter(
+                      (key) =>
+                        key !== 'LAST_UPDATE_DATE' && key !== 'CREATION_DATE',
+                    )
+                    .map((key, index) => (
+                      <th
+                        key={key}
+                        className={`px-6 py-4 text-center ${
+                          key === 'DESCRIPTION'
+                            ? 'min-w-[300px] max-w-[500px]'
+                            : ''
+                        }`}
+                      >
+                        {key
+                          .replace(/_/g, ' ')
+                          .toLowerCase()
+                          .replace(/\b\w/g, (c) => c.toUpperCase())}
+                      </th>
+                    ))}
+                </tr>
+              </thead>
+              <tbody>
+                {opportunityData.ORDER_LINES.map((line, index) => (
+                  <tr
+                    key={line.OPPORTUNITY_DETAIL_ID || index}
+                    className={`${
+                      index % 2 === 0 ? 'bg-white' : 'bg-[#F5F5F5]'
+                    } hover:bg-[#FFD7D7] shadow-lg border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors`}
+                  >
+                    <td className="px-6 py-4">{index + 1}</td>
+
+                    {columnOrder
+                      .filter(
+                        (key) =>
+                          key !== 'LAST_UPDATE_DATE' && key !== 'CREATION_DATE',
+                      )
+                      .map((key) => (
+                        <td
+                          key={key}
+                          className={`px-6 py-5 ${
+                            key === 'DESCRIPTION'
+                              ? 'whitespace-normal break-words'
+                              : ''
+                          }`}
+                        >
+                          {String(line[key] ?? '-')}
+                        </td>
+                      ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : (
+        <p>No order lines available</p>
+      )}
+
+      {/* {opportunityData.ORDER_LINES && opportunityData.ORDER_LINES.length > 0 ? (
         <div className="rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-[#F9F9F9] px-5 pt-6 pb-6 shadow-default sm:px-7.5">
           <h2 className="text-xl font-semibold mb-4 text-[#C32033] dark:text-white">
             Order Items
@@ -389,7 +433,7 @@ const DetailOpportunity = () => {
                   {columnOrder.map((key) => (
                     <th key={key} className="px-6 py-4 text-left">
                       {key
-                        .replace(/_/g, ' ')
+                        .replace(/_/g, " ")
                         .toLowerCase()
                         .replace(/\b\w/g, (c) => c.toUpperCase())}
                     </th>
@@ -406,7 +450,7 @@ const DetailOpportunity = () => {
 
                     {columnOrder.map((key) => (
                       <td key={key} className="px-6 py-4">
-                        {String(line[key] ?? '-')}
+                        {String(line[key] ?? "-")}
                       </td>
                     ))}
                   </tr>
@@ -417,7 +461,7 @@ const DetailOpportunity = () => {
         </div>
       ) : (
         <p>No order lines available</p>
-      )}
+      )} */}
 
       {/* Back Button */}
       <div className="flex gap-4 pt-8">

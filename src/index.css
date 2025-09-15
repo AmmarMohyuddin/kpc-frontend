@@ -30,7 +30,21 @@
   background: rgba(0, 0, 0, 0.08); /* black with 8% opacity */
   margin: 2px 0; /* reduce vertical space */
 }
-
+  .lead-row {
+    @apply hover:bg-[#FFD7D7] shadow-lg border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors;
+  }
+  .lead-row-even {
+    @apply bg-white;
+  }
+  .lead-row-odd {
+    @apply bg-[#F5F5F5];
+  }
+    .lead-table {
+    @apply w-full border-separate border-spacing-y-[12px];
+  }
+   .btn-view-details {
+    @apply h-[34px] w-[107px] px-2 border-2 border-[#C32033] font-semibold text-[14px] text-[#C32033] rounded-lg hover:bg-[#C32033] hover:text-white transition-colors;
+  }
   
   
 }
