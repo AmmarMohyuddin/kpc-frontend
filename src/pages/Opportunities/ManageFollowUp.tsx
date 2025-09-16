@@ -6,7 +6,7 @@ import {
   X,
   ChevronRight as ChevronRightIcon,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import apiService from '../../services/ApiService';
@@ -152,6 +152,8 @@ let debounceTimer: NodeJS.Timeout;
 
 const ManageFollowUp = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const preFilteredOpportunityId = location.state?.opportunity_id || null;
   const [followUps, setFollowUps] = useState<FollowUp[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -175,6 +177,11 @@ const ManageFollowUp = () => {
         limit: ITEMS_PER_PAGE,
         offset,
       };
+
+      // Always include preFilteredOpportunityId if it exists
+      if (preFilteredOpportunityId) {
+        params.OPPORTUNITY_ID = preFilteredOpportunityId;
+      }
 
       // Apply search filters if present
       if (query) {
@@ -298,10 +305,12 @@ const ManageFollowUp = () => {
             <tbody>
               {followUps.length > 0 ? (
                 followUps.map((fu, index) => (
-                      //  key={fu.followup_id}
-                   <tr
+                  //  key={fu.followup_id}
+                  <tr
                     key={fu.followup_id}
-                    className={`lead-row ${index % 2 === 0 ? "lead-row-even" : "lead-row-odd"}`}
+                    className={`lead-row ${
+                      index % 2 === 0 ? 'lead-row-even' : 'lead-row-odd'
+                    }`}
                   >
                     <td className="px-6 py-4">
                       {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
@@ -320,7 +329,7 @@ const ManageFollowUp = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <button
-                        className="btn-view-details"
+                          className="btn-view-details"
                           onClick={() =>
                             navigate(`/follow-up/detail/${fu.followup_id}`, {
                               state: { followup: fu },

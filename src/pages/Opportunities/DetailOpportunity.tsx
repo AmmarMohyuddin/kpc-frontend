@@ -479,7 +479,7 @@
 
 // export default DetailOpportunity;
 
-import { ChevronRight, ArrowRight, ArrowDown, ArrowUp } from 'lucide-react';
+import { ChevronRight, ArrowRight } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import apiService from '../../services/ApiService';
@@ -521,35 +521,14 @@ interface Opportunity {
   }>;
 }
 
-interface FollowUp {
-  followup_id: number;
-  source: string;
-  lead_id: number | null;
-  opportunity_id: number;
-  followup_date: string;
-  next_followup_date: string;
-  status: string;
-  comments: string;
-  assigned_to: string;
-  created_by: string;
-  last_updated_by: string;
-  creation_date: string;
-  last_update_date: string;
-}
-
 const DetailOpportunity = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [opportunityData, setOpportunityData] = useState<Opportunity | null>(
     null,
   );
-  const [showFollowUps, setShowFollowUps] = useState(false);
-  const [followUps, setFollowUps] = useState<FollowUp[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [followUpsLoading, setFollowUpsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [followUpsError, setFollowUpsError] = useState('');
-  const [hasFollowUps, setHasFollowUps] = useState(false);
 
   // Check if opportunity data is passed via state or need to fetch from API
   useEffect(() => {
@@ -589,67 +568,6 @@ const DetailOpportunity = () => {
 
     fetchOpportunityData();
   }, [location.state]);
-
-  // Automatically fetch follow-ups when component mounts
-  useEffect(() => {
-    const fetchFollowUps = async () => {
-      const opportunityId =
-        location.state?.opportunity_id || opportunityData?.OPPORTUNITY_ID;
-      if (!opportunityId) return;
-
-      try {
-        setFollowUpsLoading(true);
-        setFollowUpsError('');
-        const response = await apiService.get(
-          `/api/v1/opportunities/oppFollowups?OPPORTUNITY_ID=${opportunityId}`,
-          {},
-        );
-
-        if (response?.status === 200) {
-          console.log('Follow-ups response:', response);
-          const followUpsData = response.data.followups || [];
-          setFollowUps(followUpsData);
-          setHasFollowUps(followUpsData.length > 0);
-        }
-      } catch (err) {
-        console.error('Error fetching follow-ups:', err);
-        setFollowUpsError('Failed to fetch follow-ups');
-        setHasFollowUps(false);
-      } finally {
-        setFollowUpsLoading(false);
-      }
-    };
-
-    // Fetch follow-ups after opportunity data is loaded
-    if (
-      !isLoading &&
-      (location.state?.opportunity_id || opportunityData?.OPPORTUNITY_ID)
-    ) {
-      fetchFollowUps();
-    }
-  }, [
-    isLoading,
-    location.state?.opportunity_id,
-    opportunityData?.OPPORTUNITY_ID,
-  ]);
-
-  const handleViewFollowUps = () => {
-    setShowFollowUps(!showFollowUps);
-  };
-
-  const formatDate = (dateString: string) => {
-    if (!dateString) return 'N/A';
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      });
-    } catch (error) {
-      return dateString;
-    }
-  };
 
   if (isLoading) {
     return (
@@ -766,97 +684,23 @@ const DetailOpportunity = () => {
               );
             })()}
 
-            {/* View Follow Ups Button - Only show if there are follow-ups */}
-            {hasFollowUps && (
-              <div className="flex justify-center pt-4 mt-4 border-t border-[#00000019]">
-                <button
-                  onClick={handleViewFollowUps}
-                  className="flex items-center gap-2 text-[#C32033] hover:text-[#A91B2E] font-medium transition-colors"
-                >
-                  {showFollowUps ? 'Hide Follow Ups' : 'View Follow Ups'}
-                  {showFollowUps ? (
-                    <ArrowUp className="w-4 h-4" />
-                  ) : (
-                    <ArrowDown className="w-4 h-4" />
-                  )}
-                </button>
-              </div>
-            )}
-
-            {/* Follow Ups Section */}
-            {showFollowUps && hasFollowUps && (
-              <div className="mt-6 p-4 border border-[#00000019] rounded-lg bg-white">
-                <h3 className="text-lg font-semibold text-[#161616] mb-4">
-                  Follow Ups ({followUps.length})
-                </h3>
-
-                {followUpsLoading ? (
-                  <div className="flex justify-center py-8">
-                    <Loader />
-                  </div>
-                ) : followUpsError ? (
-                  <div className="text-red-500 text-center py-4">
-                    {followUpsError}
-                  </div>
-                ) : followUps.length === 0 ? (
-                  <div className="text-gray-500 text-center py-4">
-                    No follow-ups found for this opportunity
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {followUps.map((followUp) => (
-                      <div
-                        key={followUp.followup_id}
-                        className="border-b border-[#00000019] pb-4 last:border-b-0"
-                      >
-                        <div className="space-y-4">
-                          <div>
-                            <span className="font-medium text-black">
-                              Follow-up Date:
-                            </span>
-                            <span className="ml-2">
-                              {formatDate(followUp.followup_date)}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="font-medium text-black">
-                              Next Follow-up:
-                            </span>
-                            <span className="ml-2">
-                              {formatDate(followUp.next_followup_date)}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="font-medium text-black">
-                              Status:
-                            </span>
-                            <span className="ml-2 capitalize">
-                              {followUp.status?.toLowerCase()}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="font-medium text-black">
-                              Assigned To:
-                            </span>
-                            <span className="ml-2">{followUp.assigned_to}</span>
-                          </div>
-                        </div>
-                        {followUp.comments && (
-                          <div className="mt-2">
-                            <span className="font-medium text-black">
-                              Comments:
-                            </span>
-                            <p className="text-gray-600 mt-1">
-                              {followUp.comments}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+            {/* View Follow Ups Button */}
+            <div className="flex justify-center pt-4 mt-4 border-t border-[#00000019]">
+              <button
+                onClick={() =>
+                  navigate(`/opportunities/follow-up/manage`, {
+                    state: {
+                      opportunity_id: opportunityData.OPPORTUNITY_ID,
+                      preFiltered: true,
+                    },
+                  })
+                }
+                className="flex items-center gap-2 text-[#C32033] hover:text-[#A91B2E] font-medium transition-colors"
+              >
+                View Follow Ups
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
 
