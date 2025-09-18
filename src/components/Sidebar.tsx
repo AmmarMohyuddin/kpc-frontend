@@ -1152,7 +1152,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                       : 'text-black'
                                   }`}
                                 >
-                                  Track Delivery Status
+                                  Closed Order History
                                 </NavLink>
                               </li>
                               <li>
@@ -1165,7 +1165,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                       : 'text-black'
                                   }`}
                                 >
-                                  Closed Orders
+                                  Track Delivery Status
                                 </NavLink>
                               </li>
                               <li>
