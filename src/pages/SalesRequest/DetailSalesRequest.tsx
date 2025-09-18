@@ -163,18 +163,15 @@ const DetailSalesRequest = () => {
     'SITE_USE_ID',
     'SITE_ID',
     "CREATION_DATE",
-    "LAST_UPDATE_DATE"
+    "LAST_UPDATE_DATE",
+    "ADDRESS_LINE_1",
+    "CUSTOMER_CITY",
+    "CUSTOMER_BLOCK",
+    "CUSTOMER_ADDRESS",
+    "CONTACT_PERSON",
+    "CONTACT_NUMBER"
+
   ];
-  // Define the exact order you want
-  // const columnOrder = [
-  //   "ITEM_NUMBER",
-  //   "SUB_CATEGORY",
-  //   "DESCRIPTION",
-  //   "INSTRUCTION",
-  //   "QUANTITY",
-  //   "AMOUNT",
-  //   // ... add more fields in the order you want
-  // ];
 
   const excludeLineFields = [
     'ORDER_HEADER_ID',
@@ -196,8 +193,17 @@ const DetailSalesRequest = () => {
     "REQUESTED_SHIP_DATE",
     "LAST_UPDATED_BY",
   ];
+  const addressFields = [
+    "ADDRESS_LINE_1",
+    "CUSTOMER_CITY",
+    "CUSTOMER_BLOCK",
+    "CUSTOMER_ADDRESS",
+    "CONTACT_PERSON",
+    "CONTACT_NUMBER"
+  ];
 
   const wideColumns = ["DESCRIPTION", "INSTRUCTION", "SUB_CATEGORY"];
+
 
   const headerFields = Object.entries(salesRequest)
     .filter(([key]) => !excludeHeaderFields.includes(key))
@@ -205,6 +211,26 @@ const DetailSalesRequest = () => {
       label: key.replace(/_/g, ' '),
       value: value ?? '-',
     }));
+  // Excluded fields list
+  const excludedHeaderFields = ["ORDER_CURRENCY", "CUSTOMER_NUMBER", "ACCOUNT_STATUS", "BUSINESS_UNIT"];
+
+  // Normalize function (remove spaces/underscores, uppercase everything)
+  const normalize = (str) => str.replace(/[\s_]+/g, "").toUpperCase();
+
+  const filteredFields = headerFields.filter(
+    (field) => !excludedHeaderFields.map(normalize).includes(normalize(field.label))
+  );
+  // Normalize function
+  const normalizeAddressFields = (str) => str.replace(/[\s_]+/g, "").toUpperCase();
+
+  // Filter only the detail fields
+  const headerAddressFields = Object.entries(salesRequest)
+    .filter(([key]) => addressFields.includes(key.toUpperCase()))
+    .map(([key, value]) => ({
+      label: key,
+      value: value ?? "-"
+    }));
+
 
   return (
     <div className="flex flex-col py-1 px-5 gap-6 bg-white rounded-[20px]">
@@ -233,37 +259,95 @@ const DetailSalesRequest = () => {
         </h2>
         <div className="rounded-[10px] bg-white p-3 md:p-5 shadow-sm border border-[#00000019]">
           <div className="space-y-2">
-            {Array.from({ length: Math.ceil(headerFields.length / 2) }).map((_, rowIndex) => (
+            {Array.from({ length: Math.ceil(filteredFields.length / 2) }).map((_, rowIndex) => (
               <div key={rowIndex}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-                  {headerFields.slice(rowIndex * 2, rowIndex * 2 + 2).map((field) => (
-                    <div key={field.label} className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-2 md:py-3 space-y-1 sm:space-y-0">
-                      <span className="detail-title text-sm md:text-base font-medium">
-                        {field.label
-                          .split('_')
-                          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                          .join(' ')
-                        }:
-                      </span>
-                      {field.label.toLowerCase().includes("status") ? (
-                        <span className="text-[#000000B2] text-sm md:text-base font-normal inline-flex items-center px-2 md:px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 self-start sm:self-auto">
-                          {field.value ?? "-"}
+                  {filteredFields
+                    .slice(rowIndex * 2, rowIndex * 2 + 2)
+                    .map((field) => (
+                      <div
+                        key={field.label}
+                        className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-2 md:py-3 space-y-1 sm:space-y-0"
+                      >
+                        <span className="detail-title text-sm md:text-base font-medium">
+                          {field.label
+                            .split("_")
+                            .map(
+                              (word) =>
+                                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                            )
+                            .join(" ")}
+                          :
                         </span>
-                      ) : (
-                        <span className="text-[#000000B2] text-sm md:text-base font-normal break-words">
-                          {field.value ?? "-"}
-                        </span>
-                      )}
-                    </div>
-                  ))}
+                        {field.label.toLowerCase().includes("status") ? (
+                          <span className="text-[#000000B2] text-sm md:text-base font-normal inline-flex items-center px-2 md:px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 self-start sm:self-auto">
+                            {field.value ?? "-"}
+                          </span>
+                        ) : (
+                          <span className="text-[#000000B2] text-sm md:text-base font-normal break-words">
+                            {field.value ?? "-"}
+                          </span>
+                        )}
+                      </div>
+                    ))}
                 </div>
-                {rowIndex < Math.ceil(headerFields.length / 2) - 1 && (
+                {rowIndex < Math.ceil(filteredFields.length / 2) - 1 && (
+                  <hr className="border-[#00000019] mt-2" />
+                )}
+              </div>
+            ))}
+
+
+
+          </div>
+
+        </div>
+        {/* SEPARATE CARD FOR SPECIFIC ADDRESS FIELDS */}
+        <h2 className="text-xl text-[#C32033] font-semibold  mt-3">
+          Order Address
+        </h2>
+        {headerAddressFields.length > 0 && (
+          <div className="mt-3 p-4 rounded-[20px] border border-[rgba(0,0,0,0.16)] bg-white shadow-default">
+            {Array.from({ length: Math.ceil(headerAddressFields.length / 2) }).map((_, rowIndex) => (
+              <div key={rowIndex}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                  {headerAddressFields
+                    .slice(rowIndex * 2, rowIndex * 2 + 2)
+                    .map((field) => (
+                      <div
+                        key={field.label}
+                        className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-2 md:py-3 space-y-1 sm:space-y-0"
+                      >
+                        <span className="detail-title text-sm md:text-base font-medium">
+                          {field.label
+                            .split("_")
+                            .map(
+                              (word) =>
+                                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                            )
+                            .join(" ")}
+                          :
+                        </span>
+                        {field.label.toLowerCase().includes("status") ? (
+                          <span className="text-[#000000B2] text-sm md:text-base font-normal inline-flex items-center px-2 md:px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 self-start sm:self-auto">
+                            {field.value ?? "-"}
+                          </span>
+                        ) : (
+                          <span className="text-[#000000B2] text-sm md:text-base font-normal break-words">
+                            {field.value ?? "-"}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                </div>
+                {rowIndex < Math.ceil(headerAddressFields.length / 2) - 1 && (
                   <hr className="border-[#00000019] mt-2" />
                 )}
               </div>
             ))}
           </div>
-        </div>
+        )}
+
 
 
         {/* <ShowMoreList fields={headerFields} initialCount={5} /> */}
@@ -324,61 +408,58 @@ const DetailSalesRequest = () => {
         {salesRequest.ORDER_LINES.length > 0 ? (
           <div className="overflow-x-auto mt-5">
             <table className="lead-table">
-  <thead>
-    <tr className="bg-[#C32033] shadow-lg text-white">
-      <th className="px-6 py-4 text-left">No.</th>
-      {columnOrder
-        .filter((key) => !excludeLineFields.includes(key))
-        .map((key) => (
-          <th
-            key={key}
-            className={`px-6 py-4 text-left ${
-              wideColumns.includes(key) ? "min-w-[300px] max-w-[400px]" : ""
-            }`}
-          >
-            {key
-              .replace(/_/g, " ")
-              .toLowerCase()
-              .replace(/\b\w/g, (c) => c.toUpperCase())}
-          </th>
-        ))}
-    </tr>
-  </thead>
-  <tbody>
-    {salesRequest.ORDER_LINES.map((line, index) => (
-      <tr
-        key={line.ORDER_LINE_ID || index}
-        className={`${
-          index % 2 === 0 ? "bg-white" : "bg-[#F5F5F5]"
-        } hover:bg-[#FFD7D7] shadow-lg border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors`}
-      >
-        <td className="px-6 py-4">{index + 1}</td>
+              <thead>
+                <tr className="bg-[#C32033] shadow-lg text-white">
+                  <th className="px-6 py-4 text-left">No.</th>
+                  {columnOrder
+                    .filter((key) => !excludeLineFields.includes(key))
+                    .map((key) => (
+                      <th
+                        key={key}
+                        className={`px-6 py-4 text-left ${wideColumns.includes(key) ? "min-w-[300px] max-w-[400px]" : ""
+                          }`}
+                      >
+                        {key
+                          .replace(/_/g, " ")
+                          .toLowerCase()
+                          .replace(/\b\w/g, (c) => c.toUpperCase())}
+                      </th>
+                    ))}
+                </tr>
+              </thead>
+              <tbody>
+                {salesRequest.ORDER_LINES.map((line, index) => (
+                  <tr
+                    key={line.ORDER_LINE_ID || index}
+                    className={`${index % 2 === 0 ? "bg-white" : "bg-[#F5F5F5]"
+                      } hover:bg-[#FFD7D7] shadow-lg border-b-2 text-[#1e1e1e] border-b-[#eeeaea] transition-colors`}
+                  >
+                    <td className="px-6 py-4">{index + 1}</td>
 
-        {columnOrder
-          .filter((key) => !excludeLineFields.includes(key))
-          .map((key) => (
-            <td
-              key={key}
-              className={`px-6 py-4 ${
-                wideColumns.includes(key)
-                  ? "whitespace-normal break-words"
-                  : "whitespace-nowrap"
-              }`}
-            >
-              {/* Format specific fields */}
-              {key.includes("DATE") && line[key]
-                ? new Date(line[key]).toLocaleDateString("en-GB")
-                : key.includes("PRICE") ||
-                  key.includes("AMOUNT") ||
-                  key.includes("QTY")
-                ? Number(line[key] || 0).toFixed(2)
-                : String(line[key] ?? "-")}
-            </td>
-          ))}
-      </tr>
-    ))}
-  </tbody>
-</table>
+                    {columnOrder
+                      .filter((key) => !excludeLineFields.includes(key))
+                      .map((key) => (
+                        <td
+                          key={key}
+                          className={`px-6 py-4 ${wideColumns.includes(key)
+                            ? "whitespace-normal break-words"
+                            : "whitespace-nowrap"
+                            }`}
+                        >
+                          {/* Format specific fields */}
+                          {key.includes("DATE") && line[key]
+                            ? new Date(line[key]).toLocaleDateString("en-GB")
+                            : key.includes("PRICE") ||
+                              key.includes("AMOUNT") ||
+                              key.includes("QTY")
+                              ? Number(line[key] || 0).toFixed(2)
+                              : String(line[key] ?? "-")}
+                        </td>
+                      ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         ) : (
           <p>No order lines available</p>
