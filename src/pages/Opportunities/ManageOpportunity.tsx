@@ -94,10 +94,11 @@ const FilterModal = ({
               className="w-5 h-5 accent-[#c32033]"
             />
             <span
-              className={`${selectedFilter === 'OPPORTUNITY_ID'
+              className={`${
+                selectedFilter === 'OPPORTUNITY_ID'
                   ? 'font-semibold text-black'
                   : 'font-medium text-gray-700'
-                }`}
+              }`}
             >
               Opportunity ID
             </span>
@@ -113,10 +114,11 @@ const FilterModal = ({
               className="w-5 h-5 accent-[#c32033]"
             />
             <span
-              className={`${selectedFilter === 'LEAD_NUMBER'
+              className={`${
+                selectedFilter === 'LEAD_NUMBER'
                   ? 'font-semibold text-black'
                   : 'font-medium text-gray-700'
-                }`}
+              }`}
             >
               Lead Number
             </span>
@@ -132,10 +134,11 @@ const FilterModal = ({
               className="w-5 h-5 accent-[#c32033]"
             />
             <span
-              className={`${selectedFilter === 'DATE'
+              className={`${
+                selectedFilter === 'DATE'
                   ? 'font-semibold text-black'
                   : 'font-medium text-gray-700'
-                }`}
+              }`}
             >
               Date
             </span>
@@ -274,13 +277,13 @@ const ManageOpportunities = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-[calc(100vh-200px)]">
-        <Loader />
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex justify-center items-center h-[calc(100vh-200px)]">
+  //       <Loader />
+  //     </div>
+  //   );
+  // }
 
   const totalPages = pagination?.hasMore ? currentPage + 1 : currentPage;
 
@@ -322,8 +325,8 @@ const ManageOpportunities = () => {
                   selectedFilter === 'OPPORTUNITY_ID'
                     ? 'Search by Opportunity ID...'
                     : selectedFilter === 'LEAD_NUMBER'
-                      ? 'Search by Lead Number...'
-                      : 'Disabled for Date'
+                    ? 'Search by Lead Number...'
+                    : 'Disabled for Date'
                 }
                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:border-transparent w-72"
                 value={searchTerm}
@@ -345,84 +348,88 @@ const ManageOpportunities = () => {
 
         {/* Table */}
         <div className="overflow-x-auto mt-5">
-          {isLoading ? (
-            <div className="flex justify-center items-center h-[300px]">
-              <Loader />
-            </div>
-          ) : (
-            <table className="lead-table">
-
-              <thead>
-                <tr className="bg-[#C32033] shadow-lg text-white">
-                  <th className="text-left px-6 py-4">No.</th>
-                  <th className="text-left px-6 py-4">Opportunity ID</th>
-                  <th className="text-left px-6 py-4">Generation Date</th>
-                  <th className="text-left px-6 py-4">Stage</th>
-                  <th className="text-left px-6 py-4">Status</th>
-                  <th className="text-left px-6 py-4">Salesperson</th>
-                  <th className="text-left px-6 py-4">Actions</th>
+          <table className="lead-table">
+            <thead>
+              <tr className="bg-[#C32033] shadow-lg text-white">
+                <th className="text-left px-6 py-4">No.</th>
+                <th className="text-left px-6 py-4">Opportunity ID</th>
+                <th className="text-left px-6 py-4">Lead Number</th>
+                <th className="text-left px-6 py-4">Generation Date</th>
+                <th className="text-left px-6 py-4">Stage</th>
+                <th className="text-left px-6 py-4">Status</th>
+                <th className="text-left px-6 py-4">Salesperson</th>
+                <th className="text-left px-6 py-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={8}>
+                    <div className="flex justify-center items-center h-[200px]">
+                      <Loader />
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {opportunities.length > 0 ? (
-                  opportunities.map((opp, index) => (
-                    <tr
-                      key={opp.OPPORTUNITY_ID}
-                      className={`lead-row ${index % 2 === 0 ? "lead-row-even" : "lead-row-odd"}`}
-                    >
-                      <td className="px-6 py-4">
-                        {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
-                      </td>
-                      <td className="px-6 py-4">{opp.OPPORTUNITY_ID}</td>
-                      <td className="px-6 py-4">
-                        {opp.GENERATION_DATE || '-'}
-                      </td>
-                      <td className="px-6 py-4">{opp.STAGE}</td>
-                      <td className="px-6 py-4">{opp.STATUS}</td>
-                      <td className="px-6 py-4">{opp.SALESPERSON_NAME}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <button
-                            onClick={() =>
-                              navigate(
-                                `/opportunities/edit/${opp.OPPORTUNITY_ID}`,
-                                {
-                                  state: { opportunity_id: opp.OPPORTUNITY_ID },
-                                },
-                              )
-                            }
-                            className="hover:scale-110 transition-transform"
-                          >
-                            <Edit className="text-blue-600 hover:text-blue-800 w-5 h-5" />
-                          </button>
-                          <button
-                            className="btn-view-details" onClick={() =>
-                              navigate(`/opportunities/${opp.OPPORTUNITY_ID}`, {
+              ) : opportunities.length > 0 ? (
+                opportunities.map((opp, index) => (
+                  <tr
+                    key={opp.OPPORTUNITY_ID}
+                    className={`lead-row ${
+                      index % 2 === 0 ? 'lead-row-even' : 'lead-row-odd'
+                    }`}
+                  >
+                    <td className="px-6 py-4">
+                      {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
+                    </td>
+                    <td className="px-6 py-4">{opp.OPPORTUNITY_ID}</td>
+                    <td className="px-6 py-4">{opp.LEAD_NUMBER}</td>
+                    <td className="px-6 py-4">{opp.GENERATION_DATE || '-'}</td>
+                    <td className="px-6 py-4">{opp.STAGE}</td>
+                    <td className="px-6 py-4">{opp.STATUS}</td>
+                    <td className="px-6 py-4">{opp.SALESPERSON_NAME}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() =>
+                            navigate(
+                              `/opportunities/edit/${opp.OPPORTUNITY_ID}`,
+                              {
                                 state: { opportunity_id: opp.OPPORTUNITY_ID },
-                              })
-                            }
-                          >
-                            View Details
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan={7}
-                      className="px-6 py-4 text-center text-gray-500"
-                    >
-                      {debouncedSearch || dateFilter
-                        ? 'No matching opportunities found'
-                        : 'No opportunities available'}
+                              },
+                            )
+                          }
+                          className="hover:scale-110 transition-transform"
+                        >
+                          <Edit className="text-blue-600 hover:text-blue-800 w-5 h-5" />
+                        </button>
+                        <button
+                          className="btn-view-details"
+                          onClick={() =>
+                            navigate(`/opportunities/${opp.OPPORTUNITY_ID}`, {
+                              state: { opportunity_id: opp.OPPORTUNITY_ID },
+                            })
+                          }
+                        >
+                          View Details
+                        </button>
+                      </div>
                     </td>
                   </tr>
-                )}
-              </tbody>
-            </table>
-          )}
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={8}
+                    className="px-6 py-4 text-center text-gray-500"
+                  >
+                    {debouncedSearch || dateFilter
+                      ? 'No matching opportunities found'
+                      : 'No opportunities available'}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
 
         {/* Pagination */}

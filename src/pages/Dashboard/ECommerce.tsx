@@ -8,10 +8,10 @@ import apiService from '../../services/ApiService.ts';
 
 const ECommerce = () => {
   const [counts, setCounts] = useState({
-    importUsers: 0,
-    users: 0,
-    salesPersons: 0,
-    customers: 0,
+    leads: 0,
+    opportunities: 0,
+    salesRequests: 0,
+    salesOrders: 0,
   });
 
   const [leadChart, setLeadChart] = useState({ data: [], categories: [] });
@@ -24,49 +24,41 @@ const ECommerce = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // ✅ Fetch all counts in parallel
-        const [importUsersRes, usersRes, salesPersonsRes, customersRes] =
-          await Promise.all([
-            apiService.get('/api/v1/importUsers/list', {}),
-            apiService.get('/api/v1/users/list', {}),
-            apiService.get('/api/v1/salesPersons/list', {}),
-            apiService.get('/api/v1/customers/list', {}),
-          ]);
-
-        setCounts({
-          importUsers: importUsersRes?.data?.length || 0,
-          users: usersRes?.data?.length || 0,
-          salesPersons: salesPersonsRes?.data?.length || 0,
-          customers: customersRes?.data?.length || 0,
-        });
-
-        // ✅ Fetch charts in parallel
+        // ✅ Fetch charts & counts in parallel
         const [leadsRes, oppRes, salesRes] = await Promise.all([
           apiService.get('/api/v1/leads/leadChart', {}),
           apiService.get('/api/v1/opportunities/opportunityChart', {}),
           apiService.get('/api/v1/salesRequests/sales-chart', {}),
         ]);
+        console.log(salesRes.data);
 
-        // Leads
+        // ✅ Leads chart
         setLeadChart({
           data: Object.values(leadsRes.data.monthly_counts || {}),
           categories: Object.keys(leadsRes.data.monthly_counts || {}),
         });
 
-        // Opportunities
+        // ✅ Opportunities chart
         setOppChart({
           data: Object.values(oppRes.data.monthly_counts || {}),
           categories: Object.keys(oppRes.data.monthly_counts || {}),
         });
 
-        // Sales Requests + Summary Chart
+        // ✅ Counts & Summary chart
         const salesReq = salesRes.data || {};
+        setCounts({
+          leads: salesReq.leads || 0,
+          opportunities: salesReq.opportunities || 0,
+          salesRequests: salesReq.salesRequests || 0,
+          salesOrders: salesReq.sales_orders || 0, // add in API if missing
+        });
+
         setSummaryChart({
           labels: ['Leads', 'Opportunities', 'Sales Requests'],
           series: [
             salesReq.leads || 0,
             salesReq.opportunities || 0,
-            salesReq.salesRequests || 0,
+            salesReq.sales_request || 0,
           ],
         });
       } catch (error) {
@@ -83,10 +75,10 @@ const ECommerce = () => {
 
       {/* Top Cards */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-6">
-        <CardOne title="Imported Users" count={counts.importUsers} />
-        <CardTwo title="Customers" count={counts.customers} />
-        <CardThree title="Sales Persons" count={counts.salesPersons} />
-        <CardFour title="Registered Users" count={counts.users} />
+        <CardOne title="Leads" count={counts.leads} />
+        <CardTwo title="Opportunities" count={counts.opportunities} />
+        <CardThree title="Sales Requests" count={counts.salesRequests} />
+        <CardFour title="Sales Orders" count={counts.salesOrders} />
       </div>
 
       {/* Charts Row 1 */}
@@ -110,7 +102,6 @@ const ECommerce = () => {
 
       {/* Charts Row 2 */}
       <div className="grid grid-cols-2 mt-10 gap-5">
-        {/* Left chart removed to keep your same design */}
         <div>
           <ChartFour
             title="Order Outcomes"

@@ -14,6 +14,7 @@ import Loader from '../../common/Loader';
 
 interface Lead {
   lead_id: number;
+  lead_number: string;
   lead_type: string;
   customer_name: string;
   customer_type: string;
@@ -90,10 +91,11 @@ const FilterModal = ({
               className="w-5 h-5 accent-[#c32033]"
             />
             <span
-              className={`${selectedFilter === 'CUSTOMER_NAME'
-                ? 'font-semibold text-black'
-                : 'font-medium text-gray-700'
-                }`}
+              className={`${
+                selectedFilter === 'CUSTOMER_NAME'
+                  ? 'font-semibold text-black'
+                  : 'font-medium text-gray-700'
+              }`}
             >
               Customer Name
             </span>
@@ -109,10 +111,11 @@ const FilterModal = ({
               className="w-5 h-5 accent-[#c32033]"
             />
             <span
-              className={`${selectedFilter === 'LEAD_NUMBER'
-                ? 'font-semibold text-black'
-                : 'font-medium text-gray-700'
-                }`}
+              className={`${
+                selectedFilter === 'LEAD_NUMBER'
+                  ? 'font-semibold text-black'
+                  : 'font-medium text-gray-700'
+              }`}
             >
               Lead Number
             </span>
@@ -128,10 +131,11 @@ const FilterModal = ({
               className="w-5 h-5 accent-[#c32033]"
             />
             <span
-              className={`${selectedFilter === 'DATE'
-                ? 'font-semibold text-black'
-                : 'font-medium text-gray-700'
-                }`}
+              className={`${
+                selectedFilter === 'DATE'
+                  ? 'font-semibold text-black'
+                  : 'font-medium text-gray-700'
+              }`}
             >
               Date
             </span>
@@ -267,13 +271,13 @@ const ManageLeads = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-[calc(100vh-200px)]">
-        <Loader />
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex justify-center items-center h-[calc(100vh-200px)]">
+  //       <Loader />
+  //     </div>
+  //   );
+  // }
 
   const breadcrumbs = [
     { label: 'Leads', path: '/' },
@@ -307,12 +311,13 @@ const ManageLeads = () => {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
                   type="text"
-                  placeholder={`Search by ${selectedFilter === 'CUSTOMER_NAME'
-                    ? 'Customer Name'
-                    : selectedFilter === 'LEAD_NUMBER'
+                  placeholder={`Search by ${
+                    selectedFilter === 'CUSTOMER_NAME'
+                      ? 'Customer Name'
+                      : selectedFilter === 'LEAD_NUMBER'
                       ? 'Lead Number'
                       : 'Lead ID'
-                    }...`}
+                  }...`}
                   className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:border-transparent w-72"
                   value={searchTerm}
                   onChange={(e) => {
@@ -339,25 +344,34 @@ const ManageLeads = () => {
               <tr className="bg-[#C32033] text-white">
                 <th className="text-left px-6 py-4">No.</th>
                 <th className="text-left px-6 py-4">Lead Number</th>
-                <th className="text-left px-6 py-4">Company</th>
+                <th className="text-left px-6 py-4">Customer Name</th>
                 <th className="text-left px-6 py-4">Contact Job Role</th>
                 <th className="text-left px-6 py-4">Sales Person</th>
                 <th className="text-left px-6 py-4">Status</th>
                 <th className="text-left px-6 py-4">Actions</th>
               </tr>
             </thead>
-
             <tbody>
-              {leadsData.length > 0 ? (
+              {isLoading ? (
+                <tr>
+                  <td colSpan={7}>
+                    <div className="flex justify-center items-center h-[200px]">
+                      <Loader />
+                    </div>
+                  </td>
+                </tr>
+              ) : leadsData.length > 0 ? (
                 leadsData.map((lead, index) => (
                   <tr
                     key={lead.lead_id}
-                    className={`lead-row ${index % 2 === 0 ? "lead-row-even" : "lead-row-odd"}`}
+                    className={`lead-row ${
+                      index % 2 === 0 ? 'lead-row-even' : 'lead-row-odd'
+                    }`}
                   >
                     <td className="px-6 py-4">
                       {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
                     </td>
-                    <td className="px-6 py-4">{lead.lead_id}</td>
+                    <td className="px-6 py-4">{lead.lead_number}</td>
                     <td className="px-6 py-4">{lead.customer_name}</td>
                     <td className="px-6 py-4">{lead.contact_position}</td>
                     <td className="px-6 py-4">{lead.salesperson_name}</td>
@@ -376,7 +390,7 @@ const ManageLeads = () => {
                         </button>
                         <button
                           className="btn-view-details"
-                           onClick={() =>
+                          onClick={() =>
                             navigate(`/leads/${lead.lead_id}`, {
                               state: { lead },
                             })

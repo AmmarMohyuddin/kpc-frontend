@@ -225,13 +225,13 @@ const UninvoicedOrders = () => {
     { label: 'Uninvoiced Orders', path: '', isActive: true },
   ];
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-[calc(100vh-200px)]">
-        <Loader />
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex justify-center items-center h-[calc(100vh-200px)]">
+  //       <Loader />
+  //     </div>
+  //   );
+  // }
 
   if (error) {
     return (
@@ -304,11 +304,21 @@ const UninvoicedOrders = () => {
               </tr>
             </thead>
             <tbody>
-              {salesOrders.length > 0 ? (
+              {isLoading ? (
+                <tr>
+                  <td colSpan={7}>
+                    <div className="flex justify-center items-center h-[200px]">
+                      <Loader />
+                    </div>
+                  </td>
+                </tr>
+              ) : salesOrders.length > 0 ? (
                 salesOrders.map((order, index) => (
                   <tr
                     key={`${order.order_no}-${index}`}
-                   className={`lead-row ${index % 2 === 0 ? "lead-row-even" : "lead-row-odd"}`}
+                    className={`lead-row ${
+                      index % 2 === 0 ? 'lead-row-even' : 'lead-row-odd'
+                    }`}
                   >
                     <td className="px-6 py-4">
                       {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
@@ -322,7 +332,7 @@ const UninvoicedOrders = () => {
                     <td className="px-6 py-4">
                       <button
                         onClick={() => handleViewDetails(order.order_no)}
-                          className="btn-view-details"
+                        className="btn-view-details"
                       >
                         View Details
                       </button>

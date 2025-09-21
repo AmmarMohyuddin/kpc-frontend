@@ -243,13 +243,13 @@ const OrderHistory = () => {
     { label: 'Order History', path: '', isActive: true },
   ];
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-[calc(100vh-200px)]">
-        <Loader />
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex justify-center items-center h-[calc(100vh-200px)]">
+  //       <Loader />
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
@@ -302,7 +302,7 @@ const OrderHistory = () => {
 
           {/* Table */}
           <div className="overflow-x-auto mt-5">
-          <table className="lead-table">
+            <table className="lead-table">
               <thead>
                 <tr className="bg-[#C32033] text-white">
                   <th className="px-6 py-4 text-left">No.</th>
@@ -315,12 +315,22 @@ const OrderHistory = () => {
                 </tr>
               </thead>
               <tbody>
-                {salesOrders.length > 0 ? (
+                {isLoading ? (
+                  <tr>
+                    <td colSpan={7}>
+                      <div className="flex justify-center items-center h-[200px]">
+                        <Loader />
+                      </div>
+                    </td>
+                  </tr>
+                ) : salesOrders.length > 0 ? (
                   salesOrders.map((order, index) => (
                     <tr
                       key={`${order.order_no}-${pagination?.offset}-${index}`}
-                      className={`lead-row ${index % 2 === 0 ? "lead-row-even" : "lead-row-odd"}`}
-                  >
+                      className={`lead-row ${
+                        index % 2 === 0 ? 'lead-row-even' : 'lead-row-odd'
+                      }`}
+                    >
                       <td className="px-6 py-4">
                         {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
                       </td>
