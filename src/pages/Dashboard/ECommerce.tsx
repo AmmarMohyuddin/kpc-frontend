@@ -70,15 +70,15 @@ const ECommerce = () => {
   }, []);
 
   return (
-    <div className="bg-white p-5 rounded-[20px]">
+    <div className="bg-white p-5 rounded-[20px] ">
       <p className="text-[24px] mb-5 font-semibold text-[#161616]">Dashboard</p>
 
       {/* Top Cards */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-6">
-        <CardOne title="Leads" count={counts.leads} />
-        <CardTwo title="Opportunities" count={counts.opportunities} />
-        <CardThree title="Sales Requests" count={counts.salesRequests} />
-        <CardFour title="Sales Orders" count={counts.salesOrders} />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-6 w-full">
+        <CardOne title="Total Leads" count={counts.leads} />
+        <CardTwo title="Total Opportunities" count={counts.opportunities} />
+        <CardThree title="Total Sales Requests" count={counts.salesRequests} />
+        <CardFour title="Total Sales Orders" count={counts.salesOrders} />
       </div>
 
       {/* Charts Row 1 */}

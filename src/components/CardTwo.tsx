@@ -1,4 +1,5 @@
-import LeadsRedIcon from '../images/sidebar/leads_red_icon.svg';
+import OpportunityRedIcon from '../images/sidebar/red_opportunity_icon.svg';
+
 import { cardStyle } from '../../src/styles/cardStyle';
 type CardTwoProps = {
   title: string;
@@ -13,7 +14,14 @@ const CardTwo = ({ title, count = 0 }: CardTwoProps) => {
     >
       {/* Icon */}
       <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
-        <svg
+        <img
+          src={
+            OpportunityRedIcon
+          }
+          alt="Opportunities Icon"
+          className="w-7 h-7"
+        />
+        {/* <svg
           className="fill-[#C32033] dark:fill-white"
           width="22"
           height="18"
@@ -22,7 +30,7 @@ const CardTwo = ({ title, count = 0 }: CardTwoProps) => {
           xmlns="http://www.w3.org/2000/svg"
         >
           {/* SVG paths */}
-        </svg>
+        {/* </svg> } */}
       </div>
 
       {/* Text */}
