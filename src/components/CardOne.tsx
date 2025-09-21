@@ -12,8 +12,8 @@ const CardOne = ({ title, count = 0 }: CardOneProps) => {
       style={cardStyle}
     >
       {/* Icon */}
-      <div className="flex-shrink-0 h-12 w-12 flex items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
-        <img src={LeadsRedIcon} alt="Leads Icon" className="w-6 h-6" />
+      <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
+        <img src={LeadsRedIcon} alt="Leads Icon" className="w-7 h-7" />
       </div>
 
       {/* Text (count + title) */}
