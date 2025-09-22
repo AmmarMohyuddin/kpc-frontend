@@ -375,6 +375,20 @@ const DetailLead = () => {
                 );
               })()}
 
+              <div className="flex justify-center pt-4 mt-4 border-t border-[#00000019]">
+                <button
+                  onClick={() =>
+                    navigate('/leads/follow-up', {
+                      state: { lead_id: leadData.lead_id },
+                    })
+                  }
+                  className="flex items-center gap-2 text-[#C32033] hover:text-[#A91B2E] font-medium transition-colors"
+                >
+                  Follow Up
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+
               {/* Manage Follow Ups Button */}
               <div className="flex justify-center pt-4 mt-4 border-t border-[#00000019]">
                 <button
