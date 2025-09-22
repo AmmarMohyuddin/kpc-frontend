@@ -17,6 +17,7 @@ interface SalesRequest {
   APPROVAL_STATUS: string;
   CUSTOMER_NAME: string;
   ORDER_HEADER_ID: string;
+  CUSTOMER_ACCOUNT_NUMBER: string;
   ORDER_NUMBER: string;
   ORDER_DATE: string;
   SALESPERSON: string;
@@ -35,7 +36,6 @@ interface ApiResponse {
   pagination: PaginationInfo;
 }
 
-// Filter Modal Props Interface
 interface FilterModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -44,7 +44,6 @@ interface FilterModalProps {
   onApply: () => void;
 }
 
-// Filter Modal Component
 const FilterModal = ({
   isOpen,
   onClose,
@@ -109,6 +108,25 @@ const FilterModal = ({
               Order Number
             </span>
           </label>
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="radio"
+              name="filterOption"
+              value="accountNumber"
+              checked={selectedFilter === 'accountNumber'}
+              onChange={(e) => onFilterChange(e.target.value)}
+              className="w-5 h-5 accent-[#c32033]"
+            />
+            <span
+              className={`${
+                selectedFilter === 'accountNumber'
+                  ? 'font-bold text-black'
+                  : 'font-medium text-gray-700'
+              }`}
+            >
+              Account Number
+            </span>
+          </label>
         </div>
         <div className="flex justify-center gap-4 p-6">
           <button
@@ -150,7 +168,6 @@ const ManageSalesRequest = () => {
     customer_id: string;
   } | null>(null);
 
-  // Filter modal states
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('orderNumber');
 
@@ -169,11 +186,11 @@ const ManageSalesRequest = () => {
       const params: Record<string, any> = {};
 
       if (query) {
-        // Apply search filter if query exists
         if (filter === 'customerName') params.CUSTOMER_NAME = query;
         else if (filter === 'orderNumber') params.ORDER_NUMBER = query;
+        else if (filter === 'accountNumber')
+          params.CUSTOMER_ACCOUNT_NUMBER = query;
       } else {
-        // Only apply pagination if no search/filter
         params.limit = ITEMS_PER_PAGE;
         params.offset = offset;
       }
@@ -201,7 +218,6 @@ const ManageSalesRequest = () => {
     }
   };
 
-  // Debounced search
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
     setCurrentPage(1);
@@ -213,14 +229,6 @@ const ManageSalesRequest = () => {
 
   const handlePageChange = (page: number) => setCurrentPage(page);
   const totalPages = pagination?.hasMore ? currentPage + 1 : currentPage;
-
-  // if (isLoading) {
-  //   return (
-  //     <div className="flex justify-center items-center h-[calc(100vh-200px)]">
-  //       <Loader />
-  //     </div>
-  //   );
-  // }
 
   const breadcrumbs = [
     { label: 'Sales Requests', path: '/' },
@@ -271,6 +279,8 @@ const ManageSalesRequest = () => {
                   placeholder={`Search by ${
                     selectedFilter === 'customerName'
                       ? 'Customer Name'
+                      : selectedFilter === 'accountNumber'
+                      ? 'Account Number'
                       : 'Order Number'
                   }...`}
                   className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:border-transparent w-72"
@@ -295,6 +305,7 @@ const ManageSalesRequest = () => {
                   <th className="px-6 py-4 text-left">No.</th>
                   <th className="px-6 py-4 text-left">Order Number</th>
                   <th className="px-6 py-4 text-left">Customer Name</th>
+                  <th className="px-6 py-4 text-left">Account Number</th>
                   <th className="px-6 py-4 text-left">Order Date</th>
                   <th className="px-6 py-4 text-left">Total Amount</th>
                   <th className="px-6 py-4 text-left">Status</th>
@@ -324,6 +335,9 @@ const ManageSalesRequest = () => {
                       </td>
                       <td className="px-6 py-4">
                         {request.CUSTOMER_NAME || '-'}
+                      </td>
+                      <td className="px-6 py-4">
+                        {request.CUSTOMER_ACCOUNT_NUMBER || '-'}
                       </td>
                       <td className="px-6 py-4">
                         {request.ORDER_DATE
@@ -436,9 +450,9 @@ const ManageSalesRequest = () => {
         selectedFilter={selectedFilter}
         onFilterChange={setSelectedFilter}
         onApply={() => {
-          setCurrentPage(1); // reset page
-          setSearchTerm(''); // optional: clear search if needed
-          fetchSalesRequests(1, '', selectedFilter); // <-- fetch API with new filter
+          setCurrentPage(1);
+          setSearchTerm('');
+          fetchSalesRequests(1, '', selectedFilter);
         }}
       />
     </>

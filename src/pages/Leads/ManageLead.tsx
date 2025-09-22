@@ -55,8 +55,23 @@ const FilterModal = ({
 }: FilterModalProps) => {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
+  const [error, setError] = useState('');
 
   if (!isOpen) return null;
+
+  const handleApply = () => {
+    if (selectedFilter === 'DATE') {
+      if (!fromDate || !toDate) {
+        setError('Please select both From and To dates.');
+        return;
+      }
+      setError('');
+      onApply({ from: fromDate, to: toDate });
+    } else {
+      onApply();
+    }
+    onClose();
+  };
 
   return createPortal(
     <div className="fixed inset-0 z-[10000] flex items-center justify-center">
@@ -161,6 +176,7 @@ const FilterModal = ({
                   className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#c32033] focus:outline-none"
                 />
               </div>
+              {error && <p className="text-sm text-red-600">{error}</p>}
             </div>
           )}
         </div>
@@ -174,14 +190,7 @@ const FilterModal = ({
             Cancel
           </button>
           <button
-            onClick={() => {
-              if (selectedFilter === 'DATE') {
-                onApply({ from: fromDate, to: toDate });
-              } else {
-                onApply();
-              }
-              onClose();
-            }}
+            onClick={handleApply}
             className="px-6 py-2 bg-[#c32033] text-white font-semibold rounded-md hover:bg-[#a91b2e] transition-colors"
           >
             Apply Filters
@@ -218,22 +227,24 @@ const ManageLeads = () => {
     return () => clearTimeout(handler);
   }, [searchTerm]);
 
-  const fetchLeads = async (page: number) => {
+  const fetchLeads = async (page: number, overrideParams: any = null) => {
     try {
       setIsLoading(true);
 
-      const params: any = {};
+      const params: any = overrideParams || {};
 
-      if (selectedFilter === 'CUSTOMER_NAME' && debouncedSearch) {
-        params.CUSTOMER_NAME = debouncedSearch;
-      } else if (selectedFilter === 'LEAD_NUMBER' && debouncedSearch) {
-        params.LEAD_NUMBER = debouncedSearch;
-      } else if (selectedFilter === 'DATE' && dateFilter) {
-        params.from_date = dateFilter.from;
-        params.to_date = dateFilter.to;
-      } else {
-        params.limit = ITEMS_PER_PAGE;
-        params.offset = (page - 1) * ITEMS_PER_PAGE;
+      if (!overrideParams) {
+        if (selectedFilter === 'CUSTOMER_NAME' && debouncedSearch) {
+          params.CUSTOMER_NAME = debouncedSearch;
+        } else if (selectedFilter === 'LEAD_NUMBER' && debouncedSearch) {
+          params.LEAD_NUMBER = debouncedSearch;
+        } else if (selectedFilter === 'DATE' && dateFilter) {
+          params.from_date = dateFilter.from;
+          params.to_date = dateFilter.to;
+        } else {
+          params.limit = ITEMS_PER_PAGE;
+          params.offset = (page - 1) * ITEMS_PER_PAGE;
+        }
       }
 
       const response = await apiService.get(`/api/v1/leads/listLead`, {
@@ -270,14 +281,6 @@ const ManageLeads = () => {
       setCurrentPage(page);
     }
   };
-
-  // if (isLoading) {
-  //   return (
-  //     <div className="flex justify-center items-center h-[calc(100vh-200px)]">
-  //       <Loader />
-  //     </div>
-  //   );
-  // }
 
   const breadcrumbs = [
     { label: 'Leads', path: '/' },
@@ -463,20 +466,19 @@ const ManageLeads = () => {
         selectedFilter={selectedFilter}
         onFilterChange={setSelectedFilter}
         onApply={(dates) => {
-          setLeadsData([]); // clear old data so table is empty
+          setLeadsData([]); // clear old data
           setIsLoading(true); // show loader instantly
           setCurrentPage(1); // reset page
-          setSearchTerm(''); // ✅ clear search field
-          setDebouncedSearch(''); // ✅ reset debounced search too
+          setSearchTerm('');
+          setDebouncedSearch('');
 
           if (selectedFilter === 'DATE' && dates) {
             setDateFilter({ from: dates.from, to: dates.to });
+            fetchLeads(1, { from_date: dates.from, to_date: dates.to }); // ✅ API hit instantly
           } else {
             setDateFilter(undefined);
+            fetchLeads(1); // ✅ API hit instantly
           }
-
-          // ✅ Explicitly call fetch with new filters
-          fetchLeads(1);
         }}
       />
     </div>
