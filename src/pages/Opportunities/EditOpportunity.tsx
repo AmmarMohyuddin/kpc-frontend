@@ -4,8 +4,7 @@ import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 import apiService from '../../services/ApiService';
 import Loader from '../../common/Loader';
-import { customSelectStyles } from "../../styles/selectStyle.ts";
-
+import { customSelectStyles } from '../../styles/selectStyle.ts';
 
 interface OptionType {
   value: string;
@@ -226,7 +225,6 @@ const EditOpportunity = () => {
     }
   };
 
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[calc(100vh-200px)]">
@@ -239,13 +237,13 @@ const EditOpportunity = () => {
     <div className="flex flex-col gap-10">
       <div className="rounded-3xl border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-2 gap-4">
-        <h2 className="text-2xl font-semibold mb-3 text-black dark:text-white">
+          <h2 className="text-2xl font-semibold mb-3 text-black dark:text-white">
             Edit Opportunity
           </h2>
           <button
             onClick={() =>
               navigate('/opportunities/listing', {
-                state: { opportunity_id: id },
+                state: { opportunity_id: id, from: 'edit' },
               })
             }
             className="px-6 py-3 rounded-lg font-medium transition-colors bg-[#C32033] text-white hover:bg-[#A91B2E]"
@@ -352,7 +350,7 @@ const EditOpportunity = () => {
               onChange={handleHeaderInputChange}
               placeholder="Write your remarks here..."
               rows={2}
-                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
+              className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
             />
           </div>
 

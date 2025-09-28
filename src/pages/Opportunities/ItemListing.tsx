@@ -1,11 +1,4 @@
-import {
-  ChevronLeft,
-  ChevronRight,
-  Edit,
-  Trash2,
-  Search,
-  Filter,
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight, Edit, Trash2, Search } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import apiService from '../../services/ApiService';
@@ -34,7 +27,10 @@ const ItemListing = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const opportunityId = location.state?.opportunity_id || null;
-  console.log('Opportunity ID:', opportunityId);
+  const from = location.state?.from || null;
+  console.log('FROM:', from);
+  // const customerId = location.state?.customer_id || null;
+  console.log('Location State:', location.state);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<OpportunityLine | null>(
     null,
@@ -102,6 +98,14 @@ const ItemListing = () => {
     });
   };
 
+  const handleConfirmAddress = () => {
+    navigate('/opportunities/confirm-address', {
+      state: {
+        ...location.state, // ✅ send everything received in ItemListing
+      },
+    });
+  };
+
   const breadcrumbs = [
     { label: 'Opportunities', path: '/' },
     { label: 'Opportunity Details', path: '', isActive: true },
@@ -140,16 +144,33 @@ const ItemListing = () => {
             <h2 className="text-2xl font-semibold mb-6 text-black">
               Opportunity Details
             </h2>
-            <button
-              onClick={() =>
-                navigate('/opportunities/create', {
-                  state: { step: 2, opportunityId: opportunityId },
-                })
-              }
-              className="px-6 py-3 rounded-lg font-medium transition-colors bg-[#C32033] text-white hover:bg-[#A91B2E]"
-            >
-              Add More Items
-            </button>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() =>
+                  navigate('/opportunities/create', {
+                    state: {
+                      step: 2,
+                      opportunityId: opportunityId,
+                      from: from,
+                    },
+                  })
+                }
+                className="px-6 py-3 rounded-lg font-medium transition-colors bg-[#C32033] text-white hover:bg-[#A91B2E]"
+              >
+                Add More Items
+              </button>
+
+              {/* Show Confirm Address button only when from === 'convert' */}
+              {from === 'convert' && (
+                <button
+                  onClick={handleConfirmAddress}
+                  className="px-6 py-3 rounded-lg font-medium transition-colors bg-[#C32033] text-white hover:bg-[#A91B2E]"
+                >
+                  Confirm Address
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Breadcrumbs & Search */}
@@ -179,16 +200,12 @@ const ItemListing = () => {
                   }}
                 />
               </div>
-              <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                <Filter className="w-4 h-4 text-gray-600" />
-              </button>
             </div>
           </div>
 
           {/* Table */}
           <div className="overflow-x-auto mt-6">
             <table className="lead-table">
-
               <thead>
                 <tr className="bg-[#C32033] text-white">
                   <th className="px-6 py-4 text-left">#</th>
@@ -203,8 +220,10 @@ const ItemListing = () => {
                   paginatedLines.map((line, index) => (
                     <tr
                       key={line.OPPORTUNITY_DETAIL_ID}
-                      className={`lead-row ${index % 2 === 0 ? "lead-row-even" : "lead-row-odd"}`}
-                  >
+                      className={`lead-row ${
+                        index % 2 === 0 ? 'lead-row-even' : 'lead-row-odd'
+                      }`}
+                    >
                       <td className="px-6 py-4">{startIndex + index + 1}</td>
                       <td className="px-6 py-4">{line.DESCRIPTION}</td>
                       <td className="px-6 py-4">{line.QUANTITY}</td>
@@ -262,10 +281,11 @@ const ItemListing = () => {
                   <button
                     key={page}
                     onClick={() => handlePageChange(page)}
-                    className={`px-3 py-2 rounded font-medium transition-colors ${page === currentPage
+                    className={`px-3 py-2 rounded font-medium transition-colors ${
+                      page === currentPage
                         ? 'bg-[#C32033] text-white'
                         : 'text-gray-600 hover:bg-gray-100'
-                      }`}
+                    }`}
                   >
                     {page}
                   </button>

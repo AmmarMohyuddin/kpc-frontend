@@ -50,6 +50,7 @@ const ManageFollowUp = lazy(() => import('../pages/Leads/manageFollowUp'));
 const OppManageFollowUp = lazy(() => import('../pages/Opportunities/ManageFollowUp'));
 const DetailFollowUp = lazy(() => import('../pages/Leads/DetailFollowUp'));
 const ConvertToSalesRequest = lazy(() => import('../pages/Opportunities/ConvertSalesRequest'));
+const ConfirmOppAddress = lazy(() => import('../pages/Opportunities/ConfirmAddress'));
 
 const coreRoutes = [
   {
@@ -151,6 +152,11 @@ const coreRoutes = [
     path: '/opportunities/listing',
     title: 'Opportunity Listing',
     component: Itemlisting,
+  },
+        {
+    path: '/opportunities/confirm-address',
+    title: 'Confirm Address',
+    component: ConfirmOppAddress,
   },
         {
     path: '/opportunities/follow-up',

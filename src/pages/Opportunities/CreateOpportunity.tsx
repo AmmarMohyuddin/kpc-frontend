@@ -4,8 +4,7 @@ import toast from 'react-hot-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
 import apiService from '../../services/ApiService';
 import Loader from '../../common/Loader';
-import { customSelectStyles } from "../../styles/selectStyle.ts";
-
+import { customSelectStyles } from '../../styles/selectStyle.ts';
 
 interface OptionType {
   value: string;
@@ -50,6 +49,7 @@ const CreateOpportunity = () => {
   const [currentStep, setCurrentStep] = useState(
     location.state?.step || 1, // 👈 default is 1, but will be 2 if passed
   ); // 1: Header, 2: Details
+  const from = location.state?.from || null;
   const opportunityId = location.state?.opportunityId || null;
   const lead_id = location.state?.lead_id || null;
   const [salesPersons, setSalesPersons] = useState<any[]>([]);
@@ -322,7 +322,7 @@ const CreateOpportunity = () => {
         if (response.status === 201) {
           toast.success('Opportunity Detail added!');
           navigate(`/opportunities/listing`, {
-            state: { opportunity_id: opportunityId },
+            state: { opportunity_id: opportunityId, from: from },
           });
         } else {
           toast.error('Failed to add opportunity detail.');
@@ -411,7 +411,7 @@ const CreateOpportunity = () => {
                       name="generation_date"
                       value={opportunityHeader.generation_date}
                       onChange={handleHeaderInputChange}
-                      className='custom-input'
+                      className="custom-input"
                       // className="custom-input-date w-full text-[#C32033] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 outline-none focus:border-[#C32033]"
                     />
                   </div>
@@ -472,7 +472,7 @@ const CreateOpportunity = () => {
                       name="close_date"
                       value={opportunityHeader.close_date}
                       onChange={handleHeaderInputChange}
-                      className='custom-input'
+                      className="custom-input"
                       // className="custom-input-date w-full text-[#C32033] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 outline-none focus:border-[#C32033]"
                     />
                   </div>
@@ -490,7 +490,7 @@ const CreateOpportunity = () => {
                   onChange={handleHeaderInputChange}
                   placeholder="Write your remarks here..."
                   rows={2}
-                  className='custom-input'
+                  className="custom-input"
                   // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#c32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] resize-none"
                 />
               </div>
@@ -555,7 +555,7 @@ const CreateOpportunity = () => {
                           value={opportunityDetails.unit_of_measure}
                           onChange={handleDetailsInputChange}
                           placeholder="Unit of Measure"
-                           className='custom-input'
+                          className="custom-input"
                           // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
                         />
                       </div>
@@ -571,7 +571,7 @@ const CreateOpportunity = () => {
                           value={opportunityDetails.sub_category}
                           onChange={handleDetailsInputChange}
                           placeholder="Sub Category"
-                           className='custom-input'
+                          className="custom-input"
                           // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
                         />
                       </div>
@@ -588,7 +588,7 @@ const CreateOpportunity = () => {
                           min={0}
                           step="any"
                           placeholder="Enter Price"
-                           className='custom-input'
+                          className="custom-input"
                           // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
                         />
                       </div>
@@ -603,7 +603,7 @@ const CreateOpportunity = () => {
                           step="any"
                           value={opportunityDetails.line_amount}
                           readOnly
-                           className='custom-input'
+                          className="custom-input"
                           // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
                         />
                       </div>
@@ -621,7 +621,7 @@ const CreateOpportunity = () => {
                           value={opportunityDetails.description}
                           onChange={handleDetailsInputChange}
                           placeholder="Description"
-                          className='custom-input'
+                          className="custom-input"
                           // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
                         />
                       </div>
@@ -636,7 +636,7 @@ const CreateOpportunity = () => {
                           value={opportunityDetails.instructions}
                           onChange={handleDetailsInputChange}
                           placeholder="Enter Instructions"
-                           className='custom-input'
+                          className="custom-input"
                           // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
                         />
                       </div>
@@ -652,7 +652,7 @@ const CreateOpportunity = () => {
                           onChange={handleDetailsInputChange}
                           min={0}
                           placeholder="Enter Order Quantity"
-                           className='custom-input'
+                          className="custom-input"
                           // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
                         />
                       </div>
@@ -666,7 +666,7 @@ const CreateOpportunity = () => {
                           name="requested_ship_date"
                           value={opportunityDetails.requested_ship_date}
                           onChange={handleDetailsInputChange}
-                           className='custom-input'
+                          className="custom-input"
                           // className="custom-input-date w-full text-[#C32033] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 outline-none focus:border-[#C32033]"
                         />
                       </div>
@@ -679,7 +679,7 @@ const CreateOpportunity = () => {
                           type="text"
                           value={'Pending'}
                           readOnly
-                           className='custom-input'
+                          className="custom-input"
                           // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
                         />
                       </div>

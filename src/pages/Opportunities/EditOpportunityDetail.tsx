@@ -4,13 +4,13 @@ import toast from 'react-hot-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Loader from '../../common/Loader';
 import apiService from '../../services/ApiService';
-import { customSelectStyles } from "../../styles/selectStyle.ts";
-
+import { customSelectStyles } from '../../styles/selectStyle.ts';
 
 const EditOpportunityDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const opportunityDetail = location.state?.line;
+  console.log('Location State:', location.state);
   console.log('Editing Opportunity Detail:', opportunityDetail);
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -71,7 +71,7 @@ const EditOpportunityDetail = () => {
       line_amount:
         name === 'order_quantity' || name === 'price'
           ? (name === 'order_quantity' ? Number(value) : prev.order_quantity) *
-          (name === 'price' ? Number(value) : prev.price)
+            (name === 'price' ? Number(value) : prev.price)
           : prev.line_amount,
     }));
   };
@@ -177,7 +177,6 @@ const EditOpportunityDetail = () => {
     }
   };
 
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[calc(100vh-200px)]">
@@ -187,181 +186,185 @@ const EditOpportunityDetail = () => {
   }
 
   return (
-    <div className="flex flex-col gap-10">   
+    <div className="flex flex-col gap-10">
       <div className="rounded-3xl border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
         <h2 className="text-2xl font-semibold mb-3 text-black dark:text-white">
-        Edit Opportunity
-      </h2>
+          Edit Opportunity
+        </h2>
 
-      <form className="space-y-6" onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* LEFT SIDE */}
-          <div className="space-y-6">
-            <div>
-              <label className="block text-md font-medium text-black mb-2">
-                Item Number
-              </label>
-              <Select
-                name="item_number"
-                value={
-                  itemsOptions.find(
-                    (o) => o.value === opportunityDetails.item_number,
-                  ) || null
-                }
-                onChange={handleItemNumberSelect}
-                options={itemsOptions}
-                placeholder="Select Item Number"
-                isSearchable
-                styles={customSelectStyles}
-              />
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* LEFT SIDE */}
+            <div className="space-y-6">
+              <div>
+                <label className="block text-md font-medium text-black mb-2">
+                  Item Number
+                </label>
+                <Select
+                  name="item_number"
+                  value={
+                    itemsOptions.find(
+                      (o) => o.value === opportunityDetails.item_number,
+                    ) || null
+                  }
+                  onChange={handleItemNumberSelect}
+                  options={itemsOptions}
+                  placeholder="Select Item Number"
+                  isSearchable
+                  styles={customSelectStyles}
+                />
+              </div>
+
+              <div>
+                <label className="block text-md font-medium text-black mb-2">
+                  UOM
+                </label>
+                <input
+                  type="text"
+                  name="unit_of_measure"
+                  readOnly
+                  value={opportunityDetails.unit_of_measure}
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
+                />
+              </div>
+
+              <div>
+                <label className="block text-md font-medium text-black mb-2">
+                  Sub Category
+                </label>
+                <input
+                  type="text"
+                  name="sub_category"
+                  readOnly
+                  value={opportunityDetails.sub_category}
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
+                />
+              </div>
+
+              <div>
+                <label className="block text-md font-medium text-black mb-2">
+                  Price
+                </label>
+                <input
+                  type="number"
+                  name="price"
+                  value={opportunityDetails.price}
+                  onChange={handlePrice}
+                  min={0}
+                  step="any"
+                  placeholder="Enter Price"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
+                />
+              </div>
+
+              <div>
+                <label className="block text-md font-medium text-black mb-1">
+                  Line Amount
+                </label>
+                <input
+                  type="number"
+                  name="line_amount"
+                  step="any"
+                  value={opportunityDetails.line_amount}
+                  readOnly
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="block text-md font-medium text-black mb-2">
-                UOM
-              </label>
-              <input
-                type="text"
-                name="unit_of_measure"
-                readOnly
-                value={opportunityDetails.unit_of_measure}
-                className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
-              />
-            </div>
+            {/* RIGHT SIDE */}
+            <div className="space-y-6">
+              <div>
+                <label className="block text-md font-medium text-black mb-2">
+                  Description
+                </label>
+                <input
+                  type="text"
+                  name="description"
+                  readOnly
+                  value={opportunityDetails.description}
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
+                />
+              </div>
 
-            <div>
-              <label className="block text-md font-medium text-black mb-2">
-                Sub Category
-              </label>
-              <input
-                type="text"
-                name="sub_category"
-                readOnly
-                value={opportunityDetails.sub_category}
-                className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
-              />
-            </div>
+              <div>
+                <label className="block text-md font-medium text-black mb-2">
+                  Instructions (Optional)
+                </label>
+                <input
+                  type="text"
+                  name="instructions"
+                  value={opportunityDetails.instructions}
+                  onChange={handleDetailsInputChange}
+                  placeholder="Enter Instructions"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
+                />
+              </div>
 
-            <div>
-              <label className="block text-md font-medium text-black mb-2">
-                Price
-              </label>
-              <input
-                type="number"
-                name="price"
-                value={opportunityDetails.price}
-                onChange={handlePrice}
-                min={0}
-                step="any"
-                placeholder="Enter Price"
-                className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
-              />
-            </div>
+              <div>
+                <label className="block text-md font-medium text-black mb-2">
+                  Order Quantity
+                </label>
+                <input
+                  type="number"
+                  name="order_quantity"
+                  value={opportunityDetails.order_quantity}
+                  onChange={handleDetailsInputChange}
+                  min={0}
+                  placeholder="Enter Order Quantity"
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
+                />
+              </div>
 
-            <div>
-              <label className="block text-md font-medium text-black mb-1">
-                Line Amount
-              </label>
-              <input
-                type="number"
-                name="line_amount"
-                step="any"
-                value={opportunityDetails.line_amount}
-                readOnly
-                className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
-              />
+              <div>
+                <label className="block text-md font-medium text-black mb-2">
+                  Requested Shipment Date
+                </label>
+                <input
+                  type="date"
+                  name="requested_ship_date"
+                  value={opportunityDetails.requested_ship_date}
+                  onChange={handleDetailsInputChange}
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
+                />
+              </div>
+
+              <div>
+                <label className="block text-md font-medium text-black mb-1">
+                  Status
+                </label>
+                <input
+                  type="text"
+                  value={opportunityDetails.status}
+                  readOnly
+                  className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
+                />
+              </div>
             </div>
           </div>
 
-          {/* RIGHT SIDE */}
-          <div className="space-y-6">
-            <div>
-              <label className="block text-md font-medium text-black mb-2">
-                Description
-              </label>
-              <input
-                type="text"
-                name="description"
-                readOnly
-                value={opportunityDetails.description}
-                className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
-              />
-            </div>
-
-            <div>
-              <label className="block text-md font-medium text-black mb-2">
-                Instructions (Optional)
-              </label>
-              <input
-                type="text"
-                name="instructions"
-                value={opportunityDetails.instructions}
-                onChange={handleDetailsInputChange}
-                placeholder="Enter Instructions"
-                className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
-              />
-            </div>
-
-            <div>
-              <label className="block text-md font-medium text-black mb-2">
-                Order Quantity
-              </label>
-              <input
-                type="number"
-                name="order_quantity"
-                value={opportunityDetails.order_quantity}
-                onChange={handleDetailsInputChange}
-                min={0}
-                placeholder="Enter Order Quantity"
-                className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
-              />
-            </div>
-
-            <div>
-              <label className="block text-md font-medium text-black mb-2">
-                Requested Shipment Date
-              </label>
-              <input
-                type="date"
-                name="requested_ship_date"
-                value={opportunityDetails.requested_ship_date}
-                onChange={handleDetailsInputChange}
-                className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
-              />
-            </div>
-
-            <div>
-              <label className="block text-md font-medium text-black mb-1">
-                Status
-              </label>
-              <input
-                type="text"
-                value={opportunityDetails.status}
-                readOnly
-                className="w-full px-4 py-3 bg-[#F4F4F4] border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200"
-              />
-            </div>
+          <div className="flex gap-4 pt-4">
+            <button
+              type="button"
+              onClick={() =>
+                navigate('/opportunities/listing', {
+                  state: { opportunity_id: opportunityDetail.OPPORTUNITY_ID },
+                })
+              }
+              className="w-[160px] h-[50px] rounded border border-[#C32033] text-md font-medium text-[#C32033] hover:bg-gray-2 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="w-[160px] h-[50px] rounded bg-[#C32033] text-md font-medium text-white hover:bg-[#A91B2E] transition-colors"
+              disabled={loading}
+            >
+              {loading ? 'Updating...' : 'Update'}
+            </button>
           </div>
-        </div>
-
-        <div className="flex gap-4 pt-4">
-          <button
-            type="button"
-            onClick={() => navigate('/opportunities/manage')}
-            className="w-[160px] h-[50px] rounded border border-[#C32033] text-md font-medium text-[#C32033] hover:bg-gray-2 transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="w-[160px] h-[50px] rounded bg-[#C32033] text-md font-medium text-white hover:bg-[#A91B2E] transition-colors"
-            disabled={loading}
-          >
-            {loading ? 'Updating...' : 'Update'}
-          </button>
-        </div>
-      </form>
-    </div>
+        </form>
+      </div>
     </div>
   );
 };

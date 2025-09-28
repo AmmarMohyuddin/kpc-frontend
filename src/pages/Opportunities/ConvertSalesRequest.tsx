@@ -5,8 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import apiService from '../../services/ApiService';
 import toast from 'react-hot-toast';
 import Loader from '../../common/Loader';
-import { customSelectStyles } from "../../styles/selectStyle.ts";
-
+import { customSelectStyles } from '../../styles/selectStyle.ts';
 
 interface OptionType {
   value: string;
@@ -128,36 +127,57 @@ const ConvertToSalesRequest = () => {
   }, [paymentTerm]);
 
   // Handle save functionality
+  // const handleSave = async () => {
+  //   try {
+  //     // Prepare the data to be saved
+  //     const saveData = {
+  //       lead_id,
+  //       opportunity_id,
+  //       opportunity_details,
+  //       customer_details: customerFormData,
+  //       order_status: 'Pending',
+  //     };
+
+  //     console.log('Saving data:', saveData);
+
+  //     // Make API call to save the converted sales request
+  //     const response = await apiService.post(
+  //       '/api/v1/opportunities/convertToSales',
+  //       saveData,
+  //     );
+
+  //     if (response?.status === 201) {
+  //       toast.success('Sales request created successfully from opportunity');
+  //       navigate('/sales-request/manage');
+  //     } else {
+  //       console.error('Failed to create sales request:', response);
+  //       toast.error('Failed to create sales request.');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error creating sales request:', error);
+  //     toast.error('Failed to create sales request.');
+  //   }
+  // };
   const handleSave = async () => {
-    try {
-      // Prepare the data to be saved
-      const saveData = {
-        lead_id,
-        opportunity_id,
-        opportunity_details,
-        customer_details: customerFormData,
-        order_status: 'Pending',
-      };
+    // Prepare the data to be passed
+    const saveData = {
+      lead_id,
+      opportunity_id,
+      opportunity_details,
+      customer_details: customerFormData,
+      order_status: 'Pending',
+    };
 
-      console.log('Saving data:', saveData);
+    console.log('Passing data in state (not calling API):', saveData);
 
-      // Make API call to save the converted sales request
-      const response = await apiService.post(
-        '/api/v1/opportunities/convertToSales',
-        saveData,
-      );
-
-      if (response?.status === 201) {
-        toast.success('Sales request created successfully from opportunity');
-        navigate('/sales-request/manage');
-      } else {
-        console.error('Failed to create sales request:', response);
-        toast.error('Failed to create sales request.');
-      }
-    } catch (error) {
-      console.error('Error creating sales request:', error);
-      toast.error('Failed to create sales request.');
-    }
+    // Navigate to opportunities listing with state
+    navigate('/opportunities/listing', {
+      state: {
+        ...saveData,
+        from: 'convert',
+        customer_id: customerFormData.customer_id,
+      },
+    });
   };
 
   // Handlers
@@ -307,33 +327,12 @@ const ConvertToSalesRequest = () => {
     );
   }
 
-
   return (
     <div className="flex flex-col gap-10">
       <div className="rounded-3xl border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
         <h2 className="text-2xl font-semibold mb-3 text-black dark:text-white">
           Convert Opportunity to Sales Request
         </h2>
-
-        {/* Display opportunity information
-        {opportunity_id && (
-          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-            <h1 className="text-lg font-medium text-black mb-2">
-              Opportunity Information
-            </h1>
-            <p>
-              <strong>Opportunity ID:</strong> {opportunity_id}
-            </p>
-            {opportunity_details && (
-              <div className="mt-2">
-                <p>
-                  <strong>Details:</strong>{' '}
-                  {JSON.stringify(opportunity_details)}
-                </p>
-              </div>
-            )}
-          </div>
-        )} */}
 
         <div className="flex items-center gap-2 text-xl text-black font-bold">
           <h1>Customer Information</h1>
