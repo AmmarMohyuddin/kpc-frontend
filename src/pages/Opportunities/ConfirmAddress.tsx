@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Select from 'react-select';
 import apiService from '../../services/ApiService';
 import Loader from '../../common/Loader';
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 
 interface AddressFormData {
   name: string;
