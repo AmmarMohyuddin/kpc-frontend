@@ -126,38 +126,47 @@ const ConvertToSalesRequest = () => {
     }));
   }, [paymentTerm]);
 
-  // Handle save functionality
-  // const handleSave = async () => {
-  //   try {
-  //     // Prepare the data to be saved
-  //     const saveData = {
-  //       lead_id,
-  //       opportunity_id,
-  //       opportunity_details,
-  //       customer_details: customerFormData,
-  //       order_status: 'Pending',
-  //     };
+  // NEW: Auto-select when there's only one option for Account Number
+  useEffect(() => {
+    if (accountNumberOptions.length === 1 && !customerFormData.account_number) {
+      setCustomerFormData((prev) => ({
+        ...prev,
+        account_number: accountNumberOptions[0].value,
+      }));
+    }
+  }, [accountNumberOptions, customerFormData.account_number]);
 
-  //     console.log('Saving data:', saveData);
+  // NEW: Auto-select when there's only one option for Address
+  useEffect(() => {
+    if (addressLineOptions.length === 1 && !customerFormData.address) {
+      setCustomerFormData((prev) => ({
+        ...prev,
+        address: addressLineOptions[0].value,
+      }));
+    }
+  }, [addressLineOptions, customerFormData.address]);
 
-  //     // Make API call to save the converted sales request
-  //     const response = await apiService.post(
-  //       '/api/v1/opportunities/convertToSales',
-  //       saveData,
-  //     );
+  // NEW: Auto-select when there's only one option for Payment Term
+  useEffect(() => {
+    if (paymentTermOptions.length === 1 && !customerFormData.payment_term) {
+      setCustomerFormData((prev) => ({
+        ...prev,
+        payment_term: paymentTermOptions[0].value,
+      }));
+    }
+  }, [paymentTermOptions, customerFormData.payment_term]);
 
-  //     if (response?.status === 201) {
-  //       toast.success('Sales request created successfully from opportunity');
-  //       navigate('/sales-request/manage');
-  //     } else {
-  //       console.error('Failed to create sales request:', response);
-  //       toast.error('Failed to create sales request.');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error creating sales request:', error);
-  //     toast.error('Failed to create sales request.');
-  //   }
-  // };
+  // NEW: Auto-select salesperson if there's only one option
+  useEffect(() => {
+    if (salesPersonOptions.length === 1 && !customerFormData.salesperson_id) {
+      setCustomerFormData((prev) => ({
+        ...prev,
+        salesperson_id: salesPersonOptions[0].value,
+        salesperson_name: salesPersonOptions[0].label,
+      }));
+    }
+  }, [salesPersonOptions, customerFormData.salesperson_id]);
+
   const handleSave = async () => {
     // Prepare the data to be passed
     const saveData = {
@@ -186,6 +195,7 @@ const ConvertToSalesRequest = () => {
     setCustomerFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // UPDATED: Handle customer select with auto-selection
   const handleCustomerSelect = async (selectedOption: any) => {
     if (selectedOption) {
       setCustomerFormData((prevData) => ({
@@ -202,18 +212,43 @@ const ConvertToSalesRequest = () => {
           `/api/v1/customers/list?customer_name=${selectedOption.label}`,
           {},
         );
-        setAccountNumbers(response.data);
+        setAccountNumbers(response.data || []);
+        setAddressLine([]); // Reset address lines
+        setPaymentTerm([]); // Reset payment terms
+
+        // Auto-select if there's only one account number
+        if (response.data && response.data.length === 1) {
+          setCustomerFormData((prevData) => ({
+            ...prevData,
+            account_number: response.data[0],
+          }));
+
+          // Fetch address and payment terms for the auto-selected account
+          try {
+            const addressResponse = await apiService.get(
+              `/api/v1/customers/list?customer_name=${selectedOption.label}&account_number=${response.data[0]}`,
+              {},
+            );
+            setAddressLine(addressResponse.data?.addressLines || []);
+            setPaymentTerm(addressResponse.data?.paymentTerms || []);
+          } catch (error) {
+            console.error('Error fetching address:', error);
+          }
+        }
       } catch (error) {
         console.error('Error fetching account numbers:', error);
       }
     }
   };
 
+  // UPDATED: Handle account number select with auto-selection
   const handleAccountNumberSelect = async (selectedOption: any) => {
     if (selectedOption) {
       setCustomerFormData((prevData) => ({
         ...prevData,
         account_number: selectedOption.value,
+        address: '', // Reset address when account changes
+        payment_term: '', // Reset payment term when account changes
       }));
 
       try {
@@ -256,45 +291,6 @@ const ConvertToSalesRequest = () => {
       }));
     }
   };
-
-  // Custom react-select styles
-  // const customSelectStyles = {
-  //   control: (provided: any, state: any) => ({
-  //     ...provided,
-  //     minHeight: '50px',
-  //     height: '50px',
-  //     borderColor: state.isFocused ? '#C32033' : provided.borderColor,
-  //     boxShadow: state.isFocused ? '0 0 0 1px #C32033' : provided.boxShadow,
-  //     '&:hover': {
-  //       borderColor: state.isFocused ? '#C32033' : provided.borderColor,
-  //     },
-  //   }),
-  //   valueContainer: (provided: any) => ({
-  //     ...provided,
-  //     height: '50px',
-  //     padding: '0 8px',
-  //   }),
-  //   input: (provided: any) => ({
-  //     ...provided,
-  //     margin: '0px',
-  //   }),
-  //   option: (provided: any, state: any) => ({
-  //     ...provided,
-  //     backgroundColor: state.isSelected
-  //       ? '#FFD7D7'
-  //       : state.isFocused
-  //       ? '#FFD7D7'
-  //       : provided.backgroundColor,
-  //     color: '#000',
-  //     '&:active': {
-  //       backgroundColor: state.isSelected ? '#FFD7D7' : '#FFD7D7',
-  //     },
-  //   }),
-  //   singleValue: (provided: any) => ({
-  //     ...provided,
-  //     color: '#C32033',
-  //   }),
-  // };
 
   // For Customer Name dropdown virtualization
   const MenuList = (props: any) => {
@@ -388,7 +384,11 @@ const ConvertToSalesRequest = () => {
                   }
                   onChange={handleAddressLineSelect}
                   options={addressLineOptions}
-                  placeholder="Select Address"
+                  placeholder={
+                    addressLineOptions.length === 1
+                      ? addressLineOptions[0].label
+                      : 'Select Address'
+                  }
                   isSearchable
                   styles={customSelectStyles}
                 />
@@ -412,7 +412,11 @@ const ConvertToSalesRequest = () => {
                   }
                   onChange={handleSalesPersonChange}
                   options={salesPersonOptions}
-                  placeholder="Select Sales Person"
+                  placeholder={
+                    salesPersonOptions.length === 1
+                      ? salesPersonOptions[0].label
+                      : 'Select Sales Person'
+                  }
                   isSearchable
                   styles={customSelectStyles}
                 />
@@ -441,7 +445,11 @@ const ConvertToSalesRequest = () => {
                   }
                   onChange={handleAccountNumberSelect}
                   options={accountNumberOptions}
-                  placeholder="Select Account Number"
+                  placeholder={
+                    accountNumberOptions.length === 1
+                      ? accountNumberOptions[0].label
+                      : 'Select Account Number'
+                  }
                   isSearchable
                   styles={customSelectStyles}
                 />
@@ -467,7 +475,11 @@ const ConvertToSalesRequest = () => {
                   }
                   onChange={handlePaymentTermSelect}
                   options={paymentTermOptions}
-                  placeholder="Select Payment Term"
+                  placeholder={
+                    paymentTermOptions.length === 1
+                      ? paymentTermOptions[0].label
+                      : 'Select Payment Term'
+                  }
                   isSearchable
                   styles={customSelectStyles}
                 />
