@@ -7,8 +7,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import apiService from '../../services/ApiService';
 import toast from 'react-hot-toast';
 import Loader from '../../common/Loader';
-import { customSelectStyles } from "../../styles/selectStyle.ts";
-
+import { customSelectStyles } from '../../styles/selectStyle.ts';
 
 type Address = string;
 
@@ -47,7 +46,15 @@ type CustomerFormData = {
   salesperson_id: string;
   salesperson_name: string;
   status: string;
+  requested_ship_date: string;
 };
+
+interface ItemDetail {
+  unit_of_measure: string;
+  sub_cat: string;
+  description: string;
+  base_price?: number;
+}
 
 const CreateSalesRequest = () => {
   const location = useLocation();
@@ -57,6 +64,10 @@ const CreateSalesRequest = () => {
   const [salesPersons, setSalesPersons] = useState<any[]>([]);
   const [items, setItems] = useState<any[]>([]);
   const [buttonMode, setButtonMode] = useState<'save' | 'update'>('save');
+
+  // Consolidated item detail state like in CreateOpportunity
+  const [itemDetail, setItemDetail] = useState<ItemDetail | null>(null);
+  const [price, setPrice] = useState<number>(0);
 
   const [customerFormData, setCustomerFormData] = useState<CustomerFormData>({
     customer_id: '',
@@ -76,14 +87,13 @@ const CreateSalesRequest = () => {
     line_amount: 0.0,
     salesperson_id: '',
     salesperson_name: '',
-    status: '',
+    status: 'Pending',
+    requested_ship_date: new Date().toISOString().split('T')[0],
   });
 
   const [accountNumbers, setAccountNumbers] = useState([]);
   const [addressLine, setAddressLine] = useState<string[]>([]);
   const [paymentTerm, setPaymentTerm] = useState<string[]>([]);
-  const [itemDetail, setItemDetail] = useState<string[]>([]);
-  const [price, setPrice] = useState<Price[]>([]);
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
 
@@ -92,16 +102,11 @@ const CreateSalesRequest = () => {
   const salesPersonOptions = salesPersons
     .filter(
       (person: any) => person.employee_number === loggedInUser.person_number,
-    ) // only logged-in salesperson
+    )
     .map((person: any) => ({
       value: person._id,
       label: person.salesperson_name,
     }));
-
-  // const salesPersonOptions = salesPersons.map((person: any) => ({
-  //   value: person._id,
-  //   label: person.salesperson_name,
-  // }));
 
   const customerOptions = customers.map((customer: any) => ({
     value: customer._id,
@@ -128,45 +133,141 @@ const CreateSalesRequest = () => {
     label: item.item_detail,
   }));
 
-  const unitOfMeasureOptions = itemDetail.map((item: any) => ({
-    value: item.unit_of_measure,
-    label: item.unit_of_measure,
-  }));
+  // NEW: Auto-select when there's only one option for Account Number
+  useEffect(() => {
+    if (accountNumberOptions.length === 1 && !customerFormData.account_number) {
+      setCustomerFormData((prev) => ({
+        ...prev,
+        account_number: accountNumberOptions[0].value,
+      }));
+    }
+  }, [accountNumberOptions, customerFormData.account_number]);
 
-  const subCategoryOptions = itemDetail.map((item: any) => ({
-    value: item.sub_cat,
-    label: item.sub_cat,
-  }));
+  // NEW: Auto-select when there's only one option for Address
+  useEffect(() => {
+    if (addressLineOptions.length === 1 && !customerFormData.address) {
+      setCustomerFormData((prev) => ({
+        ...prev,
+        address: addressLineOptions[0].value,
+      }));
+    }
+  }, [addressLineOptions, customerFormData.address]);
 
-  const descriptionOptions = itemDetail.map((item: any) => ({
-    value: item.description,
-    label: item.description,
-  }));
+  // NEW: Auto-select when there's only one option for Payment Term
+  useEffect(() => {
+    if (paymentTermOptions.length === 1 && !customerFormData.payment_term) {
+      setCustomerFormData((prev) => ({
+        ...prev,
+        payment_term: paymentTermOptions[0].value,
+      }));
+    }
+  }, [paymentTermOptions, customerFormData.payment_term]);
 
+  // NEW: Auto-select salesperson if there's only one option
+  useEffect(() => {
+    if (salesPersonOptions.length === 1 && !customerFormData.salesperson_id) {
+      setCustomerFormData((prev) => ({
+        ...prev,
+        salesperson_id: salesPersonOptions[0].value,
+        salesperson_name: salesPersonOptions[0].label,
+      }));
+    }
+  }, [salesPersonOptions, customerFormData.salesperson_id]);
+
+  // Fixed: Auto-calculation for price and quantity changes
   const handlePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = parseFloat(e.target.value) || 0;
-    setCustomerFormData((prevData) => ({
-      ...prevData,
-      price: newValue,
-      line_amount: prevData.order_quantity * newValue,
+    const value = Number(e.target.value);
+    setPrice(value);
+    setCustomerFormData((prev) => ({
+      ...prev,
+      price: value,
+      line_amount: prev.order_quantity * value,
     }));
   };
 
-  // useEffect(() => {
-  //   if (addressLineOptions.length === 1) {
-  //     setCustomerFormData((prev) => ({
-  //       ...prev,
-  //       address: addressLineOptions[0].value,
-  //     }));
-  //   }
+  // Fixed: Handle quantity change with auto-calculation
+  const handleDetailsInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    setCustomerFormData((prev) => ({
+      ...prev,
+      [name]:
+        name === 'order_quantity' || name === 'price' || name === 'line_amount'
+          ? Number(value)
+          : value,
+    }));
 
-  //   if (accountNumberOptions.length === 1) {
-  //     setCustomerFormData((prev) => ({
-  //       ...prev,
-  //       account_number: accountNumberOptions[0].value,
-  //     }));
-  //   }
-  // }, [addressLineOptions, accountNumberOptions]);
+    // Recalculate line amount if quantity or price changes
+    if (name === 'order_quantity' || name === 'price') {
+      const quantity =
+        name === 'order_quantity'
+          ? Number(value)
+          : customerFormData.order_quantity;
+      const priceValue =
+        name === 'price' ? Number(value) : customerFormData.price;
+      setCustomerFormData((prev) => ({
+        ...prev,
+        line_amount: quantity * priceValue,
+      }));
+    }
+  };
+
+  // Fixed: Handle item selection with auto-fill like CreateOpportunity
+  const handleItemNumberSelect = async (selectedOption: any) => {
+    if (!selectedOption) return;
+
+    // First update with the selected item number
+    setCustomerFormData((prevData) => ({
+      ...prevData,
+      item_number: selectedOption.value,
+      item_detail: selectedOption.label,
+      sub_category: '',
+      description: '',
+      unit_of_measure: '',
+      price: 0,
+      line_amount: 0,
+    }));
+
+    try {
+      // Fetch item details and price in parallel like CreateOpportunity
+      const [itemDetailRes, priceRes] = await Promise.all([
+        apiService.get(`/api/v1/items/detail/${selectedOption.value}`, {}),
+        apiService.get(`/api/v1/prices/detail/${selectedOption.value}`, {}),
+      ]);
+
+      const itemData = itemDetailRes.data[0];
+      const priceData = priceRes.data;
+
+      if (itemData) {
+        setItemDetail(itemData);
+        setCustomerFormData((prevData) => ({
+          ...prevData,
+          sub_category: itemData.sub_cat || '',
+          description: itemData.description || '',
+          unit_of_measure: itemData.unit_of_measure || '',
+        }));
+      }
+
+      if (priceData && priceData.length > 0) {
+        const basePrice = priceData[0].base_price || 0;
+        setPrice(basePrice);
+        setCustomerFormData((prevData) => ({
+          ...prevData,
+          price: basePrice,
+          line_amount: prevData.order_quantity * basePrice,
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching item details:', error);
+      toast.error('Failed to fetch item details');
+    }
+  };
+
+  // Remove the old handleChange and use handleDetailsInputChange for all inputs
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleDetailsInputChange(e);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -176,7 +277,6 @@ const CreateSalesRequest = () => {
       setButtonMode(mode);
 
       if (mode === 'update' && item_number && customer_id) {
-        // Editing existing item
         try {
           const response = await apiService.post(
             `/api/v1/salesRequests/item-detail`,
@@ -186,8 +286,12 @@ const CreateSalesRequest = () => {
           if (response?.status === 200) {
             setCustomerFormData((prev) => ({
               ...prev,
-              ...response.data, // Merge item fields with existing customer data
+              ...response.data,
             }));
+            // Also set the price state for consistency
+            if (response.data.price) {
+              setPrice(response.data.price);
+            }
           } else {
             console.error('Failed to fetch item details:', response);
           }
@@ -195,7 +299,6 @@ const CreateSalesRequest = () => {
           console.error('Error fetching item details:', error);
         }
       } else if (mode === 'save' && customer_id) {
-        // Pre-fill customer info from location.state (already passed from navigate)
         setCustomerFormData((prev) => ({
           ...prev,
           customer_id,
@@ -212,7 +315,6 @@ const CreateSalesRequest = () => {
       try {
         setLoading(true);
 
-        // Fetch all data in parallel
         const [customersRes, salesPersonsRes, itemsRes] = await Promise.all([
           apiService.get('/api/v1/customers/list', {}),
           apiService.get('/api/v1/salesPersons/list', {}),
@@ -225,7 +327,7 @@ const CreateSalesRequest = () => {
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
-        setLoading(false); // stop loading after all requests finish
+        setLoading(false);
       }
     };
 
@@ -260,7 +362,7 @@ const CreateSalesRequest = () => {
 
       if (response?.status === 200) {
         toast.success('Item Updated');
-        setCustomerFormData(response.data); // refresh form with saved data
+        setCustomerFormData(response.data);
         navigate('/item-listing', {
           state: { customer: response.data },
         });
@@ -298,14 +400,6 @@ const CreateSalesRequest = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setCustomerFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
   const handleSalesPersonChange = (salesPerson: {
     id: string;
     name: string;
@@ -317,36 +411,59 @@ const CreateSalesRequest = () => {
     });
   };
 
+  // UPDATED: Handle customer select with auto-selection
   const handleCustomerSelect = async (selectedOption: any) => {
     if (selectedOption) {
       setCustomerFormData((prevData) => ({
         ...prevData,
         customer_id: selectedOption.value,
         customer_name: selectedOption.label,
+        account_number: '', // Reset account number when customer changes
+        address: '', // Reset address when customer changes
+        payment_term: '', // Reset payment term when customer changes
       }));
       try {
         const response = await apiService.get(
           `/api/v1/customers/list?customer_name=${selectedOption.label}`,
           {},
         );
-        setAccountNumbers(response.data);
-        setCustomerFormData((prevData) => ({
-          ...prevData,
-          address: '',
-          payment_term: '',
-          account_number: '',
-        }));
+        setAccountNumbers(response.data || []);
+        setAddressLine([]); // Reset address lines
+        setPaymentTerm([]); // Reset payment terms
+
+        // Auto-select if there's only one account number
+        if (response.data && response.data.length === 1) {
+          setCustomerFormData((prevData) => ({
+            ...prevData,
+            account_number: response.data[0],
+          }));
+
+          // Fetch address and payment terms for the auto-selected account
+          try {
+            const addressResponse = await apiService.get(
+              `/api/v1/customers/list?customer_name=${selectedOption.label}&account_number=${response.data[0]}`,
+              {},
+            );
+            setAddressLine(addressResponse.data?.addressLines || []);
+            setPaymentTerm(addressResponse.data?.paymentTerms || []);
+          } catch (error) {
+            console.error('Error fetching address:', error);
+          }
+        }
       } catch (error) {
         console.error('Error fetching account numbers:', error);
       }
     }
   };
 
+  // UPDATED: Handle account number select with auto-selection
   const handleAccountNumberSelect = async (selectedOption: any) => {
     if (selectedOption) {
       setCustomerFormData((prevData) => ({
         ...prevData,
         account_number: selectedOption.value,
+        address: '', // Reset address when account changes
+        payment_term: '', // Reset payment term when account changes
       }));
       try {
         const response = await apiService.get(
@@ -380,73 +497,6 @@ const CreateSalesRequest = () => {
     }
   };
 
-  const handleItemNumberSelect = async (selectedOption: any) => {
-    if (!selectedOption) return;
-    // First update with the selected item number
-    setCustomerFormData((prevData) => ({
-      ...prevData,
-      item_number: selectedOption.value,
-      item_detail: selectedOption.label,
-    }));
-    try {
-      const response = await apiService.get(
-        `/api/v1/items/detail/${selectedOption.value}`,
-        {},
-      );
-      // If you still need itemDetail for other purposes
-      console.log(response.data);
-      setItemDetail(response.data);
-      setCustomerFormData((prevData) => ({
-        ...prevData,
-        sub_category: '',
-        description: '',
-        unit_of_measure: '',
-        order_quantity: 0,
-        price: 0,
-        line_amount: 0,
-      }));
-    } catch (error) {
-      console.error('Error fetching item details:', error);
-    }
-    try {
-      const response = await apiService.get(
-        `/api/v1/prices/detail/${selectedOption.value}`,
-        {},
-      );
-      // If you still need itemDetail for other purposes
-      setPrice(response.data.map((p: any) => ({ base_price: p.base_price })));
-    } catch (error) {
-      console.error('Error fetching item details:', error);
-    }
-  };
-
-  const handleUnitOfMeasureSelect = async (selectedOption: any) => {
-    if (selectedOption) {
-      setCustomerFormData((prevData) => ({
-        ...prevData,
-        unit_of_measure: selectedOption.value,
-      }));
-    }
-  };
-
-  const handleSubCategorySelect = (selectedOption: any) => {
-    if (selectedOption) {
-      setCustomerFormData((prevData) => ({
-        ...prevData,
-        sub_category: selectedOption.value,
-      }));
-    }
-  };
-
-  const handleDescriptionSelect = (selectedOption: any) => {
-    if (selectedOption) {
-      setCustomerFormData((prevData) => ({
-        ...prevData,
-        description: selectedOption.value,
-      }));
-    }
-  };
-
   const isFormValid = () => {
     return (
       customerFormData.item_detail &&
@@ -468,44 +518,6 @@ const CreateSalesRequest = () => {
       customerFormData.salesperson_name
     );
   };
-
-  // const customSelectStyles = {
-  //   control: (provided: any, state: any) => ({
-  //     ...provided,
-  //     minHeight: '50px',
-  //     height: '50px',
-  //     borderColor: state.isFocused ? '#C32033' : provided.borderColor,
-  //     boxShadow: state.isFocused ? '0 0 0 1px #C32033' : provided.boxShadow,
-  //     '&:hover': {
-  //       borderColor: state.isFocused ? '#C32033' : provided.borderColor,
-  //     },
-  //   }),
-  //   valueContainer: (provided: any) => ({
-  //     ...provided,
-  //     height: '50px',
-  //     padding: '0 8px',
-  //   }),
-  //   input: (provided: any) => ({
-  //     ...provided,
-  //     margin: '0px',
-  //   }),
-  //   option: (provided: any, state: any) => ({
-  //     ...provided,
-  //     backgroundColor: state.isSelected
-  //       ? '#FFD7D7'
-  //       : state.isFocused
-  //       ? '#FFD7D7'
-  //       : provided.backgroundColor,
-  //     color: '#000',
-  //     '&:active': {
-  //       backgroundColor: state.isSelected ? '#FFD7D7' : '#FFD7D7',
-  //     },
-  //   }),
-  //   singleValue: (provided: any) => ({
-  //     ...provided,
-  //     color: '#C32033',
-  //   }),
-  // };
 
   // For Customer Name
   const MenuList = (props: any) => {
@@ -549,15 +561,12 @@ const CreateSalesRequest = () => {
           <ChevronRight className="w-4 h-4" />
           <span className="text-[#C32033]">Create</span>
         </div>
+
         {/* Stepper */}
         <div className="flex justify-center gap-6 text-center">
-          <div
-            className="py-4 
-          "
-          >
+          <div className="py-4">
             <Stepper activeStep={activeStep}>
               <Step
-                // onClick={() => setActiveStep(0)}
                 className={`!px-4 !py-2 !rounded-full mx-50 !cursor-pointer ${
                   activeStep === 0
                     ? '!bg-[#C32033] !text-white'
@@ -569,7 +578,6 @@ const CreateSalesRequest = () => {
                 1
               </Step>
               <Step
-                // onClick={() => setActiveStep(1)}
                 className={`!px-4 !py-2 !rounded-full mx-50 !cursor-pointer ${
                   activeStep === 1
                     ? '!bg-[#C32033] !text-white'
@@ -640,7 +648,11 @@ const CreateSalesRequest = () => {
                       }
                       onChange={handleAddressLineSelect}
                       options={addressLineOptions}
-                      placeholder="Select Address"
+                      placeholder={
+                        addressLineOptions.length === 1
+                          ? addressLineOptions[0].label
+                          : 'Select Address'
+                      }
                       isSearchable
                       styles={customSelectStyles}
                     />
@@ -670,7 +682,11 @@ const CreateSalesRequest = () => {
                         })
                       }
                       options={salesPersonOptions}
-                      placeholder="Select Sales Person"
+                      placeholder={
+                        salesPersonOptions.length === 1
+                          ? salesPersonOptions[0].label
+                          : 'Select Sales Person'
+                      }
                       isSearchable
                       styles={customSelectStyles}
                     />
@@ -700,7 +716,11 @@ const CreateSalesRequest = () => {
                       }
                       onChange={handleAccountNumberSelect}
                       options={accountNumberOptions}
-                      placeholder="Select Account Number"
+                      placeholder={
+                        accountNumberOptions.length === 1
+                          ? accountNumberOptions[0].label
+                          : 'Select Account Number'
+                      }
                       isSearchable
                       styles={customSelectStyles}
                     />
@@ -726,7 +746,11 @@ const CreateSalesRequest = () => {
                       }
                       onChange={handlePaymentTermSelect}
                       options={paymentTermOptions}
-                      placeholder="Select Payment Term"
+                      placeholder={
+                        paymentTermOptions.length === 1
+                          ? paymentTermOptions[0].label
+                          : 'Select Payment Term'
+                      }
                       isSearchable
                       styles={customSelectStyles}
                     />
@@ -743,8 +767,7 @@ const CreateSalesRequest = () => {
                       value={customerFormData.customer_po_number}
                       onChange={handleChange}
                       placeholder="Enter Customer PO Number"
-                      className='custom-input'
-                      // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                      className="custom-input"
                     />
                   </div>
                 </div>
@@ -772,7 +795,7 @@ const CreateSalesRequest = () => {
         ) : (
           <>
             <div className="flex items-center gap-2 text-xl text-black font-bold">
-              <h1>Adds Item</h1>
+              <h1>Add Item</h1>
             </div>
             <form className="space-y-6 mt-3">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -802,54 +825,35 @@ const CreateSalesRequest = () => {
                     />
                   </div>
 
+                  {/* Fixed: Changed to read-only input since it's auto-filled */}
                   <div>
                     <label className="block text-md font-medium text-black mb-2">
                       UOM
                     </label>
-                    <Select
+                    <input
+                      type="text"
                       name="unit_of_measure"
-                      isDisabled={!customerFormData.item_number}
-                      value={
-                        unitOfMeasureOptions.length > 0
-                          ? unitOfMeasureOptions.find(
-                              (o) =>
-                                o.value === customerFormData.unit_of_measure,
-                            ) || null
-                          : {
-                              value: customerFormData.unit_of_measure,
-                              label: customerFormData.unit_of_measure,
-                            }
-                      }
-                      onChange={handleUnitOfMeasureSelect}
-                      options={unitOfMeasureOptions}
-                      placeholder="Select Unit of Measure"
-                      isSearchable
-                      styles={customSelectStyles}
+                      readOnly
+                      value={customerFormData.unit_of_measure}
+                      onChange={handleDetailsInputChange}
+                      placeholder="Unit of Measure"
+                      className="custom-input"
                     />
                   </div>
 
+                  {/* Fixed: Changed to read-only input since it's auto-filled */}
                   <div>
                     <label className="block text-md font-medium text-black mb-2">
                       Sub Category
                     </label>
-                    <Select
+                    <input
+                      type="text"
                       name="sub_category"
-                      isDisabled={!customerFormData.item_number}
-                      value={
-                        subCategoryOptions.length > 0
-                          ? subCategoryOptions.find(
-                              (o) => o.value === customerFormData.sub_category,
-                            ) || null
-                          : {
-                              value: customerFormData.sub_category,
-                              label: customerFormData.sub_category,
-                            }
-                      }
-                      onChange={handleSubCategorySelect}
-                      options={subCategoryOptions}
-                      placeholder="Select Sub Category"
-                      isSearchable
-                      styles={customSelectStyles}
+                      readOnly
+                      value={customerFormData.sub_category}
+                      onChange={handleDetailsInputChange}
+                      placeholder="Sub Category"
+                      className="custom-input"
                     />
                   </div>
 
@@ -860,17 +864,12 @@ const CreateSalesRequest = () => {
                     <input
                       type="number"
                       name="price"
-                      value={
-                        (customerFormData.price === 0
-                          ? price[0]?.base_price
-                          : customerFormData.price) || 0
-                      }
+                      value={customerFormData.price}
+                      onChange={handlePrice}
                       min={0}
                       step="any"
-                      onChange={handlePrice}
                       placeholder="Enter Price"
-                                    className='custom-input'
-                      // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                      className="custom-input"
                     />
                   </div>
 
@@ -883,38 +882,26 @@ const CreateSalesRequest = () => {
                       name="line_amount"
                       step="any"
                       value={customerFormData.line_amount}
-                      onChange={handleChange}
-                      placeholder="Select Line Amount"
                       readOnly
-                                    className='custom-input'
-                      // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                      className="custom-input"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-6">
+                  {/* Fixed: Changed to read-only input since it's auto-filled */}
                   <div>
                     <label className="block text-md font-medium text-black mb-2">
                       Description
                     </label>
-                    <Select
+                    <input
+                      type="text"
                       name="description"
-                      isDisabled={!customerFormData.item_number}
-                      value={
-                        descriptionOptions.length > 0
-                          ? descriptionOptions.find(
-                              (o) => o.value === customerFormData.description,
-                            ) || null
-                          : {
-                              value: customerFormData.description,
-                              label: customerFormData.description,
-                            }
-                      }
-                      onChange={handleDescriptionSelect}
-                      options={descriptionOptions}
-                      placeholder="Select Description"
-                      isSearchable
-                      styles={customSelectStyles}
+                      readOnly
+                      value={customerFormData.description}
+                      onChange={handleDetailsInputChange}
+                      placeholder="Description"
+                      className="custom-input"
                     />
                   </div>
 
@@ -928,11 +915,11 @@ const CreateSalesRequest = () => {
                       value={customerFormData.instructions}
                       onChange={handleChange}
                       placeholder="Enter Instructions"
-                                    className='custom-input'
-                      // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                      className="custom-input"
                     />
                   </div>
 
+                  {/* Fixed: Added auto-calculation for quantity changes */}
                   <div>
                     <label className="block text-md font-medium text-black mb-2">
                       Order Quantity
@@ -941,11 +928,10 @@ const CreateSalesRequest = () => {
                       type="number"
                       name="order_quantity"
                       value={customerFormData.order_quantity}
-                      onChange={handleChange}
+                      onChange={handleDetailsInputChange}
                       min={0}
                       placeholder="Enter Order Quantity"
-                                    className='custom-input'
-                      // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                      className="custom-input"
                     />
                   </div>
 
@@ -956,9 +942,10 @@ const CreateSalesRequest = () => {
                     <div className="relative">
                       <input
                         type="date"
-                        defaultValue={new Date().toISOString().split('T')[0]}
-                                      className='custom-input'
-                        // className="custom-input-date custom-input-date-1 w-full text-[#C32033] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5  outline-none transition focus:border-[#C32033] active:border-[#C32033] dark:border-form-strokedark dark:bg-form-input dark:focus:border-[#C32033]"
+                        name="requested_ship_date"
+                        value={customerFormData.requested_ship_date}
+                        onChange={handleChange}
+                        className="custom-input"
                       />
                     </div>
                   </div>
@@ -970,12 +957,11 @@ const CreateSalesRequest = () => {
                     <input
                       type="text"
                       name="status"
-                      value={'Pending'}
+                      value={customerFormData.status}
                       readOnly
                       onChange={handleChange}
                       placeholder="Enter Order Status"
-                                    className='custom-input'
-                      // className="w-full px-4 py-3 bg-gray border-0 rounded-lg text-[#C32033] focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
+                      className="custom-input"
                     />
                   </div>
                 </div>
