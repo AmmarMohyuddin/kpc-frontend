@@ -462,7 +462,7 @@ const ConvertToSalesRequest = () => {
                 </label>
                 <Select
                   name="payment_term"
-                  isDisabled={!customerFormData.account_number}
+                  isDisabled={true}
                   value={
                     paymentTermOptions.length > 0
                       ? paymentTermOptions.find(
