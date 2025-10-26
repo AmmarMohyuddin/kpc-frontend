@@ -76,10 +76,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   };
   const [openTab, setOpenTab] = useState<string | null>(null);
 
+  // Auto-close sidebar on mobile when clicking a link
+  const handleLinkClick = () => {
+    if (window.innerWidth < 1024) {
+      setSidebarOpen(false);
+    }
+  };
+
   return (
     <aside
       ref={sidebar}
-      className={`z-9999 fixed top-0 left-0 flex flex-col h-screen  bg-white duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
+      className={`z-9999 fixed top-0 left-0 flex flex-col h-screen bg-white duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       } ${isCollapsed ? 'w-24' : 'w-80'}`}
     >
@@ -103,6 +110,28 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             }}
           />
         </NavLink>
+
+        {/* Mobile-only close button */}
+        <button
+          onClick={() => setSidebarOpen(false)}
+          className="lg:hidden absolute right-3 top-1/2 transform -translate-y-1/2 w-9 h-9 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors z-50"
+          aria-label="Close sidebar"
+        >
+          <svg
+            className="w-5 h-5 text-[#C32033]"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2.5}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
       </div>
       {/* <!-- SIDEBAR HEADER --> */}
 
@@ -113,7 +142,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           <div>
             <ul className="mb-6 flex flex-col gap-1.5">
               {/* <!-- Menu Item Dashboard --> */}
-              <li className="mb-4 relative">
+              <li className="mb-4 relative lg:block hidden">
                 <NavLink
                   to="/"
                   className={
@@ -133,7 +162,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
                 <button
                   onClick={toggleSidebar}
-                  className="absolute right-[-15px] top-1/2 transform -translate-y-1/2 w-8 h-8 shadow-2xl bg-[#fff] border-2 border-[#C32033] rounded-full flex items-center justify-center transition-colors duration-200 z-50"
+                  className="absolute right-[-15px] top-1/2 transform -translate-y-1/2 w-8 h-8 shadow-2xl bg-[#fff] border-2 border-[#C32033] rounded-full flex items-center justify-center transition-colors duration-200 z-[100] hover:bg-gray-50"
                 >
                   {isCollapsed ? (
                     // 👉 Right Arrow (expand)
@@ -173,6 +202,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               <li className="mb-1">
                 <NavLink
                   to="/"
+                  onClick={handleLinkClick}
                   className={`group relative flex items-center ${
                     isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
                   } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${
@@ -203,6 +233,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <li className="mb-1">
                   <NavLink
                     to="/users"
+                    onClick={handleLinkClick}
                     className={`group relative flex items-center ${
                       isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
                     } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${
@@ -248,6 +279,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <li className="mb-1">
                   <NavLink
                     to="/deactivate"
+                    onClick={handleLinkClick}
                     className={`group relative flex items-center ${
                       isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
                     } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${
@@ -298,6 +330,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <li className="mb-1">
                   <NavLink
                     to="/import"
+                    onClick={handleLinkClick}
                     className={`group relative flex items-center ${
                       isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
                     } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${
@@ -345,6 +378,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <li className="mb-1">
                   <NavLink
                     to="/sales"
+                    onClick={handleLinkClick}
                     className={`group relative flex items-center ${
                       isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
                     } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${
@@ -390,6 +424,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <li className="mb-1">
                   <NavLink
                     to="/customers"
+                    onClick={handleLinkClick}
                     className={`group relative flex items-center ${
                       isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
                     } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${

@@ -70,11 +70,13 @@ const ECommerce = () => {
   }, []);
 
   return (
-    <div className="bg-white p-5 rounded-[20px] ">
-      <p className="text-[24px] mb-5 font-semibold text-[#161616]">Dashboard</p>
+    <div className="bg-white p-4 sm:p-5 rounded-[20px] overflow-hidden">
+      <p className="text-xl sm:text-2xl mb-4 sm:mb-5 font-semibold text-[#161616]">
+        Dashboard
+      </p>
 
       {/* Top Cards */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-6 w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 lg:gap-6 xl:grid-cols-4 w-full">
         <CardOne title="Total Leads" count={counts.leads} />
         <CardTwo title="Total Opportunities" count={counts.opportunities} />
         <CardThree title="Total Sales Requests" count={counts.salesRequests} />
@@ -82,15 +84,15 @@ const ECommerce = () => {
       </div>
 
       {/* Charts Row 1 */}
-      <div className="grid grid-cols-2 mt-10 gap-5">
-        <div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 mt-6 sm:mt-8 lg:mt-10 gap-4 sm:gap-5">
+        <div className="w-full">
           <ChartFour
             title="Leads Trend (Last 6 Months)"
             data={leadChart.data}
             categories={leadChart.categories}
           />
         </div>
-        <div>
+        <div className="w-full">
           <ChartFour
             title="Opportunities Booked (Last 12 Months)"
             data={oppChart.data}
@@ -101,8 +103,8 @@ const ECommerce = () => {
       </div>
 
       {/* Charts Row 2 */}
-      <div className="grid grid-cols-2 mt-10 gap-5">
-        <div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 mt-6 sm:mt-8 lg:mt-10 gap-4 sm:gap-5">
+        <div className="w-full">
           <ChartFour
             title="Order Outcomes"
             data={summaryChart.series}

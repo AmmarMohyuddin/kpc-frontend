@@ -32,6 +32,11 @@ const ChartFour: React.FC<ChartFourProps> = ({
       categories,
       axisBorder: { show: false },
       axisTicks: { show: false },
+      labels: {
+        style: {
+          fontSize: '11px',
+        },
+      },
     },
     legend: {
       show: true,
@@ -45,16 +50,31 @@ const ChartFour: React.FC<ChartFourProps> = ({
     },
     fill: { opacity: 1 },
     tooltip: { x: { show: false } },
+    responsive: [
+      {
+        breakpoint: 640,
+        options: {
+          chart: {
+            height: 300,
+          },
+          plotOptions: {
+            bar: {
+              columnWidth: '60%',
+            },
+          },
+        },
+      },
+    ],
   };
 
   const series = [{ data }];
 
   return (
-    <div className="col-span-12 rounded-sm border border-stroke bg-white px-5 pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5">
-      <h3 className="text-xl font-semibold text-black dark:text-white mb-4">
+    <div className="w-full rounded-sm border border-stroke bg-white px-3 sm:px-5 pt-5 sm:pt-7.5 pb-4 sm:pb-5 shadow-default dark:border-strokedark dark:bg-boxdark overflow-hidden">
+      <h3 className="text-lg sm:text-xl font-semibold text-black dark:text-white mb-3 sm:mb-4">
         {title}
       </h3>
-      <div id="chartFour" className="-ml-5">
+      <div id="chartFour" className="-ml-2 sm:-ml-5 overflow-x-auto">
         <ReactApexChart
           options={options}
           series={series}

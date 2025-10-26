@@ -126,11 +126,13 @@ const ImportUsers = () => {
             <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-              className="inline-flex items-center justify-center rounded-md border border-black py-4 px-10 text-center font-medium text-black hover:bg-opacity-90 lg:px-8 xl:px-10"
+              className={`inline-flex items-center justify-center rounded-md border border-black py-2 px-6 text-center font-medium text-black hover:bg-opacity-90 ${
+                currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
             >
               Previous
             </button>
-            <span>
+            <span className="text-black dark:text-white">
               Page <b>{currentPage}</b> of {totalPages}
             </span>
             <button
@@ -138,7 +140,11 @@ const ImportUsers = () => {
                 setCurrentPage((prev) => Math.min(prev + 1, totalPages))
               }
               disabled={currentPage === totalPages}
-              className="inline-flex items-center justify-center rounded-md border border-black py-4 px-10 text-center font-medium text-black hover:bg-opacity-90 lg:px-8 xl:px-10"
+              className={`inline-flex items-center justify-center rounded-md border border-black py-2 px-6 text-center font-medium text-black hover:bg-opacity-90 ${
+                currentPage === totalPages
+                  ? 'opacity-50 cursor-not-allowed'
+                  : ''
+              }`}
             >
               Next
             </button>

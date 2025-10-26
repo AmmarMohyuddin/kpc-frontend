@@ -9,36 +9,24 @@ type CardTwoProps = {
 const CardTwo = ({ title, count = 0 }: CardTwoProps) => {
   return (
     <div
-      className="bg-white px-5 py-5 w-full h-[138px] flex items-center justify-between"
+      className="bg-white px-4 sm:px-5 py-4 sm:py-5 w-full h-auto min-h-[120px] sm:min-h-[138px] flex items-center justify-between"
       style={cardStyle}
     >
       {/* Icon */}
-      <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
+      <div className="flex h-10 w-10 sm:h-11.5 sm:w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4 flex-shrink-0">
         <img
-          src={
-            OpportunityRedIcon
-          }
+          src={OpportunityRedIcon}
           alt="Opportunities Icon"
-          className="w-7 h-7"
+          className="w-6 h-6 sm:w-7 sm:h-7"
         />
-        {/* <svg
-          className="fill-[#C32033] dark:fill-white"
-          width="22"
-          height="18"
-          viewBox="0 0 22 18"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          {/* SVG paths */}
-        {/* </svg> } */}
       </div>
 
       {/* Text */}
-      <div className="flex flex-col text-right">
-        <h4 className="text-[30px] font-medium text-black dark:text-white">
-          {count}
+      <div className="flex flex-col text-right ml-2">
+        <h4 className="text-2xl sm:text-[30px] font-medium text-black dark:text-white">
+          {count.toLocaleString()}
         </h4>
-        <span className="text-[14px] font-medium text-black dark:text-white">
+        <span className="text-xs sm:text-sm font-medium text-black dark:text-white truncate max-w-[140px] sm:max-w-none">
           {title}
         </span>{' '}
       </div>

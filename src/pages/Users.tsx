@@ -95,25 +95,25 @@ const Users = () => {
             <table className="w-full table-auto">
               <thead>
                 <tr className="bg-gray-2 text-left dark:bg-meta-4">
-                  <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                  <th className="min-w-[180px] py-4 px-3 sm:px-4 font-medium text-black dark:text-white xl:pl-11">
                     Full Name
                   </th>
-                  <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+                  <th className="min-w-[140px] py-4 px-3 sm:px-4 font-medium text-black dark:text-white">
                     Email
                   </th>
-                  <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                  <th className="min-w-[100px] py-4 px-3 sm:px-4 font-medium text-black dark:text-white hidden sm:table-cell">
                     Person Number
                   </th>
-                  <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                  <th className="min-w-[80px] py-4 px-3 sm:px-4 font-medium text-black dark:text-white">
                     Role
                   </th>
-                  <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                  <th className="min-w-[90px] py-4 px-3 sm:px-4 font-medium text-black dark:text-white">
                     Approval
                   </th>
-                  <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                  <th className="min-w-[80px] py-4 px-3 sm:px-4 font-medium text-black dark:text-white hidden md:table-cell">
                     Status
                   </th>
-                  <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                  <th className="min-w-[120px] py-4 px-3 sm:px-4 font-medium text-black dark:text-white">
                     Actions
                   </th>
                 </tr>
@@ -122,27 +122,27 @@ const Users = () => {
                 {!loading && currentUsers.length > 0 ? (
                   currentUsers.map((user) => (
                     <tr key={user._id}>
-                      <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                      <td className="border-b border-[#eee] py-5 px-3 sm:px-4 pl-9 dark:border-strokedark xl:pl-11">
                         <h5 className="font-medium text-black dark:text-white">
                           {user.full_name}
                         </h5>
                       </td>
-                      <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                        <p className="text-black dark:text-white">
+                      <td className="border-b border-[#eee] py-5 px-3 sm:px-4 dark:border-strokedark">
+                        <p className="text-black dark:text-white text-sm sm:text-base">
                           {user.email}
                         </p>
                       </td>
-                      <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                      <td className="border-b border-[#eee] py-5 px-3 sm:px-4 dark:border-strokedark hidden sm:table-cell">
                         <p className="text-black dark:text-white">
                           {user.person_number ? user.person_number : 'N/A'}
                         </p>
                       </td>
-                      <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                      <td className="border-b border-[#eee] py-5 px-3 sm:px-4 dark:border-strokedark">
                         <p className="text-black dark:text-white">
                           {user.role}
                         </p>
                       </td>
-                      <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                      <td className="border-b border-[#eee] py-5 px-3 sm:px-4 dark:border-strokedark">
                         <div>
                           <label
                             htmlFor={`toggle-${user._id}`}
@@ -211,7 +211,7 @@ const Users = () => {
                           </label>
                         </div>
                       </td>
-                      <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                      <td className="border-b border-[#eee] py-5 px-3 sm:px-4 dark:border-strokedark hidden md:table-cell">
                         {user.is_approved ? (
                           <p className="inline-flex rounded-full bg-success bg-opacity-10 py-1 px-3 text-sm font-medium text-success">
                             Approved
@@ -222,8 +222,8 @@ const Users = () => {
                           </p>
                         )}
                       </td>
-                      <td className="py-5 px-4">
-                        <div className="flex items-center space-x-3.5">
+                      <td className="py-5 px-3 sm:px-4">
+                        <div className="flex items-center space-x-2 sm:space-x-3.5">
                           <button
                             className="hover:text-primary"
                             onClick={() =>
@@ -303,11 +303,13 @@ const Users = () => {
             <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-              className="inline-flex items-center justify-center rounded-md border border-black py-4 px-10 text-center font-medium text-black hover:bg-opacity-90 lg:px-8 xl:px-10"
+              className={`inline-flex items-center justify-center rounded-md border border-black py-2 px-6 text-center font-medium text-black hover:bg-opacity-90 ${
+                currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
             >
               Previous
             </button>
-            <span>
+            <span className="text-black dark:text-white">
               Page <b>{currentPage}</b> of {totalPages}
             </span>
             <button
@@ -315,7 +317,11 @@ const Users = () => {
                 setCurrentPage((prev) => Math.min(prev + 1, totalPages))
               }
               disabled={currentPage === totalPages}
-              className="inline-flex items-center justify-center rounded-md border border-black py-4 px-10 text-center font-medium text-black hover:bg-opacity-90 lg:px-8 xl:px-10"
+              className={`inline-flex items-center justify-center rounded-md border border-black py-2 px-6 text-center font-medium text-black hover:bg-opacity-90 ${
+                currentPage === totalPages
+                  ? 'opacity-50 cursor-not-allowed'
+                  : ''
+              }`}
             >
               Next
             </button>
