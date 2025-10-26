@@ -157,6 +157,17 @@ const SignIn = () => {
               Log In
             </button>
 
+            <button
+              type="button"
+              onClick={() =>
+                (window.location.href =
+                  'https://localhost:3000/api/v1/auth/oci/login')
+              }
+              className="w-full bg-[#C32033] text-white py-4 rounded-lg font-semibold hover:bg-[#A91B2E] transition-all duration-200 shadow-lg"
+            >
+              Login with Oracle
+            </button>
+
             <div className="text-center mt-6">
               <p className="text-gray-600">
                 Don't have an account?{' '}
