@@ -2,9 +2,12 @@ import React, { createContext, useState, ReactNode, useEffect } from 'react';
 
 // Define a User type
 interface User {
-  id: string;
-  name: string;
-  email: string;
+  id?: string;
+  name?: string;
+  full_name?: string;
+  email?: string;
+  person_number?: string;
+  [key: string]: any;
 }
 
 interface AuthContextType {

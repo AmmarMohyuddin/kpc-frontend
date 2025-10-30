@@ -9,6 +9,7 @@ import SignUp from './pages/Authentication/SignUp';
 import ForgotPassword from './pages/Authentication/ForgotPassword';
 import VerifyOtp from './pages/Authentication/VerifyOtp';
 import ResetPassword from './pages/Authentication/ResetPassword';
+import OracleCallback from './pages/Authentication/OracleCallback';
 import Loader from './common/Loader';
 import routes from './routes';
 
@@ -43,6 +44,8 @@ function App() {
         <Route path="/auth/forgot-password" element={<ForgotPassword />} />
         <Route path="/auth/verify-otp" element={<VerifyOtp />} />
         <Route path="/auth/reset-password" element={<ResetPassword />} />
+        <Route path="/auth/oracle/callback" element={<OracleCallback />} />
+        <Route path="/callback" element={<OracleCallback />} />
 
         {/* Authenticated Routes */}
         <Route

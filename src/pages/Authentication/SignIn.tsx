@@ -159,10 +159,62 @@ const SignIn = () => {
 
             <button
               type="button"
-              onClick={() =>
-                (window.location.href =
-                  'https://localhost:3000/api/v1/auth/oci/login')
-              }
+              onClick={async () => {
+                try {
+                  // Call the Oracle login endpoint
+                  const response = await apiService.get(
+                    '/api/v1/auth/oci/login',
+                    {},
+                  );
+
+                  // If backend returns an authUrl, redirect user to Oracle
+                  const authUrl = response?.data?.authUrl || response?.authUrl;
+                  if (authUrl) {
+                    window.location.href = authUrl;
+                    return;
+                  }
+
+                  // Otherwise, handle immediate success with salesPerson data
+                  if (
+                    response?.success &&
+                    response?.data &&
+                    response?.data?.salesPerson
+                  ) {
+                    const salesPerson = response.data.salesPerson;
+
+                    const userData = {
+                      _id: salesPerson._id,
+                      email: salesPerson.salesperson_id || '',
+                      full_name: salesPerson.salesperson_name,
+                      person_number: salesPerson.employee_number,
+                      role: 'salesPerson',
+                      authentication_token: 'oracle-auth-' + salesPerson._id,
+                      registered: salesPerson.registered,
+                    };
+
+                    localStorage.setItem(
+                      'auth-token',
+                      userData.authentication_token,
+                    );
+                    localStorage.setItem('user', JSON.stringify(userData));
+
+                    setUser(userData as any);
+
+                    if (salesPerson.registered) {
+                      toast.success('Logged in successfully!');
+                      navigate('/');
+                    } else {
+                      toast.success('Please complete your registration');
+                      navigate('/auth/signup', { state: { salesPerson } });
+                    }
+                  } else {
+                    toast.error('Invalid Oracle authentication response');
+                  }
+                } catch (error: any) {
+                  console.error('Oracle login error:', error);
+                  toast.error(error?.message || 'Oracle login failed');
+                }
+              }}
               className="w-full bg-[#C32033] text-white py-4 rounded-lg font-semibold hover:bg-[#A91B2E] transition-all duration-200 shadow-lg"
             >
               Login with Oracle

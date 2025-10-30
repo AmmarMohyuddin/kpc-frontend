@@ -1,10 +1,15 @@
 import { useEffect, useRef, useState, useContext } from 'react';
+// @ts-ignore
+import Cookies from 'js-cookie';
 import { Link, useNavigate } from 'react-router-dom';
 import UserOne from '../images/user/user-01.png';
 import { AuthContext } from '../context/AuthContext';
+import apiService from '../services/ApiService';
+import Loader from '../common/Loader';
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   const { user, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -37,12 +42,121 @@ const DropdownUser = () => {
     return () => document.removeEventListener('keydown', keyHandler);
   });
 
-  const handleSignOut = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('auth-token');
-    setUser(null);
-    navigate('/auth/signin');
+  const handleSignOut = async () => {
+    setLoggingOut(true); // Show loader
+
+    try {
+      // Get id_token from localStorage
+      const idToken = localStorage.getItem('oracle_id_token') || '';
+      console.log(
+        'Available localStorage:',
+        localStorage.getItem('oracle_id_token'),
+      );
+      console.log('Extracted id_token:', idToken);
+
+      // Call Oracle logout endpoint BEFORE clearing storage
+      try {
+        if (idToken) {
+          console.log('Calling logout with id_token:', idToken);
+          const response = await apiService.get('/api/v1/auth/oci/logout', {
+            id_token: idToken,
+          });
+
+          // Check if response contains logoutUrl
+          if (response?.success && response?.data?.logoutUrl) {
+            console.log(
+              'Redirecting to Oracle logout URL:',
+              response.data.logoutUrl,
+            );
+
+            // Use hidden iframe to trigger Oracle logout without showing the page
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = response.data.logoutUrl;
+            document.body.appendChild(iframe);
+
+            // Wait a moment for logout to process, then navigate to signin
+            // Keep loader visible during the entire process
+            setTimeout(() => {
+              try {
+                document.body.removeChild(iframe);
+              } catch (e) {
+                console.log('Iframe already removed');
+              }
+
+              // Clear all storage AFTER Oracle logout completes
+              localStorage.clear();
+              sessionStorage.clear();
+              Cookies.remove('id_token');
+              Cookies.remove('oracle_id_token');
+              setUser(null);
+
+              // Redirect - the loader will naturally stay on screen during navigation
+              window.location.href = '/auth/signin';
+            }, 200);
+
+            return; // Don't navigate to signin immediately, let iframe handle logout
+          }
+        } else {
+          console.log('No id_token found, calling logout without token');
+          const response = await apiService.get('/api/v1/auth/oci/logout', {});
+
+          // Check if response contains logoutUrl
+          if (response?.success && response?.data?.logoutUrl) {
+            console.log(
+              'Redirecting to Oracle logout URL:',
+              response.data.logoutUrl,
+            );
+
+            // Use hidden iframe to trigger Oracle logout without showing the page
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = response.data.logoutUrl;
+            document.body.appendChild(iframe);
+
+            // Wait a moment for logout to process, then navigate to signin
+            // Keep loader visible during the entire process
+            setTimeout(() => {
+              try {
+                document.body.removeChild(iframe);
+              } catch (e) {
+                console.log('Iframe already removed');
+              }
+
+              // Clear all storage
+              localStorage.clear();
+              sessionStorage.clear();
+              setUser(null);
+
+              // Redirect - the loader will naturally stay on screen during navigation
+              window.location.href = '/auth/signin';
+            }, 1000);
+
+            return; // Don't navigate to signin immediately, let iframe handle logout
+          }
+        }
+      } catch (error) {
+        console.error('Oracle logout error:', error);
+      }
+
+      // If we get here, clear storage and navigate normally
+      localStorage.clear();
+      sessionStorage.clear();
+      setUser(null);
+      navigate('/auth/signin');
+    } catch (error) {
+      console.error('Logout error:', error);
+      navigate('/auth/signin');
+    }
   };
+
+  if (loggingOut) {
+    return (
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="relative">
@@ -54,10 +168,10 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-md font-medium text-white dark:text-white">
-            {user?.full_name}
+            {user?.full_name || user?.name}
           </span>
           <span className="block text-md font-small text-white">
-            {user?.person_number}
+            {user?.person_number || user?.email}
           </span>
         </span>
 
