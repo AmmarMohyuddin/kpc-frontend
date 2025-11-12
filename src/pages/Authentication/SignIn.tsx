@@ -73,7 +73,7 @@ const SignIn = () => {
           <h2 className="text-3xl font-bold text-black text-left">Company!</h2>
 
           <form onSubmit={handleSubmit} className="space-y-6 mt-10">
-            <div className="flex gap-2 mb-6">
+            {/* <div className="flex gap-2 mb-6">
               <button
                 type="button"
                 onClick={() => handleRoleChange('admin')}
@@ -109,9 +109,9 @@ const SignIn = () => {
               >
                 Customer
               </button>
-            </div>
+            </div> */}
 
-            <div>
+            {/* <div>
               <label className="block text-md font-medium text-black mb-2">
                 Email
               </label>
@@ -139,23 +139,23 @@ const SignIn = () => {
                 className="w-full px-4 py-3 bg-gray border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C32033] focus:bg-white transition-all duration-200 placeholder-gray-500"
                 required
               />
-            </div>
+            </div> */}
 
-            <div className="text-right">
+            {/* <div className="text-right">
               <Link
                 to="/auth/forgot-password"
                 className="text-black hover:text-[#C32033] text-md font-medium transition-colors duration-200"
               >
                 Forgot Password?
               </Link>
-            </div>
+            </div> */}
 
-            <button
+            {/* <button
               type="submit"
               className="w-full bg-[#C32033] text-white py-4 rounded-lg font-semibold hover:bg-[#A91B2E] transition-all duration-200 shadow-lg"
             >
               Log In
-            </button>
+            </button> */}
 
             <button
               type="button"
@@ -217,10 +217,10 @@ const SignIn = () => {
               }}
               className="w-full bg-[#C32033] text-white py-4 rounded-lg font-semibold hover:bg-[#A91B2E] transition-all duration-200 shadow-lg"
             >
-              Login with Oracle
+              Login
             </button>
 
-            <div className="text-center mt-6">
+            {/* <div className="text-center mt-6">
               <p className="text-gray-600">
                 Don't have an account?{' '}
                 <Link
@@ -230,7 +230,7 @@ const SignIn = () => {
                   Sign Up
                 </Link>
               </p>
-            </div>
+            </div> */}
           </form>
         </div>
       </div>

@@ -206,7 +206,72 @@ const OracleCallback = () => {
                 navigate('/auth/signup', { state: { salesPerson } });
               }
               return;
-            } else {
+            }
+            
+            else if (
+              response?.success &&
+              response?.data &&
+              response?.data?.admin
+            ) {
+              console.log('✓ Valid response structure - processing login...');
+              const admin = response.data.admin;
+              console.log('Admin data:', admin);
+
+              // Store id_token if available
+              const idToken = response.data.id_token;
+              if (idToken) {
+                localStorage.setItem('oracle_id_token', idToken);
+                console.log('✓ id_token stored in localStorage');
+              }
+
+              const userData = {
+                _id: admin._id,
+                email: admin.email || '',
+                full_name: admin.full_name,
+                person_number: admin.person_number,
+                role: 'admin',
+                authentication_token: 'oracle-auth-' + admin._id,
+                registered: true,
+              };
+
+              console.log('User data to store:', userData);
+
+              localStorage.setItem('auth-token', userData.authentication_token);
+              localStorage.setItem('user', JSON.stringify(userData));
+
+              console.log('✓ User data stored in localStorage');
+              console.log('✓ Updating AuthContext...');
+              setUser(userData as any);
+
+              console.log(
+                '✓ Checking registration status:',
+                admin.registered,
+              );
+              if (admin.registered || true) {
+                console.log(
+                  '✓ User is registered - showing success toast and navigating to dashboard',
+                );
+                toast.success('Logged in successfully!');
+                console.log(
+                  '✓ Stored in localStorage:',
+                  localStorage.getItem('user'),
+                );
+
+                // Small delay to ensure state is updated
+                setTimeout(() => {
+                  console.log('✓ Navigating to /');
+                  // Force navigation - replace entire history
+                  window.location.href = '/';
+                }, 100);
+              } else {
+                console.log('✓ User not registered - redirecting to signup');
+                toast.success('Please complete your registration');
+                navigate('/auth/signup', { state: { admin } });
+              }
+              return;
+            }
+
+            else {
               console.log('✗ Invalid response structure');
               console.log('Response success:', response?.success);
               console.log('Response data exists:', !!response?.data);
