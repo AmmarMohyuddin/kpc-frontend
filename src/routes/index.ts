@@ -51,6 +51,9 @@ const OppManageFollowUp = lazy(() => import('../pages/Opportunities/ManageFollow
 const DetailFollowUp = lazy(() => import('../pages/Leads/DetailFollowUp'));
 const ConvertToSalesRequest = lazy(() => import('../pages/Opportunities/ConvertSalesRequest'));
 const ConfirmOppAddress = lazy(() => import('../pages/Opportunities/ConfirmAddress'));
+const ActualSales = lazy(() => import('../pages/ActualSales'));
+const TargetSales = lazy(() => import('../pages/TargetSales'));
+const ActualVSTargetSales = lazy(() => import('../pages/ActualVSTargetSales'));
 
 const coreRoutes = [
   {
@@ -312,6 +315,21 @@ const coreRoutes = [
     path: '/ui/buttons',
     title: 'Buttons',
     component: Buttons,
+  },
+  {
+    path: '/actual-sales',
+    title: 'Actual Sales',
+    component: ActualSales,
+  },
+  {
+    path: '/target-sales',
+    title: 'Target Sales',
+    component: TargetSales,
+  },
+  {
+    path: '/actual-vs-target',
+    title: 'Actual vs Target Sales',
+    component: ActualVSTargetSales,
   },
 ];
 
