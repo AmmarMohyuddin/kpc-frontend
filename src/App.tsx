@@ -10,6 +10,7 @@ import ForgotPassword from './pages/Authentication/ForgotPassword';
 import VerifyOtp from './pages/Authentication/VerifyOtp';
 import ResetPassword from './pages/Authentication/ResetPassword';
 import OracleCallback from './pages/Authentication/OracleCallback';
+import OracleLogin from './pages/Authentication/OracleLogin';
 import Loader from './common/Loader';
 import routes from './routes';
 
@@ -25,7 +26,7 @@ function App() {
 
   // Function to protect routes that require authentication
   const PrivateRoute = ({ children }: { children: JSX.Element }) => {
-    return user ? children : <Navigate to="/auth/signin" />;
+    return user ? children : <Navigate to="/auth/oracle-login" />;
   };
 
   return loading ? (
@@ -39,6 +40,7 @@ function App() {
       />
       <Routes>
         {/* Unauthenticated Routes */}
+        <Route path="/auth/oracle-login" element={<OracleLogin />} />
         <Route path="/auth/signin" element={<SignIn />} />
         <Route path="/auth/signup" element={<SignUp />} />
         <Route path="/auth/forgot-password" element={<ForgotPassword />} />
@@ -75,8 +77,8 @@ function App() {
           })}
         </Route>
 
-        {/* Redirect any other route to sign-in if not authenticated */}
-        <Route path="*" element={<Navigate to="/auth/signin" />} />
+        {/* Redirect any other route to Oracle login if not authenticated */}
+        <Route path="*" element={<Navigate to="/auth/oracle-login" />} />
       </Routes>
     </>
   );
