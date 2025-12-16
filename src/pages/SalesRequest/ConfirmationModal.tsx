@@ -32,7 +32,7 @@ const NotificationModal = ({
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-black" />
           </button>
         </div>
 
@@ -52,14 +52,14 @@ const NotificationModal = ({
               {notification && (
                 <div className="space-y-4 text-left">
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">Type</h3>
+                    <h3 className="text-sm font-medium text-black">Type</h3>
                     <p className="text-lg font-semibold text-black">
                       {notification.NOTIFICATION_TYPE}
                     </p>
                   </div>
 
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">
+                    <h3 className="text-sm font-medium text-black">
                       Message
                     </h3>
                     <p className="text-md text-black">{notification.MESSAGE}</p>
@@ -67,7 +67,7 @@ const NotificationModal = ({
 
                   {notification.DETAILS && (
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">
+                      <h3 className="text-sm font-medium text-black">
                         Details
                       </h3>
                       <p className="text-md text-black bg-gray-50 p-3 rounded-md">
@@ -77,7 +77,7 @@ const NotificationModal = ({
                   )}
 
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">Date</h3>
+                    <h3 className="text-sm font-medium text-black">Date</h3>
                     <p className="text-md text-black">
                       {new Date(notification.CREATION_DATE).toLocaleString()}
                     </p>
@@ -85,7 +85,7 @@ const NotificationModal = ({
 
                   {notification.RELATED_ENTITY && (
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">
+                      <h3 className="text-sm font-medium text-black">
                         Related To
                       </h3>
                       <p className="text-md text-blue-600">
@@ -97,7 +97,7 @@ const NotificationModal = ({
                   )}
 
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">
+                    <h3 className="text-sm font-medium text-black">
                       Status
                     </h3>
                     <p className="text-md text-black">

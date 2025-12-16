@@ -556,7 +556,7 @@ const CreateSalesRequest = () => {
         <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
           New Order
         </h2>
-        <div className="flex items-center gap-2 text-md text-gray-600">
+        <div className="flex items-center gap-2 text-md text-black">
           <span>Sales Requests</span>
           <ChevronRight className="w-4 h-4" />
           <span className="text-[#C32033]">Create</span>
@@ -783,7 +783,7 @@ const CreateSalesRequest = () => {
     ${
       isCustomerFormValid()
         ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
-        : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
+        : 'bg-gray-400 border border-gray-400 text-black cursor-not-allowed'
     }
   `}
                 >
@@ -987,7 +987,7 @@ const CreateSalesRequest = () => {
     ${
       isFormValid()
         ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
-        : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
+        : 'bg-gray-400 border border-gray-400 text-black cursor-not-allowed'
     }
   `}
                 >

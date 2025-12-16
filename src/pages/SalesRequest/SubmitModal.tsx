@@ -94,20 +94,20 @@ const SubmitModal = ({
               onClick={onClose}
               className="p-1 hover:bg-gray-100 rounded-full transition-colors"
             >
-              <X className="w-5 h-5 text-gray-500" />
+              <X className="w-5 h-5 text-black" />
             </button>
           </div>
 
           <div className="px-6 pb-6 space-y-6">
             <div className="text-center">
-              <p className="text-gray-600 text-lg">
+              <p className="text-black text-lg">
                 Do you really want to submit this order?
               </p>
             </div>
 
             <div className="bg-gray-100 rounded-lg p-4">
               <div className="flex items-center justify-between">
-                <span className="text-gray-700 font-medium">Total Amount:</span>
+                <span className="text-black font-medium">Total Amount:</span>
                 <span className="text-black font-semibold">{totalAmount}</span>
               </div>
             </div>

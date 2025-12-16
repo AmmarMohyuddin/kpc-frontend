@@ -6,7 +6,7 @@ const Test = () => {
         <form>
           <div className="mb-4">
             <label
-              className="block mb-2 text-sm font-bold text-gray-700"
+              className="block mb-2 text-sm font-bold text-black"
               htmlFor="email"
             >
               Email
@@ -21,7 +21,7 @@ const Test = () => {
           </div>
           <div className="mb-4">
             <label
-              className="block mb-2 text-sm font-bold text-gray-700"
+              className="block mb-2 text-sm font-bold text-black"
               htmlFor="password"
             >
               Password
@@ -37,7 +37,7 @@ const Test = () => {
           <div className="mb-4">
             <label className="inline-flex items-center">
               <input type="checkbox" className="form-checkbox" />
-              <span className="ml-2 text-sm text-gray-600">Remember me</span>
+              <span className="ml-2 text-sm text-black">Remember me</span>
             </label>
           </div>
           <button

@@ -285,7 +285,7 @@ const EditLead = () => {
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-8 shadow-default">
         <h2 className="text-2xl font-semibold mb-3 text-black">Edit Lead</h2>
 
-        <div className="flex items-center gap-2 text-md text-gray-600">
+        <div className="flex items-center gap-2 text-md text-black">
           <span>Leads</span>
           <ChevronRight className="w-4 h-4" />
           <span>Edit</span>
@@ -454,7 +454,7 @@ const EditLead = () => {
                   name="stage"
                   value={leadsFormData.stage}
                   readOnly
-                  className="w-full px-4 py-3 bg-gray-100 border-0 rounded-lg text-gray-600"
+                  className="w-full px-4 py-3 bg-gray-100 border-0 rounded-lg text-black"
                 />
               </div> */}
 
@@ -496,7 +496,7 @@ const EditLead = () => {
               className={`px-15 py-3 rounded-lg font-medium ${
                 isFormValid()
                   ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
-                  : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
+                  : 'bg-gray-400 border border-gray-400 text-black cursor-not-allowed'
               }`}
             >
               Update

@@ -234,7 +234,7 @@ const Settings = () => {
                       Cancel
                     </button>
                     <button
-                      className="flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:shadow-1"
+                      className="flex justify-center rounded bg-primary py-2 px-6 font-medium text-black hover:shadow-1"
                       type="submit"
                       onClick={fireToast}
                     >
@@ -328,7 +328,7 @@ const Settings = () => {
                       Cancel
                     </button>
                     <button
-                      className="flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:bg-opacity-70"
+                      className="flex justify-center rounded bg-primary py-2 px-6 font-medium text-black hover:bg-opacity-70"
                       type="submit"
                     >
                       Save

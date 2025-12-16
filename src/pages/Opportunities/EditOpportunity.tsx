@@ -321,7 +321,7 @@ const EditOpportunity = () => {
                   name="stage"
                   value={opportunityHeader.stage}
                   readOnly
-                  className="w-full px-4 py-3 bg-gray-100 border-0 rounded-lg text-gray-600"
+                  className="w-full px-4 py-3 bg-gray-100 border-0 rounded-lg text-black"
                 />
               </div> */}
 

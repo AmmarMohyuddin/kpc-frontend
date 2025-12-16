@@ -102,7 +102,7 @@ const DetailItem = () => {
         </h1>
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-md text-gray-600">
+        <div className="flex items-center gap-2 text-md text-black">
           <span>Sales Request</span>
           <ChevronRight className="w-4 h-4" />
           <span>Detail</span>
@@ -124,7 +124,7 @@ const DetailItem = () => {
               <span className="font-bold text-lg text-black dark:text-white">
                 {field.label}:
               </span>
-              <span className="text-black dark:text-gray-300">
+              <span className="text-black dark:text-black">
                 {field.value || '-'}
               </span>
             </div>

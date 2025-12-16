@@ -203,7 +203,7 @@ const SignUp = () => {
                 className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all duration-200 ${
                   activeTab === tab
                     ? 'bg-[#C32033] text-white shadow-lg'
-                    : 'bg-gray text-gray-600 hover:bg-gray-300'
+                    : 'bg-gray text-black hover:bg-gray-300'
                 }`}
               >
                 {tab}

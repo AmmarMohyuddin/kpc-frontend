@@ -24,7 +24,7 @@
 //         </h1>
 
 //         {/* Breadcrumb */}
-//         <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+//         <div className="flex items-center gap-2 text-sm text-black dark:text-black">
 //           <span>Leads</span>
 //           <ChevronRight className="w-4 h-4" />
 //           <span>Manage Leads</span>
@@ -52,8 +52,8 @@
 //             ['Link for Follow Up History', opportunityData.followUpLink],
 //           ].map(([label, value]) => (
 //             <div key={label} className="flex items-center justify-between py-2">
-//               <span className="text-gray-600 font-medium">{label}:</span>
-//               <span className="text-gray-900">{value}</span>
+//               <span className="text-black font-medium">{label}:</span>
+//               <span className="text-black">{value}</span>
 //             </div>
 //           ))}
 //         </div>
@@ -90,7 +90,7 @@ const DetailOpportunity = () => {
             Opportunity Details
           </h1>
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-md text-gray-600 dark:text-gray-400 mt-5">
+          <div className="flex items-center gap-2 text-md text-black dark:text-black mt-5">
             <span>Leads</span>
             <ChevronRight className="w-4 h-4" />
             <span>Manage Leads</span>

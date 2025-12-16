@@ -52,7 +52,7 @@ const VerifyOtp = () => {
           <h2 className="text-3xl font-bold text-black mb-2 text-left mt-5">
             Verify Your Email
           </h2>
-          <p className="text-gray-600 mb-8">
+          <p className="text-black mb-8">
             We've sent a verification code to{' '}
             <span className="font-semibold">{email}</span>. Please enter the
             code below.
@@ -92,7 +92,7 @@ const VerifyOtp = () => {
             </button>
 
             <div className="text-center mt-6">
-              <p className="text-gray-600">
+              <p className="text-black">
                 Didn't receive the code?{' '}
                 <Link
                   to="/auth/forgot-password"

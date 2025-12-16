@@ -102,13 +102,13 @@ const DeleteModal = ({
             className="p-1 hover:bg-gray-100 rounded-full transition-colors"
             disabled={loading}
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-black" />
           </button>
         </div>
 
         <div className="px-6 pb-6 space-y-6">
           <div className="text-center">
-            <p className="text-gray-600 text-lg">
+            <p className="text-black text-lg">
               {itemNumber && orderHeaderId
                 ? `Do you really want to delete this ${itemName} from the order?`
                 : orderHeaderId

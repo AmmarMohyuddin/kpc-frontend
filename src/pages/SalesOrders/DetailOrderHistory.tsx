@@ -52,7 +52,7 @@ const DetailOrderHistory = () => {
         </h1>
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-md text-gray-600">
+        <div className="flex items-center gap-2 text-md text-black">
           <span className="text-[rgba(22,22,22,0.7)]">Sales Orders</span>
           <ChevronRight className="w-4 h-4" />
           <span className="text-[rgba(22,22,22,0.7)]">Order History</span>

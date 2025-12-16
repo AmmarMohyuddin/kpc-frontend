@@ -234,7 +234,7 @@ const ItemListing = () => {
 
           {/* Top Bar */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mt-5">
-            <div className="flex items-center gap-2 text-md text-gray-600">
+            <div className="flex items-center gap-2 text-md text-black">
               {breadcrumbs.map((crumb, i) => (
                 <div key={i} className="flex items-center">
                   {i > 0 && <CrRight className="w-4 h-4 mx-2" />}
@@ -245,7 +245,7 @@ const ItemListing = () => {
               ))}
             </div>
 
-            <div className="text-md text-gray-700">
+            <div className="text-md text-black">
               Total Items:{' '}
               <span className="font-semibold text-[#C32033]">
                 {filteredItems.length}
@@ -254,7 +254,7 @@ const ItemListing = () => {
 
             <div className="flex items-center gap-3">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-4 h-4" />
                 <input
                   type="text"
                   placeholder="Search..."
@@ -267,7 +267,7 @@ const ItemListing = () => {
                 />
               </div>
               <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                <Filter className="w-4 h-4 text-gray-600" />
+                <Filter className="w-4 h-4 text-black" />
               </button>
             </div>
           </div>
@@ -392,7 +392,7 @@ const ItemListing = () => {
                   <tr>
                     <td
                       colSpan={order_header_id ? 6 : 7}
-                      className="px-6 py-4 text-center text-gray-500"
+                      className="px-6 py-4 text-center text-black"
                     >
                       {searchTerm
                         ? 'No matching items found'
@@ -412,7 +412,7 @@ const ItemListing = () => {
                 disabled={currentPage === 1}
                 className="p-2 rounded hover:bg-gray-100 disabled:opacity-50 transition-colors"
               >
-                <ChevronLeft className="w-4 h-4 text-gray-600" />
+                <ChevronLeft className="w-4 h-4 text-black" />
               </button>
 
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(
@@ -423,7 +423,7 @@ const ItemListing = () => {
                     className={`px-3 py-2 rounded font-medium transition-colors ${
                       page === currentPage
                         ? 'bg-[#C32033] text-white'
-                        : 'text-gray-600 hover:bg-gray-100'
+                        : 'text-black hover:bg-gray-100'
                     }`}
                   >
                     {page}
@@ -436,7 +436,7 @@ const ItemListing = () => {
                 disabled={currentPage === totalPages}
                 className="p-2 rounded hover:bg-gray-100 disabled:opacity-50 transition-colors"
               >
-                <ChevronRight className="w-4 h-4 text-gray-600" />
+                <ChevronRight className="w-4 h-4 text-black" />
               </button>
             </div>
           )}

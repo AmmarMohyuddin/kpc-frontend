@@ -92,7 +92,7 @@ const FilterModal = ({
                 className={`${
                   selectedFilter === filter
                     ? 'font-bold text-black'
-                    : 'font-medium text-gray-700'
+                    : 'font-medium text-black'
                 }`}
               >
                 {filter === 'customerName'
@@ -269,7 +269,7 @@ const OpenOrders = () => {
 
           {/* Top Bar */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mt-5">
-            <div className="flex items-center gap-2 text-md text-gray-600">
+            <div className="flex items-center gap-2 text-md text-black">
               {breadcrumbs.map((crumb, i) => (
                 <div key={i} className="flex items-center">
                   {i > 0 && <CrRight className="w-4 h-4 mx-2" />}
@@ -282,7 +282,7 @@ const OpenOrders = () => {
 
             <div className="flex items-center gap-3">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-4 h-4" />
                 <input
                   type="text"
                   placeholder={`Search by ${
@@ -299,7 +299,7 @@ const OpenOrders = () => {
               </div>
               <button
                 onClick={() => setIsFilterModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-black rounded-lg hover:bg-gray-100 transition-colors"
                 aria-label="Open filters"
               >
                 <SlidersHorizontal />
@@ -372,7 +372,7 @@ const OpenOrders = () => {
                   <tr>
                     <td
                       colSpan={7}
-                      className="px-6 py-4 text-center text-gray-500"
+                      className="px-6 py-4 text-center text-black"
                     >
                       {debouncedSearch
                         ? 'No matching Orders found'
@@ -393,7 +393,7 @@ const OpenOrders = () => {
                 className="p-2 rounded hover:bg-gray-100 disabled:opacity-50 transition-colors"
                 aria-label="Previous page"
               >
-                <ChevronLeft className="w-4 h-4 text-gray-600" />
+                <ChevronLeft className="w-4 h-4 text-black" />
               </button>
 
               <button
@@ -406,14 +406,14 @@ const OpenOrders = () => {
               {pagination?.hasMore && (
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className="px-3 py-2 rounded font-medium transition-colors text-gray-600 hover:bg-gray-100"
+                  className="px-3 py-2 rounded font-medium transition-colors text-black hover:bg-gray-100"
                 >
                   {currentPage + 1}
                 </button>
               )}
 
               {pagination?.hasMore && currentPage + 1 < totalPages && (
-                <span className="px-2 text-gray-600">...</span>
+                <span className="px-2 text-black">...</span>
               )}
 
               <button
@@ -422,7 +422,7 @@ const OpenOrders = () => {
                 className="p-2 rounded hover:bg-gray-100 disabled:opacity-50 transition-colors"
                 aria-label="Next page"
               >
-                <ChevronRight className="w-4 h-4 text-gray-600" />
+                <ChevronRight className="w-4 h-4 text-black" />
               </button>
             </div>
           )}

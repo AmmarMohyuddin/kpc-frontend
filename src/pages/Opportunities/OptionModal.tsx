@@ -46,7 +46,7 @@ const OptionModal = ({ isOpen, onClose, onSelectOption }: OptionModalProps) => {
             onClick={onClose}
             className="p-1 hover:bg-gray-100 rounded-full transition-colors"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-black" />
           </button>
         </div>
 

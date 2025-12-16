@@ -97,7 +97,7 @@ const FilterModal = ({
               className={`${
                 selectedFilter === 'OPPORTUNITY_ID'
                   ? 'font-semibold text-black'
-                  : 'font-medium text-gray-700'
+                  : 'font-medium text-black'
               }`}
             >
               Opportunity ID
@@ -117,7 +117,7 @@ const FilterModal = ({
               className={`${
                 selectedFilter === 'LEAD_NUMBER'
                   ? 'font-semibold text-black'
-                  : 'font-medium text-gray-700'
+                  : 'font-medium text-black'
               }`}
             >
               Lead Number
@@ -137,7 +137,7 @@ const FilterModal = ({
               className={`${
                 selectedFilter === 'DATE'
                   ? 'font-semibold text-black'
-                  : 'font-medium text-gray-700'
+                  : 'font-medium text-black'
               }`}
             >
               Date
@@ -304,7 +304,7 @@ const ManageOpportunities = () => {
 
         {/* Breadcrumbs */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mt-5">
-          <div className="flex items-center gap-2 text-md text-gray-600">
+          <div className="flex items-center gap-2 text-md text-black">
             {breadcrumbs.map((crumb, i) => (
               <div key={i} className="flex items-center">
                 {i > 0 && <CrRight className="w-4 h-4 mx-2" />}
@@ -318,7 +318,7 @@ const ManageOpportunities = () => {
           {/* Search & Filter */}
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-black w-4 h-4" />
               <input
                 type="text"
                 placeholder={
@@ -339,7 +339,7 @@ const ManageOpportunities = () => {
             </div>
             <button
               onClick={() => setIsFilterModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-black rounded-lg hover:bg-gray-100 transition-colors"
             >
               <SlidersHorizontal />
             </button>
@@ -420,7 +420,7 @@ const ManageOpportunities = () => {
                 <tr>
                   <td
                     colSpan={8}
-                    className="px-6 py-4 text-center text-gray-500"
+                    className="px-6 py-4 text-center text-black"
                   >
                     {debouncedSearch || dateFilter
                       ? 'No matching opportunities found'
@@ -440,7 +440,7 @@ const ManageOpportunities = () => {
               disabled={currentPage === 1}
               className="p-2 rounded hover:bg-gray-100 disabled:opacity-50 transition-colors"
             >
-              <ChevronLeft className="w-4 h-4 text-gray-600" />
+              <ChevronLeft className="w-4 h-4 text-black" />
             </button>
 
             <button
@@ -453,7 +453,7 @@ const ManageOpportunities = () => {
             {pagination?.hasMore && (
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
-                className="px-3 py-2 rounded font-medium text-gray-600 hover:bg-gray-100"
+                className="px-3 py-2 rounded font-medium text-black hover:bg-gray-100"
               >
                 {currentPage + 1}
               </button>
@@ -464,7 +464,7 @@ const ManageOpportunities = () => {
               disabled={!pagination?.hasMore}
               className="p-2 rounded hover:bg-gray-100 disabled:opacity-50 transition-colors"
             >
-              <CrRight className="w-4 h-4 text-gray-600" />
+              <CrRight className="w-4 h-4 text-black" />
             </button>
           </div>
         )}

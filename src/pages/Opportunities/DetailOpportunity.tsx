@@ -211,7 +211,7 @@
 //         </h1>
 
 //         {/* Breadcrumb */}
-//         <div className="flex items-center gap-2 text-md text-gray-600 mt-5">
+//         <div className="flex items-center gap-2 text-md text-black mt-5">
 //           <span className="text-[rgba(22,22,22,0.7)]">Opportunities</span>
 //           <ChevronRight className="w-4 h-4" />
 //           <span className="text-[rgba(22,22,22,0.7)]">Detail</span>
@@ -609,7 +609,7 @@ const DetailOpportunity = () => {
         </h1>
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-md text-gray-600 mt-5">
+        <div className="flex items-center gap-2 text-md text-black mt-5">
           <span className="text-[rgba(22,22,22,0.7)]">Opportunities</span>
           <ChevronRight className="w-4 h-4" />
           <span className="text-[rgba(22,22,22,0.7)]">Detail</span>

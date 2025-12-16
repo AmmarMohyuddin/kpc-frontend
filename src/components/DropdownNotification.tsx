@@ -55,7 +55,7 @@ const NotificationModal = ({
         <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
           {/* Type */}
           <div>
-            <h3 className="text-md font-medium text-gray-500">Type</h3>
+            <h3 className="text-md font-medium text-black">Type</h3>
             <p className="text-lg font-semibold text-black">
               {notification.NOTIFICATION_TYPE}
             </p>
@@ -64,20 +64,20 @@ const NotificationModal = ({
           {/* Object Name */}
           {notification.OBJECT_NAME && (
             <div>
-              <h3 className="text-md font-medium text-gray-500">Object Name</h3>
+              <h3 className="text-md font-medium text-black">Object Name</h3>
               <p className="text-lg text-black">{notification.OBJECT_NAME}</p>
             </div>
           )}
 
           {/* Message */}
           <div>
-            <h3 className="text-md font-medium text-gray-500">Message</h3>
+            <h3 className="text-md font-medium text-black">Message</h3>
             <p className="text-lg text-black">{notification.MESSAGE}</p>
           </div>
 
           {/* Date */}
           <div>
-            <h3 className="text-md font-medium text-gray-500">Date</h3>
+            <h3 className="text-md font-medium text-black">Date</h3>
             <p className="text-lg text-black">
               {new Date(notification.CREATION_DATE).toLocaleString()}
             </p>
@@ -243,10 +243,10 @@ const DropdownNotification = () => {
                         {notification.NOTIFICATION_TYPE}
                       </span>
                     </p>
-                    <p className="text-sm text-gray-600 line-clamp-2">
+                    <p className="text-sm text-black line-clamp-2">
                       {notification.MESSAGE}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-black">
                       {new Date(
                         notification.CREATION_DATE,
                       ).toLocaleDateString()}
@@ -255,7 +255,7 @@ const DropdownNotification = () => {
                 </li>
               ))
             ) : (
-              <li className="px-4.5 py-3 text-sm text-gray-500">
+              <li className="px-4.5 py-3 text-sm text-black">
                 No notifications
               </li>
             )}

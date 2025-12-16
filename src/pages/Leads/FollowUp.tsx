@@ -193,7 +193,7 @@ const CreateFollowUp = () => {
           Follow-Up Entry
         </h2>
 
-        <div className="flex items-center gap-2 text-md text-gray-600">
+        <div className="flex items-center gap-2 text-md text-black">
           <span>Follow-Ups</span>
           <ChevronRight className="w-4 h-4" />
           <span className="text-[#C32033]">Create</span>
@@ -331,7 +331,7 @@ const CreateFollowUp = () => {
                 ${
                   isFormValid()
                     ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
-                    : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
+                    : 'bg-gray-400 border border-gray-400 text-black cursor-not-allowed'
                 }`}
             >
               Save

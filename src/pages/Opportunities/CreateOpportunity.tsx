@@ -505,7 +505,7 @@ const CreateOpportunity = () => {
     ${
       isFormValid()
         ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
-        : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
+        : 'bg-gray-400 border border-gray-400 text-black cursor-not-allowed'
     }`}
                 >
                   Next
@@ -704,7 +704,7 @@ const CreateOpportunity = () => {
     ${
       isItemFormValid()
         ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
-        : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
+        : 'bg-gray-400 border border-gray-400 text-black cursor-not-allowed'
     }`}
                 >
                   Save

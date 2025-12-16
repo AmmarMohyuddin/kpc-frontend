@@ -558,7 +558,7 @@ const EditSalesRequest = () => {
           )}
         </div>
 
-        <div className="flex items-center gap-2 text-md text-gray-600">
+        <div className="flex items-center gap-2 text-md text-black">
           <span>Sales Requests</span>
           <ChevronRight className="w-4 h-4" />
           <span className="text-[#C32033]">Edit</span>

@@ -67,7 +67,7 @@ const ResetPassword = () => {
           <h2 className="text-3xl font-bold text-black mb-2 text-left mt-5">
             Create New Password
           </h2>
-          <p className="text-gray-600 mb-8">
+          <p className="text-black mb-8">
             Your new password must be different from previously used passwords.
           </p>
 
@@ -110,7 +110,7 @@ const ResetPassword = () => {
             </button>
 
             <div className="text-center mt-6">
-              <p className="text-gray-600">
+              <p className="text-black">
                 Remember your password?{' '}
                 <Link
                   to="/auth/signin"

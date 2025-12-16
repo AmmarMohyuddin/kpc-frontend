@@ -182,7 +182,7 @@ const ConfirmAddress = () => {
           </h2>
 
           {/* Breadcrumb - Original structure */}
-          <div className="flex items-center gap-2 text-md text-gray-600 mt-5">
+          <div className="flex items-center gap-2 text-md text-black mt-5">
             <span>Sales Requests</span>
             <ChevronRight className="w-4 h-4" />
             <span>Items</span>
@@ -298,7 +298,7 @@ const ConfirmAddress = () => {
     ${
       isFormValid()
         ? 'bg-[#C32033] text-white hover:bg-[#A91B2E]'
-        : 'bg-gray-400 border border-gray-400 text-gray-700 cursor-not-allowed'
+        : 'bg-gray-400 border border-gray-400 text-black cursor-not-allowed'
     }
   `}
                 disabled={!isFormValid()}
