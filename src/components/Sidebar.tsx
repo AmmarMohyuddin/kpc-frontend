@@ -86,12 +86,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   return (
     <aside
       ref={sidebar}
-      className={`z-9999 fixed top-0 left-0 flex flex-col h-screen bg-white duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      className={`z-9999 fixed top-0 left-0 flex flex-col h-screen bg-white dark:bg-boxdark lg:static lg:translate-x-0 transition-all duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } ${isCollapsed ? 'w-24' : 'w-80'}`}
     >
       {/* <!-- SIDEBAR HEADER --> */}
       <div
-        className={`flex items-center justify-between gap-2 pt-8 pb-7 bg-[#C32033] h-[80px] relative ${isCollapsed ? 'px-2 justify-center' : ''
+        className={`flex items-center justify-between gap-2 pt-6 pb-6 px-4 sm:pt-7 sm:pb-7 bg-[#C32033] h-[80px] relative ${isCollapsed ? 'px-3 justify-center' : 'px-4 sm:px-6'
           }`}
       >
         <NavLink
@@ -133,12 +133,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
       </div>
       {/* <!-- SIDEBAR HEADER --> */}
 
-      <div className="no-scrollbar flex flex-col duration-300 ease-linear">
+      <div className="no-scrollbar flex flex-col overflow-y-auto">
         {/* <!-- Sidebar Menu --> */}
-        <nav className={`${isCollapsed ? 'py-4 px-0' : 'py-4 lg:px-1'}`}>
+        <nav className={`transition-all duration-300 ease-in-out ${isCollapsed ? 'py-4 px-2' : 'py-5 px-3 sm:px-4 lg:px-5'}`}>
           {/* <!-- Menu Group --> */}
           <div>
-            <ul className="mb-6 flex flex-col gap-1.5">
+            <ul className="mb-6 flex flex-col gap-2 sm:gap-2.5">
               {/* <!-- Menu Item Dashboard --> */}
               <li className="mb-4 relative lg:block hidden">
                 <NavLink
@@ -197,45 +197,45 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   )}
                 </button>
               </li>
-              <li className="mb-1">
+              <li className="mb-0.5">
                 <NavLink
                   to="/"
                   onClick={handleLinkClick}
-                  className={`group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
-                    } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${pathname === '/'
-                      ? 'bg-[rgb(255,215,215)] border-l-6 border-[#C32033] text-black'
+                  className={`group relative flex items-center ${isCollapsed ? 'justify-center px-3 py-3' : 'gap-4 px-4 py-3 sm:gap-5 sm:px-5'
+                    } rounded-lg font-semibold text-black text-base sm:text-[15px] duration-300 ease-in-out hover:bg-[#FFD7D7] transition-all ${pathname === '/'
+                      ? 'bg-[rgb(255,215,215)] border-l-4 border-[#C32033] text-black'
                       : ''
                     }`}
                 >
                   <div
-                    className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0
+                    className={`w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full flex-shrink-0 transition-all
                       ${pathname === '/' ? 'bg-white' : 'bg-[#C32033]'}`}
                   >
                     <img
                       src={
                         pathname !== '/' ? DashboardWhiteIcon : DashboardRedIcon
                       }
-                      alt="Leads Icon"
-                      className="w-6 h-6"
+                      alt="Dashboard Icon"
+                      className="w-5 h-5 sm:w-6 sm:h-6"
                     />
                   </div>
                   {!isCollapsed && (
-                    <span className="text-base ">Dashboard</span>
+                    <span className="text-[15px] sm:text-base font-semibold">Dashboard</span>
                   )}
                 </NavLink>
               </li>
               {/* <!-- Menu Item Users --> */}
               {user?.role === 'admin' && (
-                <li className="mb-1">
+                <li className="mb-0.5">
                   <NavLink
                     to="/users"
                     onClick={handleLinkClick}
-                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
-                      } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${pathname.includes('users') && 'bg-[#FFD7D7] text-black'
+                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-3 py-3' : 'gap-4 px-4 py-3 sm:gap-5 sm:px-5'
+                      } rounded-lg font-semibold text-black text-base sm:text-[15px] duration-300 ease-in-out hover:bg-[#FFD7D7] transition-all ${pathname.includes('users') && 'bg-[#FFD7D7] border-l-4 border-[#C32033] text-black'
                       }`}
                   >
                     <div
-                      className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${pathname.includes('users') ? 'bg-white' : 'bg-[#C32033]'
+                      className={`w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full flex-shrink-0 transition-all ${pathname.includes('users') ? 'bg-white' : 'bg-[#C32033]'
                         }`}
                     >
                       <svg
@@ -263,22 +263,22 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         />
                       </svg>
                     </div>
-                    {!isCollapsed && 'Registered Users'}
+                    {!isCollapsed && <span className="text-[15px] sm:text-base font-semibold">Registered Users</span>}
                   </NavLink>
                 </li>
               )}
               {user?.role === 'admin' && (
-                <li className="mb-1">
+                <li className="mb-0.5">
                   <NavLink
                     to="/deactivate"
                     onClick={handleLinkClick}
-                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
-                      } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${pathname.includes('deactivate') &&
-                      'bg-[#FFD7D7] text-black'
+                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-3 py-3' : 'gap-4 px-4 py-3 sm:gap-5 sm:px-5'
+                      } rounded-lg font-semibold text-black text-base sm:text-[15px] duration-300 ease-in-out hover:bg-[#FFD7D7] transition-all ${pathname.includes('deactivate') &&
+                      'bg-[#FFD7D7] border-l-4 border-[#C32033] text-black'
                       }`}
                   >
                     <div
-                      className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${pathname.includes('deactivate')
+                      className={`w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full flex-shrink-0 transition-all ${pathname.includes('deactivate')
                         ? 'bg-white'
                         : 'bg-[#C32033]'
                         }`}
@@ -308,23 +308,23 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         />
                       </svg>
                     </div>
-                    {!isCollapsed && 'Deactivate Users'}
+                    {!isCollapsed && <span className="text-[15px] sm:text-base font-semibold">Deactivate Users</span>}
                   </NavLink>
                 </li>
               )}
               {/* <!-- Menu Item Users --> */}
               {/* <!-- Menu Item Profile --> */}
               {user?.role === 'admin' && (
-                <li className="mb-1">
+                <li className="mb-0.5">
                   <NavLink
                     to="/import"
                     onClick={handleLinkClick}
-                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
-                      } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${pathname.includes('import') && 'bg-[#FFD7D7] text-black'
+                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-3 py-3' : 'gap-4 px-4 py-3 sm:gap-5 sm:px-5'
+                      } rounded-lg font-semibold text-black text-base sm:text-[15px] duration-300 ease-in-out hover:bg-[#FFD7D7] transition-all ${pathname.includes('import') && 'bg-[#FFD7D7] border-l-4 border-[#C32033] text-black'
                       }`}
                   >
                     <div
-                      className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${pathname.includes('import')
+                      className={`w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full flex-shrink-0 transition-all ${pathname.includes('import')
                         ? 'bg-white'
                         : 'bg-[#C32033]'
                         }`}
@@ -354,21 +354,21 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         />
                       </svg>
                     </div>
-                    {!isCollapsed && 'Import Users'}
+                    {!isCollapsed && <span className="text-[15px] sm:text-base font-semibold">Import Users</span>}
                   </NavLink>
                 </li>
               )}
               {user?.role === 'admin' && (
-                <li className="mb-1">
+                <li className="mb-0.5">
                   <NavLink
                     to="/sales"
                     onClick={handleLinkClick}
-                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
-                      } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${(pathname === '/sales' || pathname.startsWith('/sales/')) && !pathname.includes('actual-sales') && !pathname.includes('target-sales') && !pathname.includes('actual-vs-target') && 'bg-[#FFD7D7] text-black'
+                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-3 py-3' : 'gap-4 px-4 py-3 sm:gap-5 sm:px-5'
+                      } rounded-lg font-semibold text-black text-base sm:text-[15px] duration-300 ease-in-out hover:bg-[#FFD7D7] transition-all ${(pathname === '/sales' || pathname.startsWith('/sales/')) && !pathname.includes('actual-sales') && !pathname.includes('target-sales') && !pathname.includes('actual-vs-target') && 'bg-[#FFD7D7] border-l-4 border-[#C32033] text-black'
                       }`}
                   >
                     <div
-                      className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${(pathname === '/sales' || pathname.startsWith('/sales/')) && !pathname.includes('actual-sales') && !pathname.includes('target-sales') && !pathname.includes('actual-vs-target') ? 'bg-white' : 'bg-[#C32033]'
+                      className={`w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full flex-shrink-0 transition-all ${(pathname === '/sales' || pathname.startsWith('/sales/')) && !pathname.includes('actual-sales') && !pathname.includes('target-sales') && !pathname.includes('actual-vs-target') ? 'bg-white' : 'bg-[#C32033]'
                         }`}
                     >
                       <svg
@@ -396,22 +396,22 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         />
                       </svg>
                     </div>
-                    {!isCollapsed && 'Sales Persons'}
+                    {!isCollapsed && <span className="text-[15px] sm:text-base font-semibold">Sales Persons</span>}
                   </NavLink>
                 </li>
               )}
               {user?.role === 'admin' && (
-                <li className="mb-1">
+                <li className="mb-0.5">
                   <NavLink
                     to="/customers"
                     onClick={handleLinkClick}
-                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
-                      } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${pathname.includes('customers') &&
-                      'bg-[#FFD7D7] text-black'
+                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-3 py-3' : 'gap-4 px-4 py-3 sm:gap-5 sm:px-5'
+                      } rounded-lg font-semibold text-black text-base sm:text-[15px] duration-300 ease-in-out hover:bg-[#FFD7D7] transition-all ${pathname.includes('customers') &&
+                      'bg-[#FFD7D7] border-l-4 border-[#C32033] text-black'
                       }`}
                   >
                     <div
-                      className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${pathname.includes('customers')
+                      className={`w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full flex-shrink-0 transition-all ${pathname.includes('customers')
                         ? 'bg-white'
                         : 'bg-[#C32033]'
                         }`}
@@ -441,23 +441,23 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         />
                       </svg>
                     </div>
-                    {!isCollapsed && 'Customers'}
+                    {!isCollapsed && <span className="text-[15px] sm:text-base font-semibold">Customers</span>}
                   </NavLink>
                 </li>
               )}
 
               {user?.role === 'admin' && (
-                <li className="mb-1">
+                <li className="mb-0.5">
                   <NavLink
                     to="/actual-sales"
                     onClick={handleLinkClick}
-                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
-                      } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${pathname.includes('actual-sales') &&
-                      'bg-[#FFD7D7] text-black'
+                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-3 py-3' : 'gap-4 px-4 py-3 sm:gap-5 sm:px-5'
+                      } rounded-lg font-semibold text-black text-base sm:text-[15px] duration-300 ease-in-out hover:bg-[#FFD7D7] transition-all ${pathname.includes('actual-sales') &&
+                      'bg-[#FFD7D7] border-l-4 border-[#C32033] text-black'
                       }`}
                   >
                     <div
-                      className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${pathname.includes('actual-sales')
+                      className={`w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full flex-shrink-0 transition-all ${pathname.includes('actual-sales')
                         ? 'bg-white'
                         : 'bg-[#C32033]'
                         }`}
@@ -487,23 +487,23 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         />
                       </svg>
                     </div>
-                    {!isCollapsed && 'Actual Sales'}
+                    {!isCollapsed && <span className="text-[15px] sm:text-base font-semibold">Actual Sales</span>}
                   </NavLink>
                 </li>
               )}
 
               {user?.role === 'admin' && (
-                <li className="mb-1">
+                <li className="mb-0.5">
                   <NavLink
                     to="/target-sales"
                     onClick={handleLinkClick}
-                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
-                      } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${pathname.includes('target-sales') &&
-                      'bg-[#FFD7D7] text-black'
+                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-3 py-3' : 'gap-4 px-4 py-3 sm:gap-5 sm:px-5'
+                      } rounded-lg font-semibold text-black text-base sm:text-[15px] duration-300 ease-in-out hover:bg-[#FFD7D7] transition-all ${pathname.includes('target-sales') &&
+                      'bg-[#FFD7D7] border-l-4 border-[#C32033] text-black'
                       }`}
                   >
                     <div
-                      className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${pathname.includes('target-sales')
+                      className={`w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full flex-shrink-0 transition-all ${pathname.includes('target-sales')
                         ? 'bg-white'
                         : 'bg-[#C32033]'
                         }`}
@@ -533,23 +533,23 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         />
                       </svg>
                     </div>
-                    {!isCollapsed && 'Target Sales'}
+                    {!isCollapsed && <span className="text-[15px] sm:text-base font-semibold">Target Sales</span>}
                   </NavLink>
                 </li>
               )}
 
               {user?.role === 'admin' && (
-                <li className="mb-1">
+                <li className="mb-0.5">
                   <NavLink
                     to="/actual-vs-target"
                     onClick={handleLinkClick}
-                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
-                      } rounded-sm py-2 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${pathname.includes('actual-vs-target') &&
-                      'bg-[#FFD7D7] text-black'
+                    className={`group relative flex items-center ${isCollapsed ? 'justify-center px-3 py-3' : 'gap-4 px-4 py-3 sm:gap-5 sm:px-5'
+                      } rounded-lg font-semibold text-black text-base sm:text-[15px] duration-300 ease-in-out hover:bg-[#FFD7D7] transition-all ${pathname.includes('actual-vs-target') &&
+                      'bg-[#FFD7D7] border-l-4 border-[#C32033] text-black'
                       }`}
                   >
                     <div
-                      className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${pathname.includes('actual-vs-target')
+                      className={`w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full flex-shrink-0 transition-all ${pathname.includes('actual-vs-target')
                         ? 'bg-white'
                         : 'bg-[#C32033]'
                         }`}
@@ -579,7 +579,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         />
                       </svg>
                     </div>
-                    {!isCollapsed && 'Actual vs Target'}
+                    {!isCollapsed && <span className="text-[15px] sm:text-base font-semibold">Actual vs Target</span>}
                   </NavLink>
                 </li>
               )}
@@ -604,69 +604,112 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     return (
                       <>
                         {/* Main Tab */}
-                        <NavLink
-                          to="#"
-                          className={`group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
-                            } rounded-sm py-2 mb-1 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${open ? 'bg-[#FFD7D7] text-black' : ''
-                            }`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            sidebarExpanded
-                              ? handleClick()
-                              : setSidebarExpanded(true);
-                          }}
-                        >
-                          {/* Icon */}
-                          <div
-                            className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${!open ? 'bg-[#C32033]' : 'bg-white'
+                        <div className="relative">
+                          <NavLink
+                            to="#"
+                            className={`group relative flex items-center ${isCollapsed ? 'justify-center px-3 py-3' : 'gap-4 px-4 py-3 sm:gap-5 sm:px-5'
+                              } rounded-lg mb-0.5 font-semibold text-black text-base sm:text-[15px] duration-300 ease-in-out hover:bg-[#FFD7D7] transition-all ${open ? 'bg-[#FFD7D7] border-l-4 border-[#C32033] text-black' : ''
                               }`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              sidebarExpanded
+                                ? handleClick()
+                                : setSidebarExpanded(true);
+                            }}
                           >
-                            <img
-                              src={open ? LeadsRedIcon : LeadsWhiteIcon}
-                              alt="Leads Icon"
-                              className="w-6 h-6"
-                            />
-                          </div>
-
-                          {/* Label */}
-                          {!isCollapsed && (
-                            <span className="text-base font-medium">Leads</span>
-                          )}
-
-                          {/* Arrow */}
-                          {!isCollapsed && (
-                            <svg
-                              className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
+                            {/* Icon */}
+                            <div
+                              className={`w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full flex-shrink-0 transition-all ${!open ? 'bg-[#C32033]' : 'bg-white'
                                 }`}
-                              width="20"
-                              height="20"
-                              viewBox="0 0 20 20"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
                             >
-                              <path
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
+                              <img
+                                src={open ? LeadsRedIcon : LeadsWhiteIcon}
+                                alt="Leads Icon"
+                                className="w-5 h-5 sm:w-6 sm:h-6"
                               />
-                            </svg>
-                          )}
-                        </NavLink>
+                            </div>
 
-                        {/* Dropdown Items */}
-                        {!isCollapsed && (
+                            {/* Label */}
+                            {!isCollapsed && (
+                              <span className="text-[15px] sm:text-base font-semibold">Leads</span>
+                            )}
+
+                            {/* Arrow */}
+                            {!isCollapsed && (
+                              <svg
+                                className={`absolute right-4 sm:right-5 top-1/2 -translate-y-1/2 fill-current transition-transform duration-300 ${open && 'rotate-180'
+                                  }`}
+                                width="20"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  clipRule="evenodd"
+                                  d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
+                                />
+                              </svg>
+                            )}
+                          </NavLink>
+
+                          {/* Dropdown Items - Collapsed Sidebar */}
+                          {open && isCollapsed && (
+                            <div
+                              className="absolute left-full top-0 ml-2 bg-white rounded-lg shadow-2xl py-2 min-w-[200px] z-[9999] border border-gray-100 opacity-100 visible transition-all duration-300 ease-in-out"
+                              style={{ top: '0px' }}
+                            >
+                              <ul className="flex flex-col gap-2.5 sm:gap-3 px-3">
+                                <li>
+                                  <NavLink
+                                    to="/leads/create"
+                                    className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname.includes('/leads/create')
+                                      ? 'text-[#C32033] bg-[#FFD7D7]'
+                                      : 'text-black'
+                                      }`}
+                                  >
+                                    Create
+                                  </NavLink>
+                                </li>
+                                <li>
+                                  <NavLink
+                                    to="/leads/manage"
+                                    className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname.includes('/leads/manage')
+                                      ? 'text-[#C32033] bg-[#FFD7D7]'
+                                      : 'text-black'
+                                      }`}
+                                  >
+                                    Manage Leads
+                                  </NavLink>
+                                </li>
+                                <li>
+                                  <NavLink
+                                    to="/leads/follow-up"
+                                    className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname === '/leads/follow-up'
+                                      ? 'text-[#C32033] bg-[#FFD7D7]'
+                                      : 'text-black'
+                                      }`}
+                                  >
+                                    Follow-Up Entries
+                                  </NavLink>
+                                </li>
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Dropdown Items - Expanded Sidebar */}
+                        {open && !isCollapsed && (
                           <div
-                            className={`overflow-hidden transition-all duration-500 ease-in-out ${open
-                              ? 'max-h-96 opacity-100'
-                              : 'max-h-0 opacity-0'
-                              }`}
+                            className={`overflow-hidden transition-all duration-300 ease-in-out ${open ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
                           >
-                            <ul className="mt-4 mb-5.5 flex flex-col gap-4 pl-6">
+                            <ul className={`flex flex-col gap-2.5 sm:gap-3 transition-all duration-300 ${isCollapsed ? 'px-3' : 'mt-3 mb-4 pl-10 sm:pl-12'}`}>
                               <li>
                                 <NavLink
                                   to="/leads/create"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${pathname.includes('/leads/create')
-                                    ? 'text-[#C32033]'
+                                  className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname.includes('/leads/create')
+                                    ? 'text-[#C32033] bg-[#FFD7D7]'
                                     : 'text-black'
                                     }`}
                                 >
@@ -676,8 +719,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/leads/manage"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base  ${pathname.includes('/leads/manage')
-                                    ? 'text-[#C32033]'
+                                  className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname.includes('/leads/manage')
+                                    ? 'text-[#C32033] bg-[#FFD7D7]'
                                     : 'text-black'
                                     }`}
                                 >
@@ -687,8 +730,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/leads/follow-up"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base  ${pathname === '/leads/follow-up'
-                                    ? 'text-[#C32033]'
+                                  className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname === '/leads/follow-up'
+                                    ? 'text-[#C32033] bg-[#FFD7D7]'
                                     : 'text-black'
                                     }`}
                                 >
@@ -883,74 +926,72 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     return (
                       <>
                         {/* Main Tab */}
-                        <NavLink
-                          to="#"
-                          className={`group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
-                            } rounded-sm py-2 mb-1 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${open ? 'bg-[#FFD7D7] text-black' : ''
-                            }`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            sidebarExpanded
-                              ? handleClick()
-                              : setSidebarExpanded(true);
-                          }}
-                        >
-                          {/* Icon */}
-                          <div
-                            className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${open ? 'bg-white' : 'bg-[#C32033]'
+                        <div className="relative">
+                          <NavLink
+                            to="#"
+                            className={`group relative flex items-center ${isCollapsed ? 'justify-center px-3 py-3' : 'gap-4 px-4 py-3 sm:gap-5 sm:px-5'
+                              } rounded-lg mb-0.5 font-semibold text-black text-base sm:text-[15px] duration-300 ease-in-out hover:bg-[#FFD7D7] transition-all ${open ? 'bg-[#FFD7D7] border-l-4 border-[#C32033] text-black' : ''
                               }`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              sidebarExpanded
+                                ? handleClick()
+                                : setSidebarExpanded(true);
+                            }}
                           >
-                            <img
-                              src={
-                                open ? OpportunityRedIcon : OpportunityWhiteIcon
-                              }
-                              alt="Opportunities Icon"
-                              className="w-6 h-6"
-                            />
-                          </div>
-
-                          {/* Label */}
-
-                          {!isCollapsed && (
-                            <span className="text-base font-medium">
-                              Opportunities
-                            </span>
-                          )}
-
-                          {/* Arrow */}
-                          {!isCollapsed && (
-                            <svg
-                              className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
+                            {/* Icon */}
+                            <div
+                              className={`w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full flex-shrink-0 transition-all ${open ? 'bg-white' : 'bg-[#C32033]'
                                 }`}
-                              width="20"
-                              height="20"
-                              viewBox="0 0 20 20"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
                             >
-                              <path
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
+                              <img
+                                src={
+                                  open ? OpportunityRedIcon : OpportunityWhiteIcon
+                                }
+                                alt="Opportunities Icon"
+                                className="w-5 h-5 sm:w-6 sm:h-6"
                               />
-                            </svg>
-                          )}
-                        </NavLink>
+                            </div>
 
-                        {/* Dropdown Items */}
-                        {!isCollapsed && (
+                            {/* Label */}
+
+                            {!isCollapsed && (
+                              <span className="text-[15px] sm:text-base font-semibold">
+                                Opportunities
+                              </span>
+                            )}
+
+                            {/* Arrow */}
+                            {!isCollapsed && (
+                              <svg
+                                className={`absolute right-4 sm:right-5 top-1/2 -translate-y-1/2 fill-current transition-transform duration-300 ${open && 'rotate-180'
+                                  }`}
+                                width="20"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  clipRule="evenodd"
+                                  d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
+                                />
+                              </svg>
+                            )}
+                          </NavLink>
+
+                          {/* Dropdown Items - Collapsed Sidebar */}
+                          {open && isCollapsed && (
                           <div
-                            className={`overflow-hidden transition-all duration-500 ease-in-out ${open
-                              ? 'max-h-96 opacity-100'
-                              : 'max-h-0 opacity-0'
-                              }`}
+                            className="absolute left-full top-0 ml-2 bg-white rounded-lg shadow-2xl py-2 min-w-[200px] z-[9999] border border-gray-100 opacity-100 visible transition-all duration-300 ease-in-out"
                           >
-                            <ul className="mt-4 mb-5.5 flex flex-col gap-4 pl-6">
+                            <ul className="flex flex-col gap-2.5 sm:gap-3 px-3">
                               <li>
                                 <NavLink
                                   to="/opportunities/create"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${pathname.includes('/opportunities/create')
-                                    ? 'text-[#C32033]'
+                                  className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname.includes('/opportunities/create')
+                                    ? 'text-[#C32033] bg-[#FFD7D7]'
                                     : 'text-black'
                                     }`}
                                 >
@@ -960,8 +1001,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/opportunities/manage"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${pathname.includes('/opportunities/manage')
-                                    ? 'text-[#C32033]'
+                                  className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname.includes('/opportunities/manage')
+                                    ? 'text-[#C32033] bg-[#FFD7D7]'
                                     : 'text-black'
                                     }`}
                                 >
@@ -971,8 +1012,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/opportunities/follow-up"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${pathname === '/opportunities/follow-up'
-                                    ? 'text-[#C32033]'
+                                  className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname === '/opportunities/follow-up'
+                                    ? 'text-[#C32033] bg-[#FFD7D7]'
                                     : 'text-black'
                                     }`}
                                 >
@@ -993,6 +1034,50 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                   Manage Follow-Up
                                 </NavLink>
                               </li> */}
+                            </ul>
+                          </div>
+                          )}
+                        </div>
+
+                        {/* Dropdown Items - Expanded Sidebar */}
+                        {open && !isCollapsed && (
+                          <div
+                            className={`overflow-hidden transition-all duration-300 ease-in-out ${open ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
+                          >
+                            <ul className="mt-3 mb-4 flex flex-col gap-2.5 sm:gap-3 pl-10 sm:pl-12">
+                              <li>
+                                <NavLink
+                                  to="/opportunities/create"
+                                  className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname.includes('/opportunities/create')
+                                    ? 'text-[#C32033] bg-[#FFD7D7]'
+                                    : 'text-black'
+                                    }`}
+                                >
+                                  Create
+                                </NavLink>
+                              </li>
+                              <li>
+                                <NavLink
+                                  to="/opportunities/manage"
+                                  className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname.includes('/opportunities/manage')
+                                    ? 'text-[#C32033] bg-[#FFD7D7]'
+                                    : 'text-black'
+                                    }`}
+                                >
+                                  Manage Opportunities
+                                </NavLink>
+                              </li>
+                              <li>
+                                <NavLink
+                                  to="/opportunities/follow-up"
+                                  className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname === '/opportunities/follow-up'
+                                    ? 'text-[#C32033] bg-[#FFD7D7]'
+                                    : 'text-black'
+                                    }`}
+                                >
+                                  Follow-Up Entries
+                                </NavLink>
+                              </li>
                             </ul>
                           </div>
                         )}
@@ -1212,10 +1297,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   {(onToggle, open) => {
                     return (
                       <>
-                        <NavLink
+                        <div className="relative">
+                          <NavLink
                           to="#"
-                          className={`group relative flex items-center ${isCollapsed ? 'justify-center px-2' : 'gap-6 px-4'
-                            } rounded-sm py-2 mb-1 font-medium text-black text-lg duration-300 ease-in-out hover:bg-[#FFD7D7] ${open ? 'bg-[#FFD7D7] text-black' : ''
+                          className={`group relative flex items-center ${isCollapsed ? 'justify-center px-3 py-3' : 'gap-4 px-4 py-3 sm:gap-5 sm:px-5'
+                            } rounded-lg mb-0.5 font-semibold text-black text-base sm:text-[15px] duration-300 ease-in-out hover:bg-[#FFD7D7] transition-all ${open ? 'bg-[#FFD7D7] border-l-4 border-[#C32033] text-black' : ''
                             } `}
                           onClick={(e) => {
                             e.preventDefault();
@@ -1225,7 +1311,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           }}
                         >
                           <div
-                            className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${open ? 'bg-white' : 'bg-[#C32033]'
+                            className={`w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full flex-shrink-0 transition-all ${open ? 'bg-white' : 'bg-[#C32033]'
                               }`}
                           >
                             <img
@@ -1233,19 +1319,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 open ? SalesOrdertRedIcon : SalesOrderWhiteIcon
                               }
                               alt="Sales Orders Icon"
-                              className="w-6 h-6"
+                              className="w-5 h-5 sm:w-6 sm:h-6"
                             />
                           </div>
 
                           {!isCollapsed && (
-                            <span className="text-base font-medium">
+                            <span className="text-[15px] sm:text-base font-semibold">
                               Sales Orders
                             </span>
                           )}
 
                           {!isCollapsed && (
                             <svg
-                              className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
+                              className={`absolute right-4 sm:right-5 top-1/2 -translate-y-1/2 fill-current transition-transform duration-300 ${open && 'rotate-180'
                                 }`}
                               width="20"
                               height="20"
@@ -1263,21 +1349,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           )}
                         </NavLink>
 
-                        {/* Dropdown Menu Start */}
-                        {!isCollapsed && (
+                        {/* Dropdown Items - Collapsed Sidebar */}
+                        {open && isCollapsed && (
                           <div
-                            className={`overflow-hidden transition-all duration-500 ease-in-out ${open
-                              ? 'max-h-96 opacity-100'
-                              : 'max-h-0 opacity-0'
-                              }`}
+                            className="absolute left-full top-0 ml-2 bg-white rounded-lg shadow-2xl py-2 min-w-[200px] z-[9999] border border-gray-100 opacity-100 visible transition-all duration-300 ease-in-out"
                           >
-                            <ul className="mt-4 mb-5.5 flex flex-col gap-4 pl-6">
+                            <ul className="flex flex-col gap-2.5 sm:gap-3 px-3">
                               <li>
                                 <NavLink
                                   to="/sales-orders/history"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${pathname === '/sales-orders/history' ||
+                                  className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname === '/sales-orders/history' ||
                                     pathname.includes('/sales-orders/history')
-                                    ? 'text-[#C32033]'
+                                    ? 'text-[#C32033] bg-[#FFD7D7]'
                                     : 'text-black'
                                     }`}
                                 >
@@ -1287,9 +1370,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/sales-orders/open"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${pathname === '/sales-orders/open' ||
+                                  className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname === '/sales-orders/open' ||
                                     pathname.includes('/sales-orders/open')
-                                    ? 'text-[#C32033]'
+                                    ? 'text-[#C32033] bg-[#FFD7D7]'
                                     : 'text-black'
                                     }`}
                                 >
@@ -1299,11 +1382,63 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/sales-orders/uninvoiced"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${pathname === '/sales-orders/uninvoiced' ||
+                                  className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname === '/sales-orders/uninvoiced' ||
                                     pathname.includes(
                                       '/sales-orders/uninvoiced',
                                     )
-                                    ? 'text-[#C32033]'
+                                    ? 'text-[#C32033] bg-[#FFD7D7]'
+                                    : 'text-black'
+                                    }`}
+                                >
+                                  Uninvoiced Orders
+                                </NavLink>
+                              </li>
+                            </ul>
+                          </div>
+                          )}
+                        </div>
+
+                        {/* Dropdown Items - Expanded Sidebar */}
+                        {open && !isCollapsed && (
+                          <div
+                            className={`overflow-hidden transition-all duration-300 ease-in-out ${open
+                              ? 'max-h-96 opacity-100'
+                              : 'max-h-0 opacity-0'
+                              }`}
+                          >
+                            <ul className="mt-3 mb-4 flex flex-col gap-2.5 sm:gap-3 pl-10 sm:pl-12">
+                              <li>
+                                <NavLink
+                                  to="/sales-orders/history"
+                                  className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname === '/sales-orders/history' ||
+                                    pathname.includes('/sales-orders/history')
+                                    ? 'text-[#C32033] bg-[#FFD7D7]'
+                                    : 'text-black'
+                                    }`}
+                                >
+                                  Closed Order History
+                                </NavLink>
+                              </li>
+                              <li>
+                                <NavLink
+                                  to="/sales-orders/open"
+                                  className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname === '/sales-orders/open' ||
+                                    pathname.includes('/sales-orders/open')
+                                    ? 'text-[#C32033] bg-[#FFD7D7]'
+                                    : 'text-black'
+                                    }`}
+                                >
+                                  Track Delivery Status
+                                </NavLink>
+                              </li>
+                              <li>
+                                <NavLink
+                                  to="/sales-orders/uninvoiced"
+                                  className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname === '/sales-orders/uninvoiced' ||
+                                    pathname.includes(
+                                      '/sales-orders/uninvoiced',
+                                    )
+                                    ? 'text-[#C32033] bg-[#FFD7D7]'
                                     : 'text-black'
                                     }`}
                                 >
@@ -1556,22 +1691,23 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   {(handleClick, open) => {
                     return (
                       <>
-                        <NavLink
-                          to="#"
-                          className={`group relative flex items-center ${isCollapsed
-                            ? 'justify-center px-2 py-2'
-                            : 'gap-6 px-4 py-2'
-                            } rounded-sm py-2 mb-1 font-medium text-black text-lg whitespace-nowrap duration-600 ease-in-out hover:bg-[#FFD7D7] ${open ? 'bg-[#FFD7D7]' : 'bg-transparent'
-                            }`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            sidebarExpanded
-                              ? handleClick()
-                              : setSidebarExpanded(true);
-                          }}
-                        >
+                        <div className="relative">
+                          <NavLink
+                            to="#"
+                            className={`group relative flex items-center ${isCollapsed
+                              ? 'justify-center px-3 py-3'
+                              : 'gap-4 px-4 py-3 sm:gap-5 sm:px-5'
+                              } rounded-lg mb-0.5 font-semibold text-black text-base sm:text-[15px] whitespace-nowrap duration-300 ease-in-out hover:bg-[#FFD7D7] transition-all ${open ? 'bg-[#FFD7D7] border-l-4 border-[#C32033] text-black' : ''
+                              }`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              sidebarExpanded
+                                ? handleClick()
+                                : setSidebarExpanded(true);
+                            }}
+                          >
                           <div
-                            className={`w-11 h-11 flex items-center justify-center rounded-full flex-shrink-0 ${open ? 'bg-white' : 'bg-[#C32033]'
+                            className={`w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full flex-shrink-0 transition-all ${open ? 'bg-white' : 'bg-[#C32033]'
                               }`}
                           >
                             <img
@@ -1581,19 +1717,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                   : SalesRequestWhiteIcon
                               }
                               alt="Sales Request Icon"
-                              className="w-6 h-6"
+                              className="w-5 h-5 sm:w-6 sm:h-6"
                             />
                           </div>
 
                           {!isCollapsed && (
-                            <span className="text-base font-medium">
+                            <span className="text-[15px] sm:text-base font-semibold">
                               Sales Requests
                             </span>
                           )}
 
                           {!isCollapsed && (
                             <svg
-                              className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
+                              className={`absolute right-4 sm:right-5 top-1/2 -translate-y-1/2 fill-current transition-transform duration-300 ${open && 'rotate-180'
                                 }`}
                               width="20"
                               height="20"
@@ -1609,23 +1745,67 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               />
                             </svg>
                           )}
-                        </NavLink>
+                          </NavLink>
 
-                        {/* Dropdown Menu Start */}
-                        {!isCollapsed && (
+                          {/* Dropdown Items - Collapsed Sidebar */}
+                          {open && isCollapsed && (
+                            <div
+                              className="absolute left-full top-0 ml-2 bg-white rounded-lg shadow-2xl py-2 min-w-[200px] z-[9999] border border-gray-100 opacity-100 visible transition-all duration-300 ease-in-out"
+                            >
+                              <ul className="flex flex-col gap-2.5 sm:gap-3 px-3">
+                                <li>
+                                  <NavLink
+                                    to="/sales-request/create"
+                                    className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname === '/sales-request/create' ||
+                                      pathname.includes('/sales-request/create')
+                                      ? 'text-[#C32033] bg-[#FFD7D7]'
+                                      : 'text-black'
+                                      }`}
+                                  >
+                                    Create
+                                  </NavLink>
+                                </li>
+                                <li>
+                                  <NavLink
+                                    to="/sales-request/manage"
+                                    className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname === '/sales-request/manage' ||
+                                      pathname.includes('/sales-request/manage')
+                                      ? 'text-[#C32033] bg-[#FFD7D7]'
+                                      : 'text-black'
+                                      }`}
+                                  >
+                                    Manage Requests
+                                  </NavLink>
+                                </li>
+                                <li>
+                                  <NavLink
+                                    to="/sales-request/draft"
+                                    className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname === '/sales-request/draft' ||
+                                      pathname.includes('/sales-request/draft')
+                                      ? 'text-[#C32033] bg-[#FFD7D7]'
+                                      : 'text-black'
+                                      }`}
+                                  >
+                                    Manage Drafts
+                                  </NavLink>
+                                </li>
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Dropdown Items - Expanded Sidebar */}
+                        {open && !isCollapsed && (
                           <div
-                            className={`overflow-hidden transition-all duration-500 ease-in-out ${open
-                              ? 'max-h-96 opacity-100'
-                              : 'max-h-0 opacity-0'
-                              }`}
+                            className={`overflow-hidden transition-all duration-300 ease-in-out ${open ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
                           >
-                            <ul className="mt-4 mb-5.5 flex flex-col gap-4 pl-6">
+                            <ul className="mt-3 mb-4 flex flex-col gap-2.5 sm:gap-3 pl-10 sm:pl-12">
                               <li>
                                 <NavLink
                                   to="/sales-request/create"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${pathname === '/sales-request/create' ||
+                                  className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname === '/sales-request/create' ||
                                     pathname.includes('/sales-request/create')
-                                    ? 'text-[#C32033]'
+                                    ? 'text-[#C32033] bg-[#FFD7D7]'
                                     : 'text-black'
                                     }`}
                                 >
@@ -1635,9 +1815,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/sales-request/manage"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${pathname === '/sales-request/manage' ||
+                                  className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname === '/sales-request/manage' ||
                                     pathname.includes('/sales-request/manage')
-                                    ? 'text-[#C32033]'
+                                    ? 'text-[#C32033] bg-[#FFD7D7]'
                                     : 'text-black'
                                     }`}
                                 >
@@ -1647,9 +1827,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               <li>
                                 <NavLink
                                   to="/sales-request/draft"
-                                  className={`flex items-center px-2 rounded-lg transition-colors text-base ${pathname === '/sales-request/draft' ||
+                                  className={`flex items-center px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg transition-all text-sm sm:text-[15px] font-semibold hover:bg-[#FFD7D7] ${pathname === '/sales-request/draft' ||
                                     pathname.includes('/sales-request/draft')
-                                    ? 'text-[#C32033]'
+                                    ? 'text-[#C32033] bg-[#FFD7D7]'
                                     : 'text-black'
                                     }`}
                                 >
